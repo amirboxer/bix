@@ -1,0 +1,94 @@
+.bring-them-back {
+    font-size: 1rem;
+    background: linear-gradient(180deg, #2F2929 0%, #111 100%);
+    padding: 0.1875em;
+    border-radius: 0.6875em;
+    z-index: 9999;
+    position: fixed;
+    bottom: 1.875em;
+    right: 3.125em;
+
+    a {
+        font-size: 0.75em;
+
+        display: flex;
+        flex-direction: column;
+        direction: ltr;
+
+        align-items: center;
+        color: #ffffff;
+        padding: 0.5em 0.666em;
+        text-align: center;
+        text-decoration: none;
+        font-family: "Open Sans", Arial, Helvetica, sans-serif;
+        border-radius: 0.9166em;
+        border: 0.794px solid #867F8A;
+        font-weight: 400;
+
+        .close-btn {
+            position: absolute;
+            left: 0.833em;
+            top: 0.833em;
+        }
+
+        .subtitle {
+            display: inline-block;
+            font-size: 1.05em;
+            vertical-align: middle;
+            font-weight: 700;
+            margin-bottom: 0.56em;
+
+            .red-bg {
+                background-color: #E82900;
+                padding-bottom: 0.2em;
+
+            }
+        }
+
+        .time-blocks {
+            display: grid;
+
+            .time-block {
+                grid-row: 1;
+                line-height: 1;
+                grid-template-columns: auto auto;
+                display: grid;
+                grid-auto-flow: column;
+                align-items: center;
+
+                .digits {
+                    display: grid;
+                    gap: 2px;
+
+                    .digit {
+                        font-size: 2.5em;
+                        font-weight: 700;
+                        grid-row: 1;
+                        background-color: #626060;
+                        border-radius: 1px;
+                        padding: 0.3em 0.115em
+                    }
+                }
+
+                .dots {
+                    font-size: 1.95em;
+                    grid-row: 1;
+                }
+
+                .time-desc {
+                    grid-row: 2;
+                    grid-column: 1;
+                    display: block;
+                    color: #AFAFAF;
+                    font-size: 0.75em;
+                    grid-row: 2;
+                    margin-top: 0.3em;
+                }
+            }
+        }
+
+        .title-wrap {
+            margin-top: 0.7em;
+        }
+    }
+}
