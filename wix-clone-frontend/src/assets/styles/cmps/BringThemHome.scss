@@ -41,7 +41,6 @@
             .red-bg {
                 background-color: #E82900;
                 padding-bottom: 0.2em;
-
             }
         }
 
@@ -73,6 +72,7 @@
                 .dots {
                     font-size: 1.95em;
                     grid-row: 1;
+                    padding-inline: 0.05em;
                 }
 
                 .time-desc {
@@ -89,6 +89,9 @@
 
         .title-wrap {
             margin-top: 0.7em;
+            svg {
+                width: 13em;
+            }
         }
     }
 }
