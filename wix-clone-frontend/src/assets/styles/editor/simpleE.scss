@@ -1,11 +1,15 @@
 .tester {
-    background-color: rgb(0, 255, 8);
     border-radius: 20px;
     position: absolute;
+    background-color: rebeccapurple;
 }
 
-.editor {
+.edit-board {
+    width: 1000px;
+    background-color: red;
     height: 100vh;
+    position: relative;
+    // overflow: hidden;
 }
 
 * {
@@ -14,120 +18,15 @@
 
 .edit-box {
     position: absolute;
-    $line-color: #116cff;
-    height: 100px;
-    width: 100px;
+    z-index: 2;
+
+
 
     .handler {
         position: absolute;
     }
 
-    .resize-edge {
-        $width: 5px;
 
-        &::after {
-            box-sizing: border-box;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            position: absolute;
-            content: '';
-            width: 7px;
-            height: 7px;
-            background-color: #fff;
-            border: 1px solid #116dff;
-            border-radius: 50%;
-        }
-
-        &.horizontal {
-            width: 100%;
-            height: $width;
-            cursor: ns-resize;
-
-            &::before {
-                position: absolute;
-                width: 100%;
-                height: 1px;
-                content: '';
-                top: 50%;
-                transform: translateY(-50%);
-                background-color: $line-color;
-            }
-        }
-
-        &.vertical {
-            height: 100%;
-            width: $width;
-            cursor: ew-resize;
-
-            &::before {
-                position: absolute;
-                height: 100%;
-                width: 1px;
-                content: '';
-                left: 50%;
-                transform: translateX(-50%);
-                background-color: $line-color;
-            }
-
-        }
-
-        &.top {
-            top: calc($width / -2);
-        }
-
-        &.bottom {
-            bottom: calc($width / -2);
-        }
-
-        &.left {
-            left: calc($width / -2);
-        }
-
-        &.right {
-            right: calc($width / -2);
-        }
-    }
-
-    .resize-corner {
-        position: absolute;
-        content: '';
-        width: 7px;
-        height: 7px;
-        background-color: #fff;
-        border: 1px solid #116dff;
-        border-radius: 50%;
-
-        &.bottom-right {
-            bottom: 0;
-            right: 0;
-            transform: translate(50%, 50%);
-            cursor: nwse-resize;
-        }
-
-        &.bottom-left {
-            bottom: 0;
-            left: 0;
-            transform: translate(-50%, 50%);
-            cursor: nesw-resize;
-
-        }
-
-        &.top-right {
-            top: 0;
-            right: 0;
-            cursor: nesw-resize;
-            transform: translate(50%, -50%);
-            cursor: nesw-resize;
-        }
-
-        &.top-left {
-            top: 0;
-            left: 0;
-            transform: translate(-50%, -50%);
-            cursor: nwse-resize;
-        }
-    }
 }
 
 body {

@@ -2,13 +2,13 @@
 import { BringThemHome } from './cmps/BringThemHome'
 
 // pages
-import { SimpleBoxPreview } from './pages/editor'
+import { EditBoard } from './cmps/editor/EditBoard'
 
 function App() {
   return (
     <>
-        <BringThemHome/>
-        <SimpleBoxPreview/>
+      <BringThemHome />
+      <EditBoard />
     </>
   )
 }
