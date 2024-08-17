@@ -1,0 +1,61 @@
+.tester {
+    border-radius: 20px;
+    position: absolute;
+}
+
+.edit-board {
+    margin: 12px;
+    margin-right: 50px;
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    // box shadow
+    -webkit-box-shadow: 3px 0px 8px 0px rgba(0, 0, 0, 0.42);
+    -moz-box-shadow: 3px 0px 8px 0px rgba(0, 0, 0, 0.42);
+    box-shadow: 3px 0px 8px 0px rgba(0, 0, 0, 0.42);
+
+
+
+    .add-section-button {
+        letter-spacing: 0.95px;
+        border-radius: 50px;
+        left: 50%;
+
+        height: 30px;
+        width: 135px;
+
+        z-index: 2;
+        position: absolute;
+        color: $clr2;
+        background-color: $clr1;
+        transform: translate(-50%, -50%);
+
+
+        &:hover {
+            background-color: $clr3;
+        }
+
+        .button-content {
+            display: flex;
+            align-items: center;
+            padding-inline-start: 13px;
+        }
+    }
+}
+
+.edit-box {
+    position: absolute;
+    z-index: 2;
+
+    .handler {
+        position: absolute;
+    }
+}
+
+
+
+
+
+

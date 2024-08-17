@@ -1,12 +1,11 @@
 // react hooks
 import { useRef, useEffect, useContext } from 'react';
 
-
 // context for handlers
 import { PointerHandlersContext } from '../EditBoard';
 
 
-export function ResizeBox({
+function ResizeBox({
     initialPointerCoords,
     setters: {
         setBoxWidth,
@@ -149,3 +148,5 @@ export function ResizeBox({
         </div>
     )
 }
+
+export default ResizeBox

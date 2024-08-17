@@ -1,0 +1,84 @@
+.ruler {
+    &.right-ruler {
+        display: grid;
+
+        // overflow: hidden;
+        position: absolute;
+        right: 0;
+        background-color: $clr2;
+        transition: opacity .15s ease-in;
+        transition-delay: .15s;
+        opacity: 0.5;
+
+
+        width: 16px;
+        font-size: 9px;
+        font-family: sans-serif;
+
+        .ruler-graduation {
+            // vars
+            $graduation-clr: black;
+            $graduation-height: 1px;
+            $graduation-pos: absolute;
+            $graduation-transY: translateY(25%);
+            $bor-box: border-box;
+            $right-dist: 1px;
+            $bottom-dist: 0px;
+
+            position: relative;
+            height: 10px;
+            width: 100%;
+
+            .ruler-digit {
+                line-height: 1;
+                margin: 0;
+                display: block;
+                position: absolute;
+                left: 3px;
+            }
+
+            &:not(:nth-child(5n)):not(:nth-child(2)):not(:nth-child(1)) {
+                &::after {
+                    content: "";
+                    position: $graduation-pos;
+                    right: $right-dist;
+                    width: 4.5px;
+                    height: $graduation-height;
+                    bottom: $bottom-dist;
+                    background-color: $graduation-clr;
+                    transform: $graduation-transY;
+                }
+            }
+
+            &:nth-child(5n):not(:nth-child(10n)) {
+                &::after {
+                    content: "";
+                    position: $graduation-pos;
+                    right: $right-dist;
+                    width: 7.5px;
+                    height: $graduation-height;
+                    bottom: $bottom-dist;
+                    background-color: $graduation-clr;
+                    transform: $graduation-transY;
+                }
+            }
+
+            &:nth-child(10n) {
+                &::after {
+                    content: "";
+                    position: $graduation-pos;
+                    right: $right-dist;
+                    width: 12px;
+                    height: $graduation-height;
+                    bottom: $bottom-dist;
+                    background-color: $graduation-clr;
+                    transform: $graduation-transY;
+                    box-sizing: $bor-box;
+                }
+            }
+        }
+
+
+
+    }
+}

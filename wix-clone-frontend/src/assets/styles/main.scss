@@ -1,9 +1,23 @@
+// setup
+@import "setup/variables";
+
+
+
+// basics
+@import "basics/base";
+
+
+
+
+
+
 // Components
 @import "cmps/BringThemHome";
 
 
 
-// editor
-@import "editor/simpleE";
-@import "editor/ResizeBox";
-@import "editor/Section";
+// Components - editor
+@import "editor/edit-board";
+@import "editor/resize-box";
+@import "editor/section";
+@import "editor/rulers"

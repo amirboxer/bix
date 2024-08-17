@@ -1,10 +1,10 @@
 // cmp-tools
-import { ResizeBox } from './tools/ResizeBox';
+import ResizeBox from './tools/ResizeBox';
 
 // react hooks
 import { useState} from 'react';
 
-export function EditBox({
+function EditBox({
     width,
     height,
     offsetX,
@@ -72,3 +72,5 @@ export function EditBox({
         </>
     )
 }
+
+export default EditBox
