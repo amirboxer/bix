@@ -2,7 +2,7 @@
 import EditBox from './EditBox';
 import Section from './Section';
 import AddSection from './AddSection';
-import Rulers from './tools/Rulers';
+import Ruler from './tools/Ruler';
 
 // react hooks
 import React, { useRef, createContext } from "react"
@@ -71,22 +71,31 @@ export function EditBoard() {
                 ref={editBoardRef}
             >
 
-                {/* right sude and top side page rulers */}
-                <Rulers
-                    editBoardRef={editBoardRef} />
+                {/* right side ruler */}
+                <Ruler
+                    lengthRef={editBoardRef}
+                    rulerSide="right" />
 
-                {/* sections and add-section-btns */}
-                {sections.map((height, idx) => (
-                    <React.Fragment key={idx}> {/* Key is added here */}
-                        {/* section */}
-                        <Section sectionHeight={height} />
-                        {/* add new section button */}
-                        <AddSection
-                            topOffset={sectionAdders[idx][0]}
-                            id={sectionAdders[idx][1]}
-                            updateAddSectionSetterRef={updateAddSectionSetterRef} />
-                    </React.Fragment>
-                ))}
+                {/* sections and add-section-btns header & footer*/}
+                <div className='page-sections'>
+
+                    {/* right side ruler */}
+                    <Ruler
+                        lengthRef={editBoardRef}
+                        rulerSide="top" />
+
+                    {sections.map((height, idx) => (
+                        <React.Fragment key={idx}> {/* Key is added here */}
+                            {/* section */}
+                            <Section sectionHeight={height} />
+                            {/* add new section button */}
+                            <AddSection
+                                topOffset={sectionAdders[idx][0]}
+                                id={sectionAdders[idx][1]}
+                                updateAddSectionSetterRef={updateAddSectionSetterRef} />
+                        </React.Fragment>
+                    ))}
+                </div>
 
                 <EditBox
                     width={100}

@@ -1,84 +1,248 @@
-.ruler {
-    &.right-ruler {
+.ruler-container {
+    z-index: 2;
+    height: max-content;
+
+    &.top {
+        height: 22px;
+        overflow-x: clip;
+        position: sticky;
+        top: 0;
         display: grid;
-
-        // overflow: hidden;
-        position: absolute;
-        right: 0;
-        background-color: $clr2;
-        transition: opacity .15s ease-in;
-        transition-delay: .15s;
-        opacity: 0.5;
+        grid-template-columns: minmax(0, 1fr) 980px minmax(0, 1fr);
+    }
 
 
-        width: 16px;
-        font-size: 9px;
-        font-family: sans-serif;
+    .ruler {
+        &.right {
+            display: grid;
+            position: absolute;
+            right: 0;
+            background-color: $clr2;
+            transition: opacity .15s ease-in;
+            transition-delay: .15s;
+            opacity: 0.5;
 
-        .ruler-graduation {
-            // vars
-            $graduation-clr: black;
-            $graduation-height: 1px;
-            $graduation-pos: absolute;
-            $graduation-transY: translateY(25%);
-            $bor-box: border-box;
-            $right-dist: 1px;
-            $bottom-dist: 0px;
 
-            position: relative;
-            height: 10px;
-            width: 100%;
+            width: 22px;
+            font-size: 9px;
+            font-family: sans-serif;
 
-            .ruler-digit {
-                line-height: 1;
-                margin: 0;
-                display: block;
-                position: absolute;
-                left: 3px;
+            &:hover {
+                opacity: 0.9;
             }
 
-            &:not(:nth-child(5n)):not(:nth-child(2)):not(:nth-child(1)) {
-                &::after {
-                    content: "";
-                    position: $graduation-pos;
-                    right: $right-dist;
-                    width: 4.5px;
-                    height: $graduation-height;
-                    bottom: $bottom-dist;
-                    background-color: $graduation-clr;
-                    transform: $graduation-transY;
+            .ruler-graduation {
+                // vars
+                $graduation-clr: black;
+                $graduation-height: 1px;
+                $graduation-pos: absolute;
+                $graduation-transY: translateY(25%);
+                $bor-box: border-box;
+                $right-dist: 6px;
+                $bottom-dist: 0px;
+
+                position: relative;
+                height: 10px;
+                // width: 100%;
+
+
+                &:not(:nth-child(5n)):not(:nth-child(2)):not(:nth-child(1)) {
+                    &::after {
+                        content: "";
+                        position: $graduation-pos;
+                        right: $right-dist;
+                        width: 4.5px;
+                        height: $graduation-height;
+                        bottom: $bottom-dist;
+                        background-color: $graduation-clr;
+                        transform: $graduation-transY;
+                    }
                 }
-            }
 
-            &:nth-child(5n):not(:nth-child(10n)) {
-                &::after {
-                    content: "";
-                    position: $graduation-pos;
-                    right: $right-dist;
-                    width: 7.5px;
-                    height: $graduation-height;
-                    bottom: $bottom-dist;
-                    background-color: $graduation-clr;
-                    transform: $graduation-transY;
+                &:nth-child(5n):not(:nth-child(10n)) {
+                    &::after {
+                        content: "";
+                        position: $graduation-pos;
+                        right: $right-dist;
+                        width: 7.5px;
+                        height: $graduation-height;
+                        bottom: $bottom-dist;
+                        background-color: $graduation-clr;
+                        transform: $graduation-transY;
+                    }
                 }
-            }
 
-            &:nth-child(10n) {
-                &::after {
-                    content: "";
-                    position: $graduation-pos;
-                    right: $right-dist;
-                    width: 12px;
-                    height: $graduation-height;
-                    bottom: $bottom-dist;
-                    background-color: $graduation-clr;
-                    transform: $graduation-transY;
-                    box-sizing: $bor-box;
+                &:nth-child(10n) {
+                    &::after {
+                        content: "";
+                        position: $graduation-pos;
+                        right: $right-dist;
+                        width: 12px;
+                        height: $graduation-height;
+                        bottom: $bottom-dist;
+                        background-color: $graduation-clr;
+                        transform: $graduation-transY;
+                        box-sizing: $bor-box;
+                    }
+                }
+
+                .digits {
+                    position: absolute;
+                    display: grid;
+                    left: 3px;
+                    top: 5px;
+
+                    .ruler-digit {
+                        line-height: 10px;
+                    }
                 }
             }
         }
 
 
 
+        &.top {
+
+            display: grid;
+            position: absolute;
+            grid-auto-flow: column;
+
+
+            height: 22px;
+            background-color: $clr2;
+            transition: opacity .15s ease-in;
+            transition-delay: .15s;
+            opacity: 0.5;
+
+
+            font-size: 9px;
+            font-family: sans-serif;
+
+            &:hover {
+                opacity: 0.9;
+            }
+
+            .ruler-graduation {
+                // vars
+                $graduation-clr: black;
+                $graduation-width: 1px;
+                $graduation-pos: absolute;
+                $graduation-transX: translateX(50%);
+                $bor-box: border-box;
+                $right-dist: 0;
+                $dist-from-start: 6px;
+                position: relative;
+                width: 10px;
+
+
+                &:not(:nth-child(5n)) {
+                    &::after {
+                        content: "";
+                        position: $graduation-pos;
+                        right: $right-dist;
+                        width: $graduation-width;
+                        height: 4.5px;
+                        top: $dist-from-start;
+                        background-color: $graduation-clr;
+                        transform: $graduation-transX;
+                    }
+                }
+
+                &:nth-child(5n):not(:nth-child(10n)) {
+                    &::after {
+                        content: "";
+                        position: $graduation-pos;
+                        right: $right-dist;
+                        width: $graduation-width;
+                        height: 7.5px;
+                        top: $dist-from-start;
+                        background-color: $graduation-clr;
+                        transform: $graduation-transX;
+                    }
+                }
+
+                &:nth-child(10n) {
+                    &::after {
+                        content: "";
+                        position: $graduation-pos;
+                        right: $right-dist;
+                        width: $graduation-width;
+                        height: 12px;
+                        top: $dist-from-start;
+                        background-color: $graduation-clr;
+                        transform: $graduation-transX;
+                    }
+                }
+
+                .digits {
+                    position: absolute;
+                    display: grid;
+                    grid-auto-flow: column;
+                    left: 3px;
+                    bottom: 0px;
+
+                    .ruler-digit {
+                        line-height: 10px;
+                    }
+                }
+            }
+        }
+    }
+
+    .grid-column-1 {
+        grid-column: 1;
+    }
+
+    .grid-column-2 {
+        grid-column: 2;
+    }
+
+    .grid-column-3 {
+        grid-column: 3;
+    }
+}
+
+.guideline-container {
+    position: absolute;
+    height: 200px;
+    transform: translateX(-50%);
+    background-color: rgba(26, 255, 0, 0.4);
+
+    .picker {
+        position: absolute;
+        right: 50%;
+        transform: translateX(50%);
+
+        width: 10px;
+        height: 22px;
+        background-color: red;
+        cursor: ew-resize;
+
+        .guideline {
+            position: absolute;
+            right: 50%;
+
+            transform: translateX(50%);
+            display: block;
+
+            height: 100vh;
+            width: 1px;
+
+            background-color: aqua;
+            pointer-events: none;
+
+
+        }
+
+        .arrow {
+            right: 50%;
+            transform: translateX(50%) rotate(45deg) scale(0.9);
+            position: absolute;
+            display: block;
+            width: 10px;
+            height: 10px;
+            background-color: $clr7;
+            top: -23%;
+        }
     }
 }
