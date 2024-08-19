@@ -3,6 +3,7 @@ import EditBox from './EditBox';
 import Section from './Section';
 import AddSection from './AddSection';
 import Ruler from './tools/Ruler';
+import RulerEditBox from './tools/ruler-edit-box';
 
 // react hooks
 import React, { useRef, createContext } from "react"
@@ -117,9 +118,7 @@ export function EditBoard() {
                     offsetX={54}
                     offsetY={102}
                 />
-            </section>
-
-
+            </section> 
         </PointerHandlersContext.Provider>
     )
 }

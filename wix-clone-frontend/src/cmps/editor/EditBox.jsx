@@ -2,7 +2,7 @@
 import ResizeBox from './tools/ResizeBox';
 
 // react hooks
-import { useState} from 'react';
+import { useState } from 'react';
 
 function EditBox({
     width,
@@ -67,6 +67,8 @@ function EditBox({
                     height: boxHeight,
                     width: boxWidth,
                 }}>
+
+
                 ok, cool
             </div>
         </>

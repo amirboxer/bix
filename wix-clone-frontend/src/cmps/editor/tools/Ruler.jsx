@@ -1,5 +1,7 @@
 // react hooks
 import React, { useState, useEffect, useRef } from 'react'
+import RulerEditBox from './ruler-edit-box';
+
 
 // cmp
 import RulerGraduations from './RulerGraduations';
@@ -29,7 +31,6 @@ function Ruler({ lengthRef, rulerSide }) {
         }
     }, [lengthRef.current, leftMarginRef.current])
 
-
     // functions
     return (
         <div className={`ruler-container ${rulerSide === 'top' ? 'top' : ''}`}>
@@ -55,13 +56,11 @@ function Ruler({ lengthRef, rulerSide }) {
                     padding={padding} />
                 {guideLines.map(offset =>
                     <GuideLine
+                        key={offset}
                         initialOffset={offset}
                         rulerSide={rulerSide}
                         padding={padding}
                     />)}
-
-
-
             </div>
         </div>
     )
