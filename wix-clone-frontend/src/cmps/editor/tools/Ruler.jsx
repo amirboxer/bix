@@ -1,65 +1,89 @@
 // react hooks
 import React, { useState, useEffect, useRef } from 'react'
-import RulerEditBox from './ruler-edit-box';
 
+// costum hooks
+import useResizeObserver from '../../../assets/costum-hooks/resizeObserver.js';
 
 // cmp
 import RulerGraduations from './RulerGraduations';
 import GuideLine from './GuideLine.jsx';
 
-function Ruler({ lengthRef, rulerSide }) {
+function Ruler({ rightRulerlengthRef, rulerSide }) {
 
     // states
-    const [rulerLength, setRulerLength] = useState(null);
     const [padding, setPadding] = useState(0);
-    const [guideLines, setGuideLines] = useState([])
-
+    const [guideLines, setGuideLines] = useState([]);
+    const [rulerLength, setRulerLength] = useState({ height: 0, width: 0 });
+    const [rulerMarginLeft, setRulerMarginLeft] = useState({ height: 0, width: 0 })
+    const [rulerMarginRight, setRulerMarginRight] = useState({ height: 0, width: 0 })
+    
     // references
     const leftMarginRef = useRef(null)
-    const contentRefLen = useRef(null)
+    const rulerBodySizeRef = useRef(null)
+    const rightMarginRef = useRef(null)
 
-    //useEffect
-    useEffect(() => {
-        if (lengthRef.current && rulerSide === 'right') {
-            setRulerLength(lengthRef.current.clientHeight);
-        }
+    // only top ruler
+    if (rulerSide === 'top') {
+        useResizeObserver(leftMarginRef, setRulerMarginLeft)
+        useResizeObserver(rightMarginRef, setRulerMarginRight)
+        useResizeObserver(rulerBodySizeRef, setRulerLength)
+        useEffect(() => {
+            setPadding(1000);
+        }, [])
+    }
 
-        if (leftMarginRef.current && rulerSide === 'top') {
-            const paddingAmount = 1000
-            setPadding(paddingAmount)
-            setRulerLength(contentRefLen.current.clientWidth + paddingAmount * 2);
-        }
-    }, [lengthRef.current, leftMarginRef.current])
+    // only right ruler
+    if (rulerSide === 'right') {
+        useResizeObserver(rightRulerlengthRef, setRulerLength)
+    }
 
-    // functions
+    // console.log(rulerSide, rulerLength.width + 2 * padding);
+
     return (
         <div className={`ruler-container ${rulerSide === 'top' ? 'top' : ''}`}>
+
+            {/* margin ref */}
             <div
                 ref={leftMarginRef}
                 className="grid-column-1">
             </div>
+
+            {/* ruler body size ref */}
+
             <div
-                ref={contentRefLen}
+                ref={rulerBodySizeRef}
                 className="grid-column-2">
             </div>
 
-            <div className="grid-column-3"></div>
-
+            {/* right margin ref */}
             <div
-                style={rulerSide === 'top' ? { left: -padding + (leftMarginRef.current?.clientWidth || 0) } : {}}
+                ref={rightMarginRef}
+                className="grid-column-3">
+            </div>
+
+            {/* ruler body */}
+            <div
+                style={rulerSide === 'top' ? { left: -padding + rulerMarginLeft.width } : {}}
                 className={`ruler ${rulerSide === 'right' ? 'right' : 'top'}`}
             >
+
+                {/* grads */}
                 <RulerGraduations
                     setGuideLines={setGuideLines}
-                    rulerLength={rulerLength}
+                    rulerLength={rulerSide === 'top' ? rulerLength.width + 2 * padding : rulerLength.height}
                     rulerSide={rulerSide}
                     padding={padding} />
+
+                {/* guide-lines */}
                 {guideLines.map(offset =>
                     <GuideLine
                         key={offset}
                         initialOffset={offset}
                         rulerSide={rulerSide}
                         padding={padding}
+                        rulerMarginLeft={rulerMarginLeft}
+                        rulerMarginRight={rulerMarginRight}
+                        rulerLength={rulerLength}
                     />)}
             </div>
         </div>

@@ -4,7 +4,10 @@ import RulerEditBox from './ruler-edit-box';
 // react hooks
 import React, { useState, useRef } from 'react';
 
-function GuideLine({ initialOffset, rulerSide, padding = 0 }) {
+function GuideLine({ initialOffset, rulerSide, padding, rulerMarginLeft, rulerMarginRight, rulerLength }) {
+
+
+
     // states 
     const [isDragging, setIsDragging] = useState(false);
     const [offSet, setOffSet] = useState(initialOffset);
@@ -16,22 +19,24 @@ function GuideLine({ initialOffset, rulerSide, padding = 0 }) {
     // referances
     const initialPos = useRef(initialOffset);
     const editBoxHovered = useRef(false);
-    const openEditBoxIntervalRef = useRef(null)
+    const openEditBoxIntervalRef = useRef(null);
+
+    // useeffects - lesteners to size changes
 
     // event handlers
     // start drag
     function onPointerDown(e) {
         setIsDragging(true);
-        setLastTrackedPosition(e.clientX);
+        setLastTrackedPosition(getClientposition(e));
     }
 
     // handle drag new position
     function onPointerMove(e) {
         if (isDragging) {
-            const diff = e.clientX - lastTrackedPosition;
+            const diff = getClientposition(e) - lastTrackedPosition;
             setDisplayVal(Math.floor(offSet + diff - padding));
             setOffSet(prev => prev + diff);
-            setLastTrackedPosition(e.clientX);
+            setLastTrackedPosition(getClientposition(e));
             setMoved(true);
         }
     }
@@ -48,9 +53,20 @@ function GuideLine({ initialOffset, rulerSide, padding = 0 }) {
         setMoved(false);
     }
 
+    function changePositionThrouhEditor(coord) {
+        if (!coord ||
+            (coord >= ((rulerLength = rulerSide === 'top' ? rulerLength.width : rulerLength.height) + rulerMarginRight.width) ||
+                (coord <= -Math.floor(rulerMarginLeft.width)))) return;
+        setOffSet(coord + padding);
+        setDisplayVal(coord);
+    }
+
     // open edit modal
     function onPointerEnter() {
+        const currDisplay = editBoxDisplay
         openEditBoxIntervalRef.current = setTimeout(() => {
+            const nextDisply = currDisplay === 'full display' ? currDisplay : 'simple display'
+            initialPos.current = offSet
             setEditBoxDisplay('simple display');
         }, 450);
     }
@@ -62,12 +78,26 @@ function GuideLine({ initialOffset, rulerSide, padding = 0 }) {
         initialPos.current = offSet;
     }
 
-    function handleEditBoxPosition(coords) {
-        initialPos.current = coords;
-    }
-
     function handleEditBoxHover(isHovered) {
         editBoxHovered.current = isHovered;
+    }
+
+    function getClientposition(e) {
+        return rulerSide === 'top' ? e.clientX : e.clientY
+    }
+
+    function getStyle(rulerSide, isDragging, offSet) {
+        return rulerSide === 'top' ? {
+            width: isDragging ? '1000px' : '',
+            height: isDragging ? '100vh' : '',
+            zIndex: isDragging ? 10 : '',
+            left: offSet,
+        } : {
+            width: isDragging ? '100vw' : '',
+            height: isDragging ? '1000px' : '',
+            zIndex: isDragging ? 10 : '',
+            top: offSet,
+        };
     }
 
     return (
@@ -75,23 +105,18 @@ function GuideLine({ initialOffset, rulerSide, padding = 0 }) {
             {editBoxDisplay &&
                 <RulerEditBox
                     initOffset={initialPos}
-                    currOffset={offSet}
                     displayVal={displayVal}
-                    displayHandler={handleEditBoxPosition}
                     handleEditBoxHover={handleEditBoxHover}
                     displayType={editBoxDisplay}
                     setEditBoxDisplay={setEditBoxDisplay}
+                    rulerSide={rulerSide}
+                    changePositionThrouhEditor={changePositionThrouhEditor}
                 />
             }
 
             <div
                 //style
-                style={{
-                    width: isDragging ? 1000 : '',
-                    height: isDragging ? '100vh' : '',
-                    zIndex: isDragging ? 10 : '',
-                    left: offSet,
-                }}
+                style={getStyle(rulerSide, isDragging, offSet)}
 
                 // events
                 onPointerMove={onPointerMove}
@@ -101,7 +126,7 @@ function GuideLine({ initialOffset, rulerSide, padding = 0 }) {
                 onPointerLeave={onPointerLeave}
 
                 // class
-                className="guideline-container"
+                className={`guideline-container ${rulerSide}`}
             >
                 <div className="picker">
 
@@ -115,7 +140,7 @@ function GuideLine({ initialOffset, rulerSide, padding = 0 }) {
                     >
                     </span>
                 </div>
-            </div>
+            </div >
         </>
     )
 }

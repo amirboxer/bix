@@ -1,34 +1,58 @@
 import { useState, useEffect } from "react"
 
-function RulerEditBox({ initOffset, currOffset, displayHandler, handleEditBoxHover, displayVal, displayType, setEditBoxDisplay }) {
+function RulerEditBox({ changePositionThrouhEditor, initOffset, handleEditBoxHover, displayVal, displayType, setEditBoxDisplay, rulerSide }) {
     // states
-    const [inEditMode, setInEditMode] = useState(false)
-    const [valToDisplay, setValToDisplay] = useState(displayVal)
+    const [inEditMode, setInEditMode] = useState(false);
+    const [valToDisplay, setValToDisplay] = useState(displayVal);
+    const [changedPosition, setChangedPosition] = useState(false)
 
+    // 
+    function onChange(e) {
+        setValToDisplay(e.target.value);
+        setChangedPosition(true);
+    }
+
+    // 
     function onEditPosition() {
-        setInEditMode(true)
-        setEditBoxDisplay('full display')
+        setInEditMode(true);
+        setEditBoxDisplay('full display');
     }
 
+    // 
     function onPointerLeave() {
-        setEditBoxDisplay(null)
-        handleEditBoxHover(false)
+        if (inEditMode) return;
+        setEditBoxDisplay(null);
+        handleEditBoxHover(false);
     }
 
+    function onBlur(){
+        if (changedPosition){
+            changePositionThrouhEditor(+valToDisplay)
+        }
+        setEditBoxDisplay(null);
+    }
 
-    useEffect(() => {
-        return () => displayHandler(currOffset);
-    }, [])
+    // 
+    function getStyle(rulerSide) {
+        return rulerSide === 'top' ? {
+            left: initOffset.current + 10,
+            top: 10,
+        } : {
+            top: initOffset.current,
+            right: 30,
+            transform: 'translateY(-50%)',
+        };
+    }
+
     return (
-        <div
+        <div 
             // style
-            style={{
-                left: initOffset.current,
-            }}
+            style={getStyle(rulerSide, initOffset.current)}
 
             // evets
             onPointerEnter={() => handleEditBoxHover(true)}
             onPointerLeave={onPointerLeave}
+            onBlur={onBlur}
 
             // classes
             className={`ruler-edit-box ${displayType === 'simple display' ? 'full-hover' : ''}`}>
@@ -40,7 +64,7 @@ function RulerEditBox({ initOffset, currOffset, displayHandler, handleEditBoxHov
                         type="text" name="" id=""
                         value={valToDisplay}
                         onFocus={e => e.target.select()}
-                        onChange={e => setValToDisplay(e.target.value)}
+                        onChange={onChange}
                     />
                     :
                     <>

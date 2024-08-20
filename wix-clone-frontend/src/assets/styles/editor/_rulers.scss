@@ -2,10 +2,10 @@
     z-index: 2;
     height: max-content;
 
-    // position: relative;
     &.top {
         height: 22px;
         overflow-x: clip;
+
         position: sticky;
         top: 0;
         display: grid;
@@ -98,8 +98,6 @@
             }
         }
 
-
-
         &.top {
 
             display: grid;
@@ -112,7 +110,6 @@
             transition: opacity .15s ease-in;
             transition-delay: .15s;
             opacity: 0.5;
-
 
             font-size: 9px;
             font-family: sans-serif;
@@ -201,11 +198,74 @@
     }
 }
 
-.guideline-container {
+.guideline-container.right {
     position: absolute;
-    height: 200px;
+    transform: translateY(-50%);
+    right: 0;
+
+    .picker {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+
+        height: 10px;
+        width: 22px;
+        cursor: ns-resize;
+
+        &:hover {
+            .arrow {
+                transform: translateX(50%) rotate(45deg) scale(1.4);
+            }
+        }
+
+        .guideline {
+            position: absolute;
+            right: 0%;
+            top: 50%;
+
+            transform: translateY(-50%);
+            display: block;
+
+            width: 100vw;
+            height: 1px;
+
+            background-color: $clr8;
+            pointer-events: none;
+        }
+
+        .arrow {
+            right: 0%;
+            transform: translateX(50%) rotate(45deg) scale(0.9);
+            transition: transform 0.2s;
+            position: absolute;
+            display: block;
+            width: 10px;
+            height: 10px;
+            background-color: $clr7;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.guideline-container.top {
+    position: absolute;
     transform: translateX(-50%);
-    background-color: rgba(26, 255, 0, 0.4);
 
     .picker {
         position: absolute;
@@ -214,7 +274,6 @@
 
         width: 10px;
         height: 22px;
-        background-color: red;
         cursor: ew-resize;
 
         &:hover {
@@ -235,8 +294,6 @@
 
             background-color: $clr8;
             pointer-events: none;
-
-
         }
 
         .arrow {
@@ -255,13 +312,11 @@
 
 .ruler-edit-box {
     z-index: 50;
-    top: 50px;
     position: absolute;
 
     font-family: sans-serif;
     font-size: 12px;
     width: fit-content;
-    // position: relative;
     background-color: $clr2;
     box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.149);
     border-radius: 50px;
@@ -275,7 +330,6 @@
     padding-left: 10px;
     padding-right: 8px;
 
-
     &.full-hover:hover {
         background-color: $clr10;
         cursor: pointer;
@@ -287,7 +341,8 @@
         align-items: center;
         height: fit-content;
         line-height: 1;
-        &:hover{
+
+        &:hover {
             background-color: $clr10;
             border-radius: 3px;
             cursor: pointer;
@@ -342,10 +397,3 @@
 
     }
 }
-
-
-
-// <div
-// style={{ left: 20, position: 'absolute' }}
-// className='ruler-edit-box'>okkscsccSkkkkk</div>
-// </div>

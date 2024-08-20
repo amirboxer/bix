@@ -74,21 +74,21 @@ export function EditBoard() {
 
                 {/* right side ruler */}
                 <Ruler
-                    lengthRef={editBoardRef}
+                    rightRulerlengthRef={editBoardRef}
                     rulerSide="right" />
 
                 {/* sections and add-section-btns header & footer*/}
                 <div className='page-sections'>
 
-                    {/* right side ruler */}
+                    {/* top side ruler */}
                     <Ruler
-                        lengthRef={editBoardRef}
                         rulerSide="top" />
 
                     {sections.map((height, idx) => (
                         <React.Fragment key={idx}> {/* Key is added here */}
                             {/* section */}
                             <Section sectionHeight={height} />
+
                             {/* add new section button */}
                             <AddSection
                                 topOffset={sectionAdders[idx][0]}

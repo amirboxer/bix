@@ -56,7 +56,6 @@ function EditBox({
                         initialPointerCoords={initialPointerCoords}
                         setters={{ setBoxHeight, setBoxWidth, setBoxOffsetLeft, setBoxOffsetTop }} />
                 }
-
             </div>
 
             <div
