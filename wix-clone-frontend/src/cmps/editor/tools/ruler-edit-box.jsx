@@ -1,10 +1,14 @@
-import { useState, useEffect } from "react"
+import { useState, useRef, useEffect } from "react"
 
-function RulerEditBox({ changePositionThrouhEditor, initOffset, handleEditBoxHover, displayVal, displayType, setEditBoxDisplay, rulerSide }) {
+function RulerEditBox({ changePositionThrouhEditor, initOffset, handleEditBoxHover, displayVal, displayType, setEditBoxDisplay, rulerSide, deleteGuidline }) {
     // states
     const [inEditMode, setInEditMode] = useState(false);
     const [valToDisplay, setValToDisplay] = useState(displayVal);
-    const [changedPosition, setChangedPosition] = useState(false)
+    const [changedPosition, setChangedPosition] = useState(false);
+    const [focused, setFocused] = useState(false)
+
+    // references
+    const refForFocus = useRef(null)
 
     // 
     function onChange(e) {
@@ -20,16 +24,24 @@ function RulerEditBox({ changePositionThrouhEditor, initOffset, handleEditBoxHov
 
     // 
     function onPointerLeave() {
-        if (inEditMode) return;
+        if (focused) return;
         setEditBoxDisplay(null);
         handleEditBoxHover(false);
     }
 
-    function onBlur(){
-        if (changedPosition){
+    function onBlur() {
+        setFocused(false);
+        console.log('blur');
+
+        if (changedPosition) {
             changePositionThrouhEditor(+valToDisplay)
         }
         setEditBoxDisplay(null);
+    }
+
+    function onFocus() {
+        setFocused(true)
+        console.log('focus');
     }
 
     // 
@@ -44,8 +56,9 @@ function RulerEditBox({ changePositionThrouhEditor, initOffset, handleEditBoxHov
         };
     }
 
+
     return (
-        <div 
+        <div
             // style
             style={getStyle(rulerSide, initOffset.current)}
 
@@ -53,13 +66,16 @@ function RulerEditBox({ changePositionThrouhEditor, initOffset, handleEditBoxHov
             onPointerEnter={() => handleEditBoxHover(true)}
             onPointerLeave={onPointerLeave}
             onBlur={onBlur}
+            onFocus={onFocus}
+            tabIndex={0}
+            ref={refForFocus}
 
             // classes
             className={`ruler-edit-box ${displayType === 'simple display' ? 'full-hover' : ''}`}>
             <div className='input-stepper' onClick={onEditPosition}>
                 {inEditMode ?
                     <input
-                        autoFocus
+                        // autoFocus
                         className="input"
                         type="text" name="" id=""
                         value={valToDisplay}
@@ -76,7 +92,7 @@ function RulerEditBox({ changePositionThrouhEditor, initOffset, handleEditBoxHov
 
             {/* trash icon for deleteing line */}
             {displayType === 'full display' &&
-                <span className='trash-icon'>
+                <span className='trash-icon' onClick={deleteGuidline}>
                     <svg width="13" height="13" viewBox="0 0 13 15" className="symbol symbol-guideToolTipTrash">
                         <defs>
                             <path id="path-1" d="M1 1h11v13H1V1z">

@@ -16,7 +16,7 @@ function Ruler({ rightRulerlengthRef, rulerSide }) {
     const [rulerLength, setRulerLength] = useState({ height: 0, width: 0 });
     const [rulerMarginLeft, setRulerMarginLeft] = useState({ height: 0, width: 0 })
     const [rulerMarginRight, setRulerMarginRight] = useState({ height: 0, width: 0 })
-    
+
     // references
     const leftMarginRef = useRef(null)
     const rulerBodySizeRef = useRef(null)
@@ -37,7 +37,6 @@ function Ruler({ rightRulerlengthRef, rulerSide }) {
         useResizeObserver(rightRulerlengthRef, setRulerLength)
     }
 
-    // console.log(rulerSide, rulerLength.width + 2 * padding);
 
     return (
         <div className={`ruler-container ${rulerSide === 'top' ? 'top' : ''}`}>
@@ -77,6 +76,7 @@ function Ruler({ rightRulerlengthRef, rulerSide }) {
                 {/* guide-lines */}
                 {guideLines.map(offset =>
                     <GuideLine
+                        id={offset}
                         key={offset}
                         initialOffset={offset}
                         rulerSide={rulerSide}
@@ -84,6 +84,7 @@ function Ruler({ rightRulerlengthRef, rulerSide }) {
                         rulerMarginLeft={rulerMarginLeft}
                         rulerMarginRight={rulerMarginRight}
                         rulerLength={rulerLength}
+                        setGuideLines={setGuideLines}
                     />)}
             </div>
         </div>

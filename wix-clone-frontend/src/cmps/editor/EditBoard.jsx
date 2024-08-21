@@ -30,7 +30,6 @@ export function EditBoard() {
     // functions
     function updateAddSectionSetterRef(id, func) {
         addSectionButtonRefs.current[id] = func
-        // console.log(addSectionButtonRefs.current)
     }
 
     function isDifferenceWithin(x, y, range) {

@@ -4,10 +4,7 @@ import RulerEditBox from './ruler-edit-box';
 // react hooks
 import React, { useState, useRef } from 'react';
 
-function GuideLine({ initialOffset, rulerSide, padding, rulerMarginLeft, rulerMarginRight, rulerLength }) {
-
-
-
+function GuideLine({ initialOffset, rulerSide, padding, rulerMarginLeft, rulerMarginRight, rulerLength, setGuideLines, id }) {
     // states 
     const [isDragging, setIsDragging] = useState(false);
     const [offSet, setOffSet] = useState(initialOffset);
@@ -21,9 +18,8 @@ function GuideLine({ initialOffset, rulerSide, padding, rulerMarginLeft, rulerMa
     const editBoxHovered = useRef(false);
     const openEditBoxIntervalRef = useRef(null);
 
-    // useeffects - lesteners to size changes
-
-    // event handlers
+    //// useeffects - lesteners to size changes
+    /// event handlers
     // start drag
     function onPointerDown(e) {
         setIsDragging(true);
@@ -44,7 +40,7 @@ function GuideLine({ initialOffset, rulerSide, padding, rulerMarginLeft, rulerMa
     // dragging done
     function onPointerUp() {
         if (!moved) {
-            clearTimeout(openEditBoxIntervalRef.current)
+            clearTimeout(openEditBoxIntervalRef.current);
             setEditBoxDisplay('full display');
         } else {
             setEditBoxDisplay(null);
@@ -63,17 +59,16 @@ function GuideLine({ initialOffset, rulerSide, padding, rulerMarginLeft, rulerMa
 
     // open edit modal
     function onPointerEnter() {
-        const currDisplay = editBoxDisplay
+        if (editBoxDisplay ==='full display') return
         openEditBoxIntervalRef.current = setTimeout(() => {
-            const nextDisply = currDisplay === 'full display' ? currDisplay : 'simple display'
-            initialPos.current = offSet
+            initialPos.current = offSet;
             setEditBoxDisplay('simple display');
         }, 450);
     }
 
     function onPointerLeave(e) {
         setTimeout(() => {
-            if (!editBoxHovered.current) setEditBoxDisplay(null);
+            if (!editBoxHovered.current && !editBoxDisplay ==='full display') setEditBoxDisplay(null);
         }, 550);
         initialPos.current = offSet;
     }
@@ -83,7 +78,7 @@ function GuideLine({ initialOffset, rulerSide, padding, rulerMarginLeft, rulerMa
     }
 
     function getClientposition(e) {
-        return rulerSide === 'top' ? e.clientX : e.clientY
+        return rulerSide === 'top' ? e.clientX : e.clientY;
     }
 
     function getStyle(rulerSide, isDragging, offSet) {
@@ -100,6 +95,12 @@ function GuideLine({ initialOffset, rulerSide, padding, rulerMarginLeft, rulerMa
         };
     }
 
+    function deleteGuidline() {
+        setGuideLines(prev => prev.filter(_id => _id != id))
+        console.log('deleteteteing');
+        
+    }
+
     return (
         <>
             {editBoxDisplay &&
@@ -111,6 +112,7 @@ function GuideLine({ initialOffset, rulerSide, padding, rulerMarginLeft, rulerMa
                     setEditBoxDisplay={setEditBoxDisplay}
                     rulerSide={rulerSide}
                     changePositionThrouhEditor={changePositionThrouhEditor}
+                    deleteGuidline={deleteGuidline}
                 />
             }
 
