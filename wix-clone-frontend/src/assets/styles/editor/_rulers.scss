@@ -1,5 +1,5 @@
 .ruler-container {
-    z-index: 2;
+    z-index: 10;
     height: max-content;
 
     &.top {
@@ -125,11 +125,10 @@
                 $graduation-pos: absolute;
                 $graduation-transX: translateX(50%);
                 $bor-box: border-box;
-                $right-dist: 0;
+                $right-dist: 0px;
                 $dist-from-start: 6px;
                 position: relative;
                 width: 10px;
-
 
                 &:not(:nth-child(5n)) {
                     &::after {
@@ -202,7 +201,6 @@
     position: absolute;
     transform: translateY(-50%);
     right: 0;
-
     .picker {
         position: absolute;
         right: 0;
@@ -311,7 +309,8 @@
 }
 
 .ruler-edit-box {
-    z-index: 50;
+    outline: none;
+    z-index: 10;
     position: absolute;
 
     font-family: sans-serif;
@@ -354,15 +353,6 @@
                 outline: none;
             }
 
-            &::-moz-selection {
-                /* Code for Firefox */
-                background: $clr12;
-            }
-
-            &::selection {
-                background: $clr12;
-            }
-
             width: 38px;
             text-align: center;
             font-size: inherit;
@@ -392,8 +382,9 @@
 
     .trash-icon {
         vertical-align: text-bottom;
-        margin-bottom: -1px;
+        margin-bottom: -2px;
         cursor: pointer;
+        padding-block: 2px;
 
     }
 }

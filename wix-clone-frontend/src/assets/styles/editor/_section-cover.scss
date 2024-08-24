@@ -1,0 +1,196 @@
+.section-cover {
+    font-family: sans-serif;
+
+    $outline-color: none;
+    outline-offset: -3px;
+    display: grid;
+    // z-index: 1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    outline: 3px solid transparent;
+
+    &.blur-hover {
+        $outline-color: $clr5;
+
+        &:hover {
+            background-color: rgba(202, 202, 202, 0.387);
+            outline-color: $outline-color;
+
+            .section-name {
+                background-color: $outline-color;
+                color: $clr1;
+                display: grid;
+
+                .section-rename-button {
+                    &:hover {
+                        background-color: $clr15;
+                    }
+                }
+            }
+        }
+    }
+
+    &.focused {
+        $outline-color: $clr1;
+
+        .section-name {
+            background-color: $outline-color;
+            display: grid;
+        }
+
+        outline-color: $outline-color;
+        pointer-events: none;
+
+        .gridline {
+            pointer-events: none;
+            display: block;
+            width: 1.5px;
+            height: calc(100% - 6px);
+            top: 3px;
+            position: absolute;
+            overflow: hidden;
+
+            &::before {
+                top: -2.5px;
+                content: '';
+                position: inherit;
+                width: inherit;
+                height: calc(100% + 5px);
+                background: repeating-linear-gradient(white, white 5px, black 5px, black 10px);
+            }
+
+            &.right {
+                right: 0;
+                transform: translateX(50%);
+            }
+
+            &.left {
+                transform: translateX(-50%);
+            }
+        }
+    }
+
+    .common {
+        position: absolute;
+        right: 0;
+        padding-inline: 15px;
+        height: 30px;
+
+    }
+
+    .section-name {
+        pointer-events: auto;
+
+        top: 0;
+        transform: translateY(calc(-100% + 2px));
+
+        display: none;
+        grid-auto-flow: column;
+        align-items: center;
+
+
+        line-height: 1;
+        color: $clr2;
+
+        cursor: pointer;
+
+        border-radius: 2px;
+
+        &:hover {
+            .section-rename-button {
+                width: fit-content;
+                display: initial;
+                border-radius: 2px;
+            }
+        }
+
+        .section-rename-button {
+            width: 0;
+            overflow: hidden;
+            margin-right: -14px;
+            color: inherit;
+
+            &:hover {
+                background-color: $clr14;
+            }
+        }
+
+        .content {
+            display: block;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+    }
+
+    .size-reference {
+        pointer-events: none;
+        opacity: 0;
+    }
+
+
+    .section-resize-button {
+        $tooltip-height: 91px;
+        $square-pointer-height: 10px;
+
+        display: none;
+        align-items: center;
+        justify-content: center;
+
+        height: 24px;
+        width: 40px;
+
+        border-radius: 3px;
+
+        z-index: 2;
+        position: absolute;
+        color: $clr2;
+        bottom: 0%;
+        background-color: $clr1;
+        transform: translate(-50%, 50%);
+        left: calc(50% + 300px);
+
+        cursor: ns-resize;
+
+        &:hover {
+            &::after {
+                box-sizing: border-box;
+                content: "Adjust section height or\a double click to remove any\a extra space above.";
+                white-space: pre;
+                text-align: left;
+                color: $clr4;
+
+                padding-left: 18px;
+
+                display: flex;
+                align-items: center;
+
+                line-height: 1.4;
+                letter-spacing: 0.63px;
+
+                border-radius: 4px;
+                background-color: $clr2;
+
+                position: absolute;
+                width: 241px;
+                height: $tooltip-height;
+                top: - calc($tooltip-height + sqrt(2) * $square-pointer-height * 1.1);
+            }
+
+            &::before {
+                content: "";
+
+                position: absolute;
+                height: $square-pointer-height;
+                width: $square-pointer-height;
+
+                transform: rotate(45deg);
+                transform-origin: 50% 50%;
+
+                background-color: $clr2;
+                top: - calc(sqrt(2) * $square-pointer-height * 1.5);
+            }
+        }
+    }
+}

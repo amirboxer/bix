@@ -1,8 +1,8 @@
 // cmp
-import { BringThemHome } from './cmps/BringThemHome'
+import { BringThemHome } from './cmps/BringThemHome';
 
 // pages
-import { EditBoard } from './cmps/editor/EditBoard'
+import { EditBoard } from './cmps/editor/EditBoard';
 
 function App() {
   return (

@@ -3,20 +3,25 @@ import EditBox from './EditBox';
 import Section from './Section';
 import AddSection from './AddSection';
 import Ruler from './tools/Ruler';
-import RulerEditBox from './tools/ruler-edit-box';
 
 // react hooks
-import React, { useRef, createContext } from "react"
+import React, { useRef, createContext } from 'react';
 
 // Context for pointer handlers instead of prop drill
 export const PointerHandlersContext = createContext();
 
 export function EditBoard() {
     // temporrary
-    const sections = [400, 500, 200, 250];
+    
+    const sections = [
+        { height: 700, name: 'Sandom1' },
+        { height: 500, name: 'Sandom2' },
+        { height: 600, name: 'Sandom3' },
+        { height: 450, name: 'Sandom4' },
+    ];
     let cumulativeHeight = 0;
-    const sectionAdders = sections.map((height, idx) => {
-        cumulativeHeight += height;
+    const sectionAdders = sections.map((section, idx) => {
+        cumulativeHeight += section.height;
         return [cumulativeHeight, idx];
     });
 
@@ -83,10 +88,11 @@ export function EditBoard() {
                     <Ruler
                         rulerSide="top" />
 
-                    {sections.map((height, idx) => (
-                        <React.Fragment key={idx}> {/* Key is added here */}
+                    {sections.map((section, idx) => (
+                        <React.Fragment key={idx}>
+                            
                             {/* section */}
-                            <Section sectionHeight={height} />
+                            <Section section={section} />
 
                             {/* add new section button */}
                             <AddSection
@@ -117,7 +123,7 @@ export function EditBoard() {
                     offsetX={54}
                     offsetY={102}
                 />
-            </section> 
+            </section>
         </PointerHandlersContext.Provider>
     )
 }

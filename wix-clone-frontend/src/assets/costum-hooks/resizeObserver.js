@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
 function useResizeObserver(ref, sizeSetter) {
     useEffect(() => {
@@ -6,7 +6,7 @@ function useResizeObserver(ref, sizeSetter) {
             const observeTarget = ref.current;
             const resizeObserver = new ResizeObserver(entries => {
                 const {height, width} = entries[0].contentRect;
-                sizeSetter({height, width})
+                sizeSetter({height: Math.ceil(height), width: Math.ceil(width)})
             });
 
             //start observing

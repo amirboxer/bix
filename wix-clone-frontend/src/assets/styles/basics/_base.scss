@@ -16,6 +16,21 @@ button {
     background: none;
 }
 
+input {
+    &:focus {
+        outline: none;
+    }
+    
+    &::-moz-selection {
+        /* Code for Firefox */
+        background: $clr12;
+    }
+
+    &::selection {
+        background: $clr12;
+    }
+}
+
 .click-through {
     pointer-events: none;
 }

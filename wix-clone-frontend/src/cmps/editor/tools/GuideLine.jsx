@@ -4,31 +4,48 @@ import RulerEditBox from './ruler-edit-box';
 // react hooks
 import React, { useState, useRef } from 'react';
 
+//debounce
+function costumDebounce(setState) {
+    let timeoutId = null;
+    return (wait, newState) => {
+        window.clearTimeout(timeoutId);
+        if (!wait) return setState(newState);
+        
+        timeoutId = window.setTimeout(() => {
+            setState(prevState => {
+                if (prevState === 'full display' && newState === 'simple display') return prevState
+                return newState;
+            })
+        }, wait);
+    }
+}
+
 function GuideLine({ initialOffset, rulerSide, padding, rulerMarginLeft, rulerMarginRight, rulerLength, setGuideLines, id }) {
     // states 
-    const [isDragging, setIsDragging] = useState(false);
     const [offSet, setOffSet] = useState(initialOffset);
     const [lastTrackedPosition, setLastTrackedPosition] = useState(null);
     const [displayVal, setDisplayVal] = useState(Math.floor(initialOffset - padding));
     const [editBoxDisplay, setEditBoxDisplay] = useState(null);
     const [moved, setMoved] = useState(false);
+    const setEditBoxDisplayDebounce = costumDebounce(setEditBoxDisplay);
+
 
     // referances
     const initialPos = useRef(initialOffset);
     const editBoxHovered = useRef(false);
-    const openEditBoxIntervalRef = useRef(null);
+    const isDragging = useRef(false);
 
     //// useeffects - lesteners to size changes
     /// event handlers
     // start drag
     function onPointerDown(e) {
-        setIsDragging(true);
+        isDragging.current = true;
         setLastTrackedPosition(getClientposition(e));
     }
 
     // handle drag new position
     function onPointerMove(e) {
-        if (isDragging) {
+        if (isDragging.current) {
             const diff = getClientposition(e) - lastTrackedPosition;
             setDisplayVal(Math.floor(offSet + diff - padding));
             setOffSet(prev => prev + diff);
@@ -39,14 +56,24 @@ function GuideLine({ initialOffset, rulerSide, padding, rulerMarginLeft, rulerMa
 
     // dragging done
     function onPointerUp() {
+
         if (!moved) {
-            clearTimeout(openEditBoxIntervalRef.current);
-            setEditBoxDisplay('full display');
+            setEditBoxDisplayDebounce(0, 'full display');
+
         } else {
             setEditBoxDisplay(null);
         }
-        setIsDragging(false);
+        isDragging.current = false;
         setMoved(false);
+    }
+
+    // open edit modal
+    function onPointerEnter() {
+
+        if (editBoxDisplay === 'full display') return
+        initialPos.current = offSet;
+
+        setEditBoxDisplayDebounce(500, 'simple display');
     }
 
     function changePositionThrouhEditor(coord) {
@@ -57,19 +84,11 @@ function GuideLine({ initialOffset, rulerSide, padding, rulerMarginLeft, rulerMa
         setDisplayVal(coord);
     }
 
-    // open edit modal
-    function onPointerEnter() {
-        if (editBoxDisplay ==='full display') return
-        openEditBoxIntervalRef.current = setTimeout(() => {
-            initialPos.current = offSet;
-            setEditBoxDisplay('simple display');
-        }, 450);
-    }
+    function onPointerLeave() {
 
-    function onPointerLeave(e) {
-        setTimeout(() => {
-            if (!editBoxHovered.current && !editBoxDisplay ==='full display') setEditBoxDisplay(null);
-        }, 550);
+        if (editBoxDisplay === 'simple display') {
+            setEditBoxDisplayDebounce(500, null);
+        }
         initialPos.current = offSet;
     }
 
@@ -85,20 +104,16 @@ function GuideLine({ initialOffset, rulerSide, padding, rulerMarginLeft, rulerMa
         return rulerSide === 'top' ? {
             width: isDragging ? '1000px' : '',
             height: isDragging ? '100vh' : '',
-            zIndex: isDragging ? 10 : '',
             left: offSet,
         } : {
             width: isDragging ? '100vw' : '',
             height: isDragging ? '1000px' : '',
-            zIndex: isDragging ? 10 : '',
             top: offSet,
         };
     }
 
     function deleteGuidline() {
         setGuideLines(prev => prev.filter(_id => _id != id))
-        console.log('deleteteteing');
-        
     }
 
     return (
@@ -109,16 +124,17 @@ function GuideLine({ initialOffset, rulerSide, padding, rulerMarginLeft, rulerMa
                     displayVal={displayVal}
                     handleEditBoxHover={handleEditBoxHover}
                     displayType={editBoxDisplay}
-                    setEditBoxDisplay={setEditBoxDisplay}
                     rulerSide={rulerSide}
                     changePositionThrouhEditor={changePositionThrouhEditor}
                     deleteGuidline={deleteGuidline}
+                    setEditBoxDisplayDebounce={setEditBoxDisplayDebounce}
+                    moved={moved}
                 />
             }
 
             <div
                 //style
-                style={getStyle(rulerSide, isDragging, offSet)}
+                style={getStyle(rulerSide, isDragging.current, offSet)}
 
                 // events
                 onPointerMove={onPointerMove}
@@ -136,7 +152,7 @@ function GuideLine({ initialOffset, rulerSide, padding, rulerMarginLeft, rulerMa
                     <span
                         //style
                         style={{
-                            transform: isDragging ? 'translateX(50%) rotate(45deg) scale(1.4)' : '',
+                            transform: isDragging.current ? 'translateX(50%) rotate(45deg) scale(1.4)' : '',
                         }}
                         className="arrow"
                     >

@@ -2,50 +2,41 @@
 import { useRef } from 'react';
 
 // cmps
-import AddSection from './AddSection';
-import ResizeSection from './ResizeSection';
+// import AddSection from './AddSection';
+// import ResizeSection from './ResizeSection';
 import SectionCover from './SectionCover';
 
-function Section({ sectionHeight }) {
+function Section({ section }) {
     // referances
     const sectionFocused = useRef(null);
 
-    function isSectionFocus(handler) {
+    // pass down call back to cover
+    function handleSectionFocus(handler) {
         sectionFocused.current = handler;
     }
 
     return (
         <section
-            style={{ height: sectionHeight || 400 }}
-            className="section"
+            style={{ height: section.height || 400 }}
+            className="section section-layout"
             tabIndex={0}
             onFocus={() => sectionFocused.current && sectionFocused.current(true)}
             onBlur={() => sectionFocused.current && sectionFocused.current(false)}>
 
-            {/* cover - not in grid*/}
-            <SectionCover isSectionFocus={isSectionFocus} />
 
             {/* left deadzone - IN grid*/}
             <div className="out-of-gridline left"></div>
 
             {/* section main part - IN grid*/}
-            <div className="grid-center">
-                <span className="gridline left"></span>
-                <span className="gridline right"></span>
-            </div>
+            <div className="grid-center"></div>
 
             {/* right deadzone - IN grid*/}
             <div className="out-of-gridline right"></div>
 
-            {/* <div className='empty'></div> */}
-
-            {/* resize buttom - not in grid*/}
-            <button className="section-resize-button handler">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M11.5 5.29l3.85 3.86-.7.7L12 7.209v10.082l2.65-2.641.7.7-3.85 3.86-3.85-3.86.7-.7L11 17.293V7.207L8.35 9.85l-.7-.7 3.85-3.86z">
-                    </path>
-                </svg>
-            </button>
+            {/* cover - not in grid*/}
+            <SectionCover
+                handleSectionFocus={handleSectionFocus}
+                sectionName={section.name} />
         </section>
     )
 }

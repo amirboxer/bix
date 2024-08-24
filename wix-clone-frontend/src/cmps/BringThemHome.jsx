@@ -1,8 +1,8 @@
 // resct tools
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react';
 
 // services
-import { utilService } from '../services/util.service.js'
+import { utilService } from '../services/util.service.js';
 
 export function BringThemHome() {
     //states

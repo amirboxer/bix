@@ -1,5 +1,5 @@
 // react hooks
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 
 // costum hooks
 import useResizeObserver from '../../../assets/costum-hooks/resizeObserver.js';
@@ -29,14 +29,13 @@ function Ruler({ rightRulerlengthRef, rulerSide }) {
         useResizeObserver(rulerBodySizeRef, setRulerLength)
         useEffect(() => {
             setPadding(1000);
-        }, [])
+        }, []);
     }
 
     // only right ruler
     if (rulerSide === 'right') {
         useResizeObserver(rightRulerlengthRef, setRulerLength)
     }
-
 
     return (
         <div className={`ruler-container ${rulerSide === 'top' ? 'top' : ''}`}>
@@ -48,7 +47,6 @@ function Ruler({ rightRulerlengthRef, rulerSide }) {
             </div>
 
             {/* ruler body size ref */}
-
             <div
                 ref={rulerBodySizeRef}
                 className="grid-column-2">
@@ -62,7 +60,7 @@ function Ruler({ rightRulerlengthRef, rulerSide }) {
 
             {/* ruler body */}
             <div
-                style={rulerSide === 'top' ? { left: -padding + rulerMarginLeft.width } : {}}
+                style={rulerSide === 'top' ? { left: -padding + rulerMarginLeft.width} : {}}
                 className={`ruler ${rulerSide === 'right' ? 'right' : 'top'}`}
             >
 

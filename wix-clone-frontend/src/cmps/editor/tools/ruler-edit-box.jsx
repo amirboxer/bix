@@ -1,61 +1,76 @@
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 
-function RulerEditBox({ changePositionThrouhEditor, initOffset, handleEditBoxHover, displayVal, displayType, setEditBoxDisplay, rulerSide, deleteGuidline }) {
+function RulerEditBox({ changePositionThrouhEditor, initOffset, handleEditBoxHover, displayVal, displayType, rulerSide, deleteGuidline, setEditBoxDisplayDebounce, moved }) {
     // states
     const [inEditMode, setInEditMode] = useState(false);
     const [valToDisplay, setValToDisplay] = useState(displayVal);
     const [changedPosition, setChangedPosition] = useState(false);
-    const [focused, setFocused] = useState(false)
 
     // references
     const refForFocus = useRef(null)
+    const inputRef = useRef(null)
 
-    // 
+    // useEffect 
+    useEffect(() => {
+        if (inEditMode) inputRef.current.focus();
+    }, [inEditMode])
+
+    // useLayoutEffect 
+
+    useLayoutEffect(() => {
+        if (displayType === 'full display') refForFocus.current.focus();
+    }, [displayType])
+
+    // event handlers
     function onChange(e) {
         setValToDisplay(e.target.value);
         setChangedPosition(true);
     }
 
-    // 
     function onEditPosition() {
         setInEditMode(true);
-        setEditBoxDisplay('full display');
+        setEditBoxDisplayDebounce(0, 'full display');
     }
 
-    // 
     function onPointerLeave() {
-        if (focused) return;
-        setEditBoxDisplay(null);
+        if (displayType === 'full display') return;
+        setEditBoxDisplayDebounce(500, null);
         handleEditBoxHover(false);
     }
 
-    function onBlur() {
-        setFocused(false);
-        console.log('blur');
+    function onBlur(e) {
+        if (e.currentTarget.contains(e.relatedTarget)) return;
+        changeGuidePosition();
+    }
 
+    function changeGuidePosition() {
         if (changedPosition) {
-            changePositionThrouhEditor(+valToDisplay)
+            changePositionThrouhEditor(+valToDisplay);
         }
-        setEditBoxDisplay(null);
+        setEditBoxDisplayDebounce(0, null);
     }
 
-    function onFocus() {
-        setFocused(true)
-        console.log('focus');
-    }
-
-    // 
+    // dynamic styling
     function getStyle(rulerSide) {
-        return rulerSide === 'top' ? {
-            left: initOffset.current + 10,
-            top: 10,
-        } : {
-            top: initOffset.current,
-            right: 30,
-            transform: 'translateY(-50%)',
+        const commonStyle = {
+            pointerEvents: moved ? 'none' : '',
         };
+    
+        if (rulerSide === 'top') {
+            return {
+                ...commonStyle,
+                left: initOffset.current + 10,
+                top: 10,
+            };
+        } else {
+            return {
+                ...commonStyle,
+                top: initOffset.current,
+                right: 30,
+                transform: 'translateY(-50%)',
+            };
+        }
     }
-
 
     return (
         <div
@@ -63,19 +78,28 @@ function RulerEditBox({ changePositionThrouhEditor, initOffset, handleEditBoxHov
             style={getStyle(rulerSide, initOffset.current)}
 
             // evets
-            onPointerEnter={() => handleEditBoxHover(true)}
+            onPointerEnter={() => displayType === 'simple display' && setEditBoxDisplayDebounce(0, displayType)}
             onPointerLeave={onPointerLeave}
             onBlur={onBlur}
-            onFocus={onFocus}
-            tabIndex={0}
+            onClick={onEditPosition}
+
+            // ref
             ref={refForFocus}
+
+            // tab
+            tabIndex={0}
 
             // classes
             className={`ruler-edit-box ${displayType === 'simple display' ? 'full-hover' : ''}`}>
-            <div className='input-stepper' onClick={onEditPosition}>
+            <div className='input-stepper'>
                 {inEditMode ?
                     <input
-                        // autoFocus
+                        ref={inputRef}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                changeGuidePosition();
+                            }
+                        }}
                         className="input"
                         type="text" name="" id=""
                         value={valToDisplay}

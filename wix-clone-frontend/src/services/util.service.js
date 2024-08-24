@@ -5,7 +5,7 @@ export const utilService = {
     loadFromStorage,
     saveToStorage,
     animateCSS,
-    debounce, 
+    debounce,
     padNumWithZero,
 }
 
@@ -76,3 +76,4 @@ function debounce(func, timeout = 300) {
         }, timeout)
     }
 }
+
