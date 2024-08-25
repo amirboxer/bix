@@ -9,10 +9,10 @@ function SectionCover({ handleSectionFocus, sectionName }) {
     const [sectionFocused, setSectionFocused] = useState(false);
     const [sectionNameTagWidth, setSectionNameTagWidth] = useState(null);
     const [currName, setCurrName] = useState(sectionName);
-    const openNameModalRef = useRef(null);
-
+    
     // references
     const nameTexRef = useRef(null);
+    const openNameModalRef = useRef(null);
 
     useEffect(() => {
         handleSectionFocus(setSectionFocused);
@@ -32,7 +32,6 @@ function SectionCover({ handleSectionFocus, sectionName }) {
 
     return (
         <div className={`section-cover section-layout ${sectionFocused ? 'focused' : 'blur-hover'}`}>
-            {/* //  <div className={`section-cover section-layout ${true ? 'focused' : 'blur-hover'}`}>*/}
             {/* center of section marked by dootted lines */}
             <div className="grid-center">
                 <span className="gridline left"></span>
