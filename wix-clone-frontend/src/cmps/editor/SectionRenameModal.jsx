@@ -17,13 +17,11 @@ function SectionRenameModal({ setOpenNameModalRef, originalName, positionRef, up
     // event handlers
     function onBlur(e) {
         if (e.currentTarget.contains(e.relatedTarget)) return;
-        ref.current.focus();
-
         // close modal
-        // setNameModalOpen(false);
+        closeModal();
     }
 
-    // on pointr down drag & drop
+    // on pointer down drag & drop
     function onStartDrag(e) {
         // let diff = 0;
         let diff = { x: 0, y: 0 };
@@ -53,7 +51,9 @@ function SectionRenameModal({ setOpenNameModalRef, originalName, positionRef, up
 
     function closeModal() {
         setNameModalOpen(false);
-        ref.current.style = getStyle();
+        upadteName(newName);
+        const style = getStyle();
+        ref.current.style = `left:${style.left}; top:${style.top} `;
     }
 
     function getStyle() {
@@ -65,10 +65,8 @@ function SectionRenameModal({ setOpenNameModalRef, originalName, positionRef, up
 
     return (positionRef.current &&
         <div
-            style={{
-                position: 'fixed',
-                ...getStyle()
-            }}
+            className='rename-modal-wrap'
+            style={getStyle()}
             tabIndex={0}
             ref={ref}
         >
@@ -88,7 +86,10 @@ function SectionRenameModal({ setOpenNameModalRef, originalName, positionRef, up
                         <div className='control-buttons'>
                             {/* exit button close modal */}
                             <button
-                                onClick={closeModal}
+                                onClick={() => {
+                                    closeModal();
+                                    ref.current.focus();
+                                }}
                                 className='exit-button'
                             >
                                 <svg viewBox="-0.5 -0.5 24 24" fill="currentColor" width="24" height="24"><path d="M10.793 11.5 7.146 7.854 6.793 7.5l.707-.707.354.353 3.646 3.647 3.646-3.647.354-.353.707.707-.353.354-3.647 3.646 3.647 3.646.353.354-.707.707-.354-.353-3.646-3.647-3.646 3.647-.354.353-.707-.707.353-.354 3.647-3.646Z"></path></svg>
@@ -97,7 +98,7 @@ function SectionRenameModal({ setOpenNameModalRef, originalName, positionRef, up
                     </div>
 
                     {/* grid 2nd line */}
-                    <label htmlFor="section-name" className='name-input'>
+                    <div htmlFor="section-name" className='name-input'>
                         <div>
                             What's this section's name?
 
@@ -123,7 +124,7 @@ function SectionRenameModal({ setOpenNameModalRef, originalName, positionRef, up
                             className="input"
                             name="section-name"
                         />
-                    </label>
+                    </div>
                 </div>
             }
         </div>

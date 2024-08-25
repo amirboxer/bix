@@ -1,9 +1,8 @@
 // react hooks
 import { useRef, useEffect, useContext } from 'react';
 
-// context for handlers
-import { PointerHandlersContext } from '../EditBoard';
-
+// context for EditBoard
+import { EditBoardContext } from '../EditBoard';
 
 function ResizeBox({
     initialPointerCoords,
@@ -14,7 +13,7 @@ function ResizeBox({
         setBoxOffsetTop
     } }) {
     // handlers from context
-    const { updatePointerMove, updatePointerUp } = useContext(PointerHandlersContext);
+    const { updatePointerMove, updatePointerUp } = useContext(EditBoardContext);
 
     // References for interactions - draging or chainging size
     const isDraggingRef = useRef(true);

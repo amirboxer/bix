@@ -1,109 +1,113 @@
-.change-section-name-modal {
-    font-family: sans-serif;
-    color: initial;
-    position: absolute;
-    transform: translate(calc(-100% - 25px), -50%);
-    z-index: 1;
-    cursor: pointer;
-    pointer-events: auto;
+.rename-modal-wrap {
+    position: fixed;
+    z-index: 2;
 
-    display: grid;
+    .change-section-name-modal {
+        font-family: sans-serif;
+        color: initial;
+        position: absolute;
+        transform: translate(calc(-100% - 25px), -50%);
+        cursor: pointer;
+        pointer-events: auto;
 
-    -webkit-box-shadow: 0px 10px 20px 1px rgba(0, 0, 0, 0.12);
-    -moz-box-shadow: 0px 10px 20px 1px rgba(0, 0, 0, 0.12);
-    box-shadow: 0px 5px 10px 1px rgba(0, 0, 0, 0.12);
-
-    border-radius: 5px;
-    border-top: 6px solid $clr16;
-    background-color: $clr2;
-
-    &>* {
-        line-height: 1;
         display: grid;
-    }
 
-    .section-settings {
-        grid-auto-flow: column;
-        align-items: center;
-        justify-content: space-between;
+        -webkit-box-shadow: 0px 10px 20px 1px rgba(0, 0, 0, 0.12);
+        -moz-box-shadow: 0px 10px 20px 1px rgba(0, 0, 0, 0.12);
+        box-shadow: 0px 5px 10px 1px rgba(0, 0, 0, 0.12);
 
-        padding-inline: 21px;
-        padding-inline-end: 8px;
-        padding-block: 9px;
-        border-bottom: 1px solid $clr18;
+        border-radius: 5px;
+        border-top: 6px solid $clr16;
+        background-color: $clr2;
 
-        cursor: move;
-
-        .control-buttons {
-
-            .exit-button {
-                display: flex;
-                justify-content: center;
-                border-radius: 1000%;
-                height: max-content;
-                width: fit-content;
-                padding: 2px;
-                margin: 0;
-
-                &:hover {
-                    background-color: $clr19;
-                }
-
-            }
-        }
-    }
-
-    .name-input {
-        gap: 7px;
-
-        font-size: 12px;
-        color: #3b4057;
-
-        padding-block: 17px;
-        padding-inline: 21px;
-        letter-spacing: 0.5px;
-
-        &:hover {
-            .more-info {
-                color: $clr23;
-
-                &:hover {
-                    color: $clr24;
-                }
-            }
+        &>* {
+            line-height: 1;
+            display: grid;
         }
 
-        div {
-            display: flex;
+        .section-settings {
+            grid-auto-flow: column;
             align-items: center;
             justify-content: space-between;
 
-            .more-info {
-                display: flex;
-                border-radius: 100%;
-                cursor: pointer;
-                color: transparent;
+            padding-inline: 21px;
+            padding-inline-end: 8px;
+            padding-block: 9px;
+            border-bottom: 1px solid $clr18;
+
+            cursor: move;
+
+            .control-buttons {
+
+                .exit-button {
+                    display: flex;
+                    justify-content: center;
+                    border-radius: 1000%;
+                    height: max-content;
+                    width: fit-content;
+                    padding: 2px;
+                    margin: 0;
+
+                    &:hover {
+                        background-color: $clr19;
+                    }
+
+                }
             }
         }
 
-        input {
-            border: 1px solid $clr17;
-            border-radius: 4px;
-            padding: 6px 10px;
-            line-height: 1.4;
-            color: $clr21;
-            width: 218px;
+        .name-input {
+            gap: 7px;
 
-            &:not(:focus) {
-                cursor: pointer;
+            font-size: 12px;
+            color: #3b4057;
+
+            padding-block: 17px;
+            padding-inline: 21px;
+            letter-spacing: 0.5px;
+
+            &:hover {
+                .more-info {
+                    color: $clr23;
+
+                    &:hover {
+                        color: $clr24;
+                    }
+                }
             }
 
-            &:hover:not(:focus) {
-                background: $clr12;
+            div {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .more-info {
+                    display: flex;
+                    border-radius: 100%;
+                    cursor: pointer;
+                    color: transparent;
+                }
             }
 
-            &:focus {
-                border-color: #68a2ff;
+            input {
+                border: 1px solid $clr17;
+                border-radius: 4px;
+                padding: 6px 10px;
+                line-height: 1.4;
+                color: $clr21;
+                width: 218px;
+
+                &:not(:focus) {
+                    cursor: pointer;
+                }
+
+                &:hover:not(:focus) {
+                    background: $clr12;
+                }
+
+                &:focus {
+                    border-color: #68a2ff;
+                }
             }
         }
     }

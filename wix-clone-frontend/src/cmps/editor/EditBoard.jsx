@@ -5,25 +5,34 @@ import AddSection from './AddSection';
 import Ruler from './tools/Ruler';
 
 // react hooks
-import React, { useRef, createContext } from 'react';
+import React, { useRef, createContext, useState } from 'react';
 
-// Context for pointer handlers instead of prop drill
-export const PointerHandlersContext = createContext();
+// Context
+export const EditBoardContext = createContext();
 
 export function EditBoard() {
     // temporrary
-    
     const sections = [
-        { height: 700, name: 'Sandom1' },
-        { height: 500, name: 'Sandom2' },
-        { height: 600, name: 'Sandom3' },
-        { height: 450, name: 'Sandom4' },
+        { height: 700, name: 'Sandom1', id: 1 },
+        { height: 500, name: 'Sandom2', id: 2 },
+        { height: 600, name: 'Sandom3', id: 3 },
+        { height: 450, name: 'Sandom4', id: 4 },
     ];
     let cumulativeHeight = 0;
     const sectionAdders = sections.map((section, idx) => {
         cumulativeHeight += section.height;
         return [cumulativeHeight, idx];
     });
+
+
+
+
+    const [resizingInProggress, setResizingInProggress] = useState(false);
+
+
+
+
+
 
     // references
     const editBoardRef = useRef(null); // Ref to the main editing board element for direct DOM manipulations.
@@ -69,7 +78,7 @@ export function EditBoard() {
     }
 
     return (
-        <PointerHandlersContext.Provider value={{ updatePointerMove, updatePointerUp }}>
+        <EditBoardContext.Provider value={{ updatePointerMove, updatePointerUp, setResizingInProggress }}>
             <section className="edit-board"
                 onPointerMove={onPointerMove}
                 onPointerUp={(e) => handlePointerUpRef.current && handlePointerUpRef.current(e)}
@@ -79,26 +88,29 @@ export function EditBoard() {
                 {/* right side ruler */}
                 <Ruler
                     rightRulerlengthRef={editBoardRef}
-                    rulerSide="right" />
+                    rulerSide="right"
+                />
 
                 {/* sections and add-section-btns header & footer*/}
                 <div className='page-sections'>
-
                     {/* top side ruler */}
-                    <Ruler
-                        rulerSide="top" />
+                    <Ruler rulerSide="top" />
 
                     {sections.map((section, idx) => (
                         <React.Fragment key={idx}>
-                            
+
                             {/* section */}
-                            <Section section={section} />
+                            <Section
+                                section={section}
+                                resizingInProggress={resizingInProggress}
+                            />
 
                             {/* add new section button */}
                             <AddSection
                                 topOffset={sectionAdders[idx][0]}
                                 id={sectionAdders[idx][1]}
-                                updateAddSectionSetterRef={updateAddSectionSetterRef} />
+                                updateAddSectionSetterRef={updateAddSectionSetterRef}
+                            />
                         </React.Fragment>
                     ))}
                 </div>
@@ -124,7 +136,7 @@ export function EditBoard() {
                     offsetY={102}
                 />
             </section>
-        </PointerHandlersContext.Provider>
+        </EditBoardContext.Provider>
     )
 }
 

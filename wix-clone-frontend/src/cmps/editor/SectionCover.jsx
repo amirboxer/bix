@@ -1,15 +1,16 @@
 // cmps
 import SectionRenameModal from './SectionRenamemodal';
+import SectionResize from './ResizeSection';
 
 //react hooks
 import { useState, useEffect, useRef } from 'react';
 
-function SectionCover({ handleSectionFocus, sectionName }) {
+function SectionCover({ handleSectionFocus, section }) {
     //states    
     const [sectionFocused, setSectionFocused] = useState(false);
     const [sectionNameTagWidth, setSectionNameTagWidth] = useState(null);
-    const [currName, setCurrName] = useState(sectionName);
-    
+    const [currName, setCurrName] = useState(section.name);
+
     // references
     const nameTexRef = useRef(null);
     const openNameModalRef = useRef(null);
@@ -22,7 +23,7 @@ function SectionCover({ handleSectionFocus, sectionName }) {
     }, []);
 
     useEffect(() => {
-        setSectionNameTagWidth(nameTexRef.current.clientWidth);
+        setSectionNameTagWidth(nameTexRef.current.clientWidth + 2);
     }, [currName]);
 
     // functions
@@ -38,13 +39,10 @@ function SectionCover({ handleSectionFocus, sectionName }) {
                 <span className="gridline right"></span>
             </div>
 
-            {/* resize buttom - not in grid*/}
-            <button className="section-resize-button handler">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                    <path d="M11.5 5.29l3.85 3.86-.7.7L12 7.209v10.082l2.65-2.641.7.7-3.85 3.86-3.85-3.86.7-.7L11 17.293V7.207L8.35 9.85l-.7-.7 3.85-3.86z">
-                    </path>
-                </svg>
-            </button>
+            {/* resize buttom*/}
+            <SectionResize
+                section={section}
+            />
 
             {/* section name disply and option to change the name of the section */}
             <div className='wrapper'>
@@ -73,7 +71,7 @@ function SectionCover({ handleSectionFocus, sectionName }) {
                 {/* change name modal */}
                 <SectionRenameModal
                     setOpenNameModalRef={setOpenNameModalRef}
-                    originalName={sectionName}
+                    originalName={currName}
                     positionRef={nameTexRef}
                     upadteName={setCurrName}
                 />
