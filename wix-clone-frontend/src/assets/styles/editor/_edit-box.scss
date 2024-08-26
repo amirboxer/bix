@@ -1,0 +1,24 @@
+.edit-box {
+    position: absolute;
+    z-index: 2;
+
+    .handler {
+        position: absolute;
+    }
+}
+
+.edit-box-indicator {
+    position: absolute;
+    transform: translateY(-150%);
+
+    pointer-events: none;
+    user-select: none;
+    
+    font-size: 13px;
+    font-family: sans-serif;
+    color: $clr2;
+
+    background-color: $clr25;
+    padding: 4px 6px;
+    border-radius: 4px;
+}

@@ -1,24 +1,90 @@
 .section {
-    display: grid;
     position: relative;
+    border: 1px solid black;
 
     &:hover {
         .section-resize-button {
             height: 24px;
             overflow: unset;
         }
+
+        &.show-upper-add-section-button,
+        &.show-lower-add-section-button+.section {
+            .add-section-button {
+                display: initial;
+                pointer-events: auto;
+            }
+        }
     }
 
-    .out-of-gridline {
-        pointer-events: auto;
+    .section-contents{
+        // overflow: hidden;
+    }
+
+    .add-section-button {
+        position: absolute;
+        left: 50%;
+        top: 0;
+        transform: translate(-50%, -50%);
+
+        display: none;
+
+        cursor: pointer;
+
+        height: 30px;
+        width: 135px;
+
+        color: $clr2;
+        letter-spacing: 0.95px;
+        background-color: $clr1;
+        border-radius: 50px;
+
+
+        &:hover {
+            background-color: $clr3;
+        }
+
+        .button-content {
+            display: flex;
+            align-items: center;
+            padding-inline-start: 13px;
+        }
     }
 }
 
 .section-layout {
+    display: grid;
     grid-template-columns: minmax(0, 1fr) 980px minmax(0, 1fr);
 
-    .grid-center {
+    &>* {
         position: relative;
+    }
+
+    .full {
+        grid-column: 1 / -1;
+    }
+
+    .grid-center {
+        background-color: rgba(96, 208, 252, 0.443);
         grid-column: 2;
     }
+
+    .out-of-gridline {
+        &.left {
+            background-color: rgba(252, 247, 96, 0.443);
+            grid-column: 1;
+        }
+
+        &.right {
+            grid-column: 3;
+            background-color: rgba(96, 252, 130, 0.443);
+        }
+    }
+}
+
+.tester {
+    z-index: 1;
+    border-radius: 20px;
+    position: absolute;
+    background-color: rgb(255, 0, 0);
 }

@@ -7,6 +7,7 @@ export const utilService = {
     animateCSS,
     debounce,
     padNumWithZero,
+    throttle,
 }
 
 function makeId(length = 12) {
@@ -77,3 +78,16 @@ function debounce(func, timeout = 300) {
     }
 }
 
+
+function throttle(func, limit) {
+    let inThrottle;
+    return function() {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}

@@ -1,4 +1,4 @@
-// context from Section
+// contexts
 import { sectionContext } from './Section';
 import { EditBoardContext } from './EditBoard';
 

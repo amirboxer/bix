@@ -1,9 +1,5 @@
-.tester {
-    border-radius: 20px;
-    position: absolute;
-}
-
 .edit-board {
+    margin-top: 100px;
     width: 100%;
     min-height: 100vh;
     position: relative;
@@ -31,42 +27,5 @@
             grid-column: 1;
 
         }
-
-
-
-        .add-section-button {
-            letter-spacing: 0.95px;
-            border-radius: 50px;
-            left: 50%;
-
-            height: 30px;
-            width: 135px;
-
-            z-index: 1;
-            position: absolute;
-            color: $clr2;
-            background-color: $clr1;
-            transform: translate(-50%, -50%);
-
-
-            &:hover {
-                background-color: $clr3;
-            }
-
-            .button-content {
-                display: flex;
-                align-items: center;
-                padding-inline-start: 13px;
-            }
-        }
-    }
-}
-
-.edit-box {
-    position: absolute;
-    z-index: 2;
-
-    .handler {
-        position: absolute;
     }
 }

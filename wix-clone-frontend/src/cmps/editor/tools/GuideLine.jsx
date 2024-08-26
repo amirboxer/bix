@@ -10,7 +10,7 @@ function costumDebounce(setState) {
     return (wait, newState) => {
         window.clearTimeout(timeoutId);
         if (!wait) return setState(newState);
-        
+
         timeoutId = window.setTimeout(() => {
             setState(prevState => {
                 if (prevState === 'full display' && newState === 'simple display') return prevState
@@ -56,10 +56,8 @@ function GuideLine({ initialOffset, rulerSide, padding, rulerMarginLeft, rulerMa
 
     // dragging done
     function onPointerUp() {
-
         if (!moved) {
             setEditBoxDisplayDebounce(0, 'full display');
-
         } else {
             setEditBoxDisplay(null);
         }
@@ -77,15 +75,15 @@ function GuideLine({ initialOffset, rulerSide, padding, rulerMarginLeft, rulerMa
     }
 
     function changePositionThrouhEditor(coord) {
-        if (!coord ||
+        if (isNaN(coord) ||
             (coord >= ((rulerLength = rulerSide === 'top' ? rulerLength.width : rulerLength.height) + rulerMarginRight.width) ||
                 (coord <= -Math.floor(rulerMarginLeft.width)))) return;
+
         setOffSet(coord + padding);
         setDisplayVal(coord);
     }
 
     function onPointerLeave() {
-
         if (editBoxDisplay === 'simple display') {
             setEditBoxDisplayDebounce(500, null);
         }

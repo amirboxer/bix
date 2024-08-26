@@ -1,6 +1,7 @@
 // cmps
 import SectionRenameModal from './SectionRenamemodal';
 import SectionResize from './ResizeSection';
+import AddSection from './AddSection';
 
 //react hooks
 import { useState, useEffect, useRef } from 'react';
@@ -76,7 +77,10 @@ function SectionCover({ handleSectionFocus, section }) {
                     upadteName={setCurrName}
                 />
             </div>
-        </div>
+
+            {/* add new section button */}
+            <AddSection />
+        </div >
     )
 }
 

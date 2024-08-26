@@ -1,7 +1,6 @@
 // cmps
 import EditBox from './EditBox';
 import Section from './Section';
-import AddSection from './AddSection';
 import Ruler from './tools/Ruler';
 
 // react hooks
@@ -12,61 +11,40 @@ export const EditBoardContext = createContext();
 
 export function EditBoard() {
     // temporrary
-    const sections = [
-        { height: 700, name: 'Sandom1', id: 1 },
-        { height: 500, name: 'Sandom2', id: 2 },
-        { height: 600, name: 'Sandom3', id: 3 },
-        { height: 450, name: 'Sandom4', id: 4 },
-    ];
-    let cumulativeHeight = 0;
-    const sectionAdders = sections.map((section, idx) => {
-        cumulativeHeight += section.height;
-        return [cumulativeHeight, idx];
-    });
+    const [sections, setsections] = useState([
+        { height: 700, range: { start: 0, end: 700 }, name: 'Sandom1', id: 1 , elements: new Set([{ width: 230, height: 80, offsetX: 20, offsetY: 102 }])},
+        { height: 500, range: { start: 701, end: 1200 }, name: 'Sandom2', id: 2 , elements: new Set([{ width: 230, height: 80, offsetX: 20, offsetY: 102 }])},
+        { height: 600, range: { start: 1201, end: 1800 }, name: 'Sandom3', id: 3 , elements: new Set([{ width: 230, height: 80, offsetX: 20, offsetY: 102 }])},
+        { height: 450, range: { start: 1801, end: 2250 }, name: 'Sandom4', id: 4 , elements: new Set([{ width: 230, height: 80, offsetX: 20, offsetY: 102 }])},
+    ]);
 
-
-
-
+    // states
     const [resizingInProggress, setResizingInProggress] = useState(false);
-
-
-
-
-
 
     // references
     const editBoardRef = useRef(null); // Ref to the main editing board element for direct DOM manipulations.
+    const draggingInProggres = useRef(false)
     const handlePointerMoveRef = useRef(null); // Ref to the function handling pointer move events.
     const handlePointerUpRef = useRef(null); // Ref to the function handling pointer up events.
-    const addSectionButtonRefs = useRef({}); // Ref holding a map of visibility setter functions for add-section buttons, keyed by section ID.
 
-
-    // functions
-    function updateAddSectionSetterRef(id, func) {
-        addSectionButtonRefs.current[id] = func
-    }
-
-    function isDifferenceWithin(x, y, range) {
-        return Math.abs(x - y) <= range;
-    }
-    // Functions Update the handlers dynamically
-
+    // Event handlers
     function onPointerMove(e) {
         // handle resizing and dragging
         if (handlePointerMoveRef.current) handlePointerMoveRef.current(e);
+    }
 
-        // handle add section button visibility
-        if (editBoardRef.current) {
-            const bounds = editBoardRef.current.getBoundingClientRect();
-            const y = e.clientY - bounds.top;
+    function onPointerUp(e) {
+        handlePointerUpRef.current && handlePointerUpRef.current(e);
+        const newSection = findSectionByRange(e.pageY, editBoardRef.current.offsetTop);
+        
+        const rect = e.target.getBoundingClientRect();
+        const scrollTop = window.scrollY;
+        const distanceFromTop = rect.top + scrollTop - editBoardRef.current.offsetTop - newSection.range.start;
+        
+        console.dir(distanceFromTop);
+        setsections(prev => [...prev.filter(section => section.id != newSection.id), {...newSection, elements: newSection.elements.add({ width: 230, height: 80, offsetX: 20, offsetY: distanceFromTop })}])
+        // return distanceFromTop;
 
-            sectionAdders.forEach(height => {
-                if (isDifferenceWithin(height[0], y, 70) && addSectionButtonRefs.current[height[1]]) {
-                    addSectionButtonRefs.current[height[1]](true)
-                }
-                else addSectionButtonRefs.current[height[1]](false);
-            });
-        }
     }
 
     function updatePointerMove(handler) {
@@ -77,11 +55,16 @@ export function EditBoard() {
         handlePointerUpRef.current = handler;
     }
 
+    // functions
+    function findSectionByRange(y, offset) {
+        return sections.find(section => section.range.start + offset <= y && y <= section.range.end + offset);
+    }
+
     return (
-        <EditBoardContext.Provider value={{ updatePointerMove, updatePointerUp, setResizingInProggress }}>
+        <EditBoardContext.Provider value={{ updatePointerMove, updatePointerUp, setResizingInProggress, editBoardRef, draggingInProggres }}>
             <section className="edit-board"
                 onPointerMove={onPointerMove}
-                onPointerUp={(e) => handlePointerUpRef.current && handlePointerUpRef.current(e)}
+                onPointerUp={onPointerUp}
                 ref={editBoardRef}
             >
 
@@ -104,37 +87,9 @@ export function EditBoard() {
                                 section={section}
                                 resizingInProggress={resizingInProggress}
                             />
-
-                            {/* add new section button */}
-                            <AddSection
-                                topOffset={sectionAdders[idx][0]}
-                                id={sectionAdders[idx][1]}
-                                updateAddSectionSetterRef={updateAddSectionSetterRef}
-                            />
                         </React.Fragment>
                     ))}
                 </div>
-
-                <EditBox
-                    width={100}
-                    height={150}
-                    offsetX={654}
-                    offsetY={512}
-                />
-
-                <EditBox
-                    width={100}
-                    height={150}
-                    offsetX={954}
-                    offsetY={12}
-                />
-
-                <EditBox
-                    width={130}
-                    height={80}
-                    offsetX={54}
-                    offsetY={102}
-                />
             </section>
         </EditBoardContext.Provider>
     )

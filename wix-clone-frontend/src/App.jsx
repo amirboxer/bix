@@ -7,10 +7,10 @@ import { EditBoard } from './cmps/editor/EditBoard';
 function App() {
   return (
     <>
-      {/* <BringThemHome /> */}
+      <BringThemHome />
       <EditBoard />
     </>
   )
 }
 
-export default App
+export default App;

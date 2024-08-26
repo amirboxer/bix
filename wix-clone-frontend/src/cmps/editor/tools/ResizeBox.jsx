@@ -1,23 +1,28 @@
 // react hooks
-import { useRef, useEffect, useContext } from 'react';
+import { useState, useRef, useEffect, useContext } from 'react';
 
-// context for EditBoard
+// context from EditBoard
 import { EditBoardContext } from '../EditBoard';
 
 function ResizeBox({
+    EditBoxRef,
     initialPointerCoords,
     setters: {
         setBoxWidth,
         setBoxHeight,
         setBoxOffsetLeft,
         setBoxOffsetTop
-    } }) {
-    // handlers from context
-    const { updatePointerMove, updatePointerUp } = useContext(EditBoardContext);
+    },
+}) {
+
+    //states
+    const [indicator, setIndicator] = useState(null);
+
+    // context
+    const { updatePointerMove, updatePointerUp, editBoardRef, draggingInProggres } = useContext(EditBoardContext);
 
     // References for interactions - draging or chainging size
-    const isDraggingRef = useRef(true);
-    const isChangingSizeRef = useRef(false);
+    const isResizingRef = useRef(false);
 
     // Reference for position
     const initialPointerCoord = useRef(initialPointerCoords);
@@ -27,6 +32,7 @@ function ResizeBox({
 
     // useEffects
     useEffect(() => {
+        draggingInProggres.current = true;
         updatePointerMove(handleResizeAndDrag);
         updatePointerUp(endPointerInteraction);
 
@@ -34,7 +40,7 @@ function ResizeBox({
             updatePointerMove(null);
             updatePointerUp(null);
         }
-    }, [])
+    }, []);
 
     // Handlers configuration
     const handlers = [
@@ -54,11 +60,10 @@ function ResizeBox({
         resizeAxis.current = { horizontal: horizontalDir, vertical: verticalDir };
 
         if (type === 'dragging') {
-            isDraggingRef.current = true;
+            draggingInProggres.current = true;
         } else {
-            isChangingSizeRef.current = true;
+            isResizingRef.current = true;
         }
-
         e.stopPropagation();
     }
 
@@ -73,19 +78,19 @@ function ResizeBox({
         const [deltaX, deltaY] = calculatePointerDelta(pageX, pageY);
         initialPointerCoord.current = { pageX, pageY };
 
-        if (isChangingSizeRef.current) {
+        if (isResizingRef.current) {
             handleResize(deltaX, deltaY);
         }
 
-        if (isDraggingRef.current) {
-            handleDrag(deltaX, deltaY);
+        if (draggingInProggres.current) {
+            handleDrag(deltaX, deltaY, pageY);
         }
     }
 
     // End dragging or resizing
     function endPointerInteraction() {
-        isChangingSizeRef.current = false;
-        isDraggingRef.current = false;
+        draggingInProggres.current = false;
+        isResizingRef.current = false;
         initialPointerCoord.current = { pageX: null, pageY: null };
     }
 
@@ -102,12 +107,19 @@ function ResizeBox({
             setBoxHeight(prev => Math.max(0, prev + vertical * deltaY));
             adjustOffsetTop(vertical, deltaY);
         }
+
+        // set Indicator info
+        setIndicator({ type: 'resizing', leftVal: Math.round(EditBoxRef.current.clientWidth), rightVal: Math.round(EditBoxRef.current.clientHeight) });
     }
 
     // Handle dragging logic
-    function handleDrag(deltaX, deltaY) {
+    function handleDrag(deltaX, deltaY, pageY) {
+        // set new offsets
         setBoxOffsetLeft(prev => prev + deltaX);
         setBoxOffsetTop(prev => prev + deltaY);
+
+        // set Indicator info
+        setIndicator({ type: 'dragging', leftVal: Math.round(EditBoxRef.current.offsetLeft + deltaX), rightVal: Math.round(window.scrollY + EditBoxRef.current.getBoundingClientRect().top - editBoardRef.current.offsetTop) });
     }
 
     // Adjust offset for left
@@ -123,27 +135,40 @@ function ResizeBox({
     }
 
     return (
-        <div className="handler resize-box"
-            style={{
-                left: 0,
-                top: 0,
-                height: "100%",
-                width: "100%",
-            }}>
+        <>
+            {/* {indicator && } */}
+            <Indicator indicator={indicator} />
+            <div className="handler resize-box"
+                style={{
+                    left: 0,
+                    top: 0,
+                    height: "100%",
+                    width: "100%",
+                }}>
 
-            {/* grebber */}
-            < span className="handler grabber"
-                onPointerDown={e => startPointerTracking(e, 0, 0, 'dragging')}>
-            </span>
+                {/* grebber */}
+                < span className="handler grabber"
+                    onPointerDown={e => startPointerTracking(e, 0, 0, 'dragging')}>
+                </span>
 
-            {/* resizers */}
-            {handlers.map(({ className, deltaX, deltaY }, index) => (
-                <span
-                    key={index}
-                    className={`handler ${className}`}
-                    onPointerDown={e => startPointerTracking(e, deltaX, deltaY)}
-                ></span>
-            ))}
+                {/* resizers */}
+                {handlers.map(({ className, deltaX, deltaY }, index) => (
+                    <span
+                        key={index}
+                        className={`handler ${className}`}
+                        onPointerDown={e => startPointerTracking(e, deltaX, deltaY)}
+                    ></span>
+                ))}
+            </div>
+        </>
+    )
+}
+
+function Indicator({ indicator }) {
+    return (indicator &&
+        <div
+            className={`edit-box-indicator ${indicator.type}`}
+        >{indicator.type === 'dragging' && 'x' || 'W'}: {indicator.leftVal}, {indicator.type === 'dragging' && 'y' || 'H'}: {indicator.rightVal}
         </div>
     )
 }

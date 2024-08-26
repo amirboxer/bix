@@ -2,7 +2,7 @@
 import ResizeBox from './tools/ResizeBox';
 
 // react hooks
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 function EditBox({
     width,
@@ -13,9 +13,11 @@ function EditBox({
 
     // State for size and position
     const [initialPointerCoords, setInitialPointerCoords] = useState({ posX: null, posY: null })
-
     const [boxWidth, setBoxWidth] = useState(width);
     const [boxHeight, setBoxHeight] = useState(height);
+
+    //reference
+    const ref = useRef(null);
 
     // location position offset
     const [boxOffsetLeft, setBoxOffsetLeft] = useState(offsetX);
@@ -39,7 +41,9 @@ function EditBox({
 
     return (
         <>
-            <div className="edit-box"
+            <div
+                ref={ref}
+                className="edit-box"
                 style={{
                     top: boxOffsetTop,
                     left: boxOffsetLeft,
@@ -53,8 +57,10 @@ function EditBox({
                 {/* resizer wrapper */}
                 {isFocused &&
                     <ResizeBox
+                        EditBoxRef={ref}
                         initialPointerCoords={initialPointerCoords}
-                        setters={{ setBoxHeight, setBoxWidth, setBoxOffsetLeft, setBoxOffsetTop }} />
+                        setters={{ setBoxHeight, setBoxWidth, setBoxOffsetLeft, setBoxOffsetTop }}
+                    />
                 }
             </div>
 
@@ -66,7 +72,6 @@ function EditBox({
                     height: boxHeight,
                     width: boxWidth,
                 }}>
-
 
                 ok, cool
             </div>
