@@ -1,10 +1,17 @@
 // react hooks
 import { useState, useRef, useEffect, useContext } from 'react';
 
+//utils
+import { utilService } from '../../../services/util.service';
+const throttle = utilService.throttle;
+
 // context from EditBoard
 import { EditBoardContext } from '../EditBoard';
 
-function ResizeBox({
+function DragResizeBox({
+    id,
+    secId,
+    contentsRef,
     EditBoxRef,
     initialPointerCoords,
     setters: {
@@ -19,7 +26,7 @@ function ResizeBox({
     const [indicator, setIndicator] = useState(null);
 
     // context
-    const { updatePointerMove, updatePointerUp, editBoardRef, draggingInProggres } = useContext(EditBoardContext);
+    const { setResizeAndDragHandler, setEndDragAndResizeHandler, editBoardRef, draggingInProggres } = useContext(EditBoardContext);
 
     // References for interactions - draging or chainging size
     const isResizingRef = useRef(false);
@@ -27,18 +34,22 @@ function ResizeBox({
     // Reference for position
     const initialPointerCoord = useRef(initialPointerCoords);
 
+    // ref for functions
+    const outOfGridlinesThrottld = useRef(null);
+
     // Direction for resizing direction
     const resizeAxis = useRef({ horizontal: 0, vertical: 0 });
 
     // useEffects
     useEffect(() => {
         draggingInProggres.current = true;
-        updatePointerMove(handleResizeAndDrag);
-        updatePointerUp(endPointerInteraction);
+        setResizeAndDragHandler(handleResizeAndDrag);
+        setEndDragAndResizeHandler(endPointerInteraction);
+        outOfGridlinesThrottld.current = throttle(outOfGridlines, 100); // dispatch event when intersectiong out of gridline
 
         return () => {
-            updatePointerMove(null);
-            updatePointerUp(null);
+            setResizeAndDragHandler(null);
+            setEndDragAndResizeHandler(null);
         }
     }, []);
 
@@ -85,6 +96,9 @@ function ResizeBox({
         if (draggingInProggres.current) {
             handleDrag(deltaX, deltaY, pageY);
         }
+
+        // check if stepping into section deadzone
+        outOfGridlinesThrottld.current()
     }
 
     // End dragging or resizing
@@ -134,6 +148,18 @@ function ResizeBox({
         setBoxOffsetTop(prev => prev + adjustment);
     }
 
+    function outOfGridlines() {
+        const rect = EditBoxRef.current;
+        if (rect.offsetLeft <= 0 || contentsRef.current.getBoundingClientRect().width <= rect.offsetLeft + rect.getBoundingClientRect().width) {
+            const intersectionEvent = new CustomEvent('elementsIntersect', {
+                detail: { top: rect.getBoundingClientRect().top, bottom: rect.getBoundingClientRect().bottom },
+                bubbles: true,
+                cancelable: true,
+            });
+            EditBoxRef.current.dispatchEvent(intersectionEvent);
+        }
+    }
+
     return (
         <>
             {/* {indicator && } */}
@@ -148,6 +174,8 @@ function ResizeBox({
 
                 {/* grebber */}
                 < span className="handler grabber"
+                    data-el-id={id}
+                    data-sec-id={secId}
                     onPointerDown={e => startPointerTracking(e, 0, 0, 'dragging')}>
                 </span>
 
@@ -157,7 +185,8 @@ function ResizeBox({
                         key={index}
                         className={`handler ${className}`}
                         onPointerDown={e => startPointerTracking(e, deltaX, deltaY)}
-                    ></span>
+                    >
+                    </span>
                 ))}
             </div>
         </>
@@ -173,4 +202,4 @@ function Indicator({ indicator }) {
     )
 }
 
-export default ResizeBox
+export default DragResizeBox

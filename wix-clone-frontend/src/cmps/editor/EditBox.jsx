@@ -1,10 +1,13 @@
 // cmp-tools
-import ResizeBox from './tools/ResizeBox';
+import DragResizeBox from './tools/DragResizeBox';
 
 // react hooks
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 function EditBox({
+    id,
+    secId,
+    contentsRef,
     width,
     height,
     offsetX,
@@ -42,6 +45,19 @@ function EditBox({
     return (
         <>
             <div
+                className="tester"
+                style={{
+                    top: boxOffsetTop,
+                    left: boxOffsetLeft,
+                    height: boxHeight,
+                    width: boxWidth,
+                }}>
+
+                ok, cool
+            </div>
+
+
+            <div
                 ref={ref}
                 className="edit-box"
                 style={{
@@ -56,24 +72,15 @@ function EditBox({
 
                 {/* resizer wrapper */}
                 {isFocused &&
-                    <ResizeBox
+                    <DragResizeBox
+                        id={id}
+                        secId={secId}
+                        contentsRef={contentsRef}
                         EditBoxRef={ref}
                         initialPointerCoords={initialPointerCoords}
                         setters={{ setBoxHeight, setBoxWidth, setBoxOffsetLeft, setBoxOffsetTop }}
                     />
                 }
-            </div>
-
-            <div
-                className="tester"
-                style={{
-                    top: boxOffsetTop,
-                    left: boxOffsetLeft,
-                    height: boxHeight,
-                    width: boxWidth,
-                }}>
-
-                ok, cool
             </div>
         </>
     )

@@ -24,8 +24,25 @@ function SectionCover({ handleSectionFocus, section }) {
     }, []);
 
     useEffect(() => {
-        setSectionNameTagWidth(nameTexRef.current.clientWidth + 2);
+        setSectionNameTagWidth(nameTexRef.current.clientWidth + 36);   // TODO ??????????????????????????????????????/
+        // console.log(nameTexRef.current.clientWidthF );
+
     }, [currName]);
+
+
+    // useEffect(() => {
+    //     const rect = coverRef.current.getBoundingClientRect();
+    //     console.log(coverRef.current);
+        
+    //     coverRef.current.addEventListener('elementsIntersect', function (e) {
+    //         console.log('catch');
+            
+
+    //         if ((rect.top < e.detail.top && e.detail.top < rect.bottom) ||
+    //             (rect.top < e.detail.bottom && e.detail.bottom < rect.bottom)) console.log(section.name);
+    //     });
+    // }, [])
+
 
     // functions
     function setOpenNameModalRef(callBack) {
@@ -33,12 +50,22 @@ function SectionCover({ handleSectionFocus, section }) {
     }
 
     return (
-        <div className={`section-cover section-layout ${sectionFocused ? 'focused' : 'blur-hover'}`}>
+        <div className={`section-cover section-layout ${sectionFocused ? 'focused' : 'blur-hover'}`}
+            // ref={coverRef}
+        >
             {/* center of section marked by dootted lines */}
+
+            {/* left deadzone */}
+            <div className="out-of-gridline left intersecting"></div>
+
+            {/* center */}
             <div className="grid-center">
                 <span className="gridline left"></span>
                 <span className="gridline right"></span>
             </div>
+
+            {/* right deadzone - IN grid*/}
+            <div className="out-of-gridline right intersecting"></div>
 
             {/* resize buttom*/}
             <SectionResize

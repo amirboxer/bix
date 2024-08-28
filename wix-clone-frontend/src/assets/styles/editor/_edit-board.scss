@@ -17,15 +17,9 @@
         box-shadow: 3px 0px 8px 0px rgba(0, 0, 0, 0.42);
 
         display: grid;
-        &>*:nth-child(2) {
+        .first, .ruler-container {
             grid-row: 1;
             grid-column: 1;
-        }
-
-        &>*:nth-child(1) {
-            grid-row: 1;
-            grid-column: 1;
-
         }
     }
 }

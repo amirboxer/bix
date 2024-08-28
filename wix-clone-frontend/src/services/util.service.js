@@ -8,6 +8,7 @@ export const utilService = {
     debounce,
     padNumWithZero,
     throttle,
+    uId,
 }
 
 function makeId(length = 12) {
@@ -90,4 +91,8 @@ function throttle(func, limit) {
             setTimeout(() => inThrottle = false, limit);
         }
     };
+}
+
+function uId(prefix=''){
+    return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).substring(2);
 }
