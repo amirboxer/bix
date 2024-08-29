@@ -2,7 +2,7 @@
 import DragResizeBox from './tools/DragResizeBox';
 
 // react hooks
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef} from 'react';
 
 function EditBox({
     id,
@@ -14,17 +14,15 @@ function EditBox({
     offsetY,
 }) {
 
-    // State for size and position
+    // States
     const [initialPointerCoords, setInitialPointerCoords] = useState({ posX: null, posY: null })
     const [boxWidth, setBoxWidth] = useState(width);
     const [boxHeight, setBoxHeight] = useState(height);
-
-    //reference
-    const ref = useRef(null);
-
-    // location position offset
     const [boxOffsetLeft, setBoxOffsetLeft] = useState(offsetX);
     const [boxOffsetTop, setBoxOffsetTop] = useState(offsetY);
+
+    //references
+    const ref = useRef(null);
 
     // State for managing appearance on focus and on blur
     const [isFocused, setIsFocused] = useState(false);
@@ -39,6 +37,8 @@ function EditBox({
 
     // Handle blur logic and prevent appearance
     function handleBlur() {
+        // console.log('dcdcd');
+
         setIsFocused(false);
     }
 
@@ -58,6 +58,7 @@ function EditBox({
 
 
             <div
+                id={id}
                 ref={ref}
                 className="edit-box"
                 style={{

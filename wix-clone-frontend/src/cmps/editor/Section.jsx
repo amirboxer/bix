@@ -1,5 +1,5 @@
 // react hooks
-import { useState, useRef, createContext, useContext, memo, useEffect } from 'react';
+import { useState, useRef, createContext, memo, useEffect } from 'react';
 
 // Context
 export const sectionContext = createContext();
@@ -11,32 +11,44 @@ import EditBox from './EditBox';
 // services
 import { utilService } from '../../services/util.service';
 
-const Section = memo(({ section, resizingInProggress, setHandlers }) => {
+function Section({ section, sectionId, resizingInProggress, setSectionHandlers }) {
+
     // states
-    const [height, setHeight] = useState(section.height);
+    const [sectionProperties, setSectionProperties] = useState(section)
+    const [height, setHeight] = useState(sectionProperties.height);
     const [lowerAddSectionButton, setLowerAddSectionButton] = useState('');
     const [upperAddSectionButton, setUpperAddSectionButton] = useState('');
     const [showAttachSign, setShowAttachSign] = useState(false);
+    // console.log(sectionProperties.elements, section.name);
+
 
     // referances
     const sectionFocused = useRef(null);
-    const SectionRef = useRef(null);
+    const sectionRef = useRef(null);
     const contentsRef = useRef(null);
 
     //useEffect
     useEffect(() => {
-        setHandlers({ setShowAttachSign: setShowAttachSign, lololol: 'ididi' }, section.id)
+        setSectionHandlers({
+            setSectionProperties: setSectionProperties,
+            getSectionProperties: () => sectionProperties,
+            getSectionRef: () => sectionRef.current,
+            setShowAttachSign: setShowAttachSign,
+        }, sectionId)
         return () => null
-    }, [])
+    }, [sectionProperties])
 
     // event handlers
     function onFocus() {
-        (!resizingInProggress || resizingInProggress === section.id)
+
+        (!resizingInProggress || resizingInProggress === sectionId)
             && sectionFocused.current
             && sectionFocused.current(true);
     }
 
     function onBlur(e) {
+        // console.log(sectionProperties.name);
+
         !e.currentTarget.contains(e.relatedTarget)
             && !resizingInProggress
             && sectionFocused.current
@@ -45,7 +57,7 @@ const Section = memo(({ section, resizingInProggress, setHandlers }) => {
 
     // showing / unshowing add section button
     const onPointerMove = utilService.throttle((e) => {
-        const bounds = SectionRef.current.getBoundingClientRect();
+        const bounds = sectionRef.current.getBoundingClientRect();
         const ybottom = bounds.bottom - e.clientY;
         const yTop = e.clientY - bounds.top;
 
@@ -58,12 +70,13 @@ const Section = memo(({ section, resizingInProggress, setHandlers }) => {
         sectionFocused.current = handler;
     }
 
+    // console.log(sectionProperties.name)
+
     return (
         <sectionContext.Provider value={{ setHeight }}>
-            {
-                showAttachSign &&
-                <div className={`attach-to-section ${section.first ? 'first' : ''}`}>
-                    <span className='inner-sign'>Attach to Section ({`${section.name}`})</span>
+            {showAttachSign &&
+                <div className={`attach-to-section ${sectionProperties.first ? 'first' : ''}`}>
+                    <span className='inner-sign'>Attach to Section ({`${sectionProperties.name}`})</span>
                 </div>
             }
 
@@ -77,10 +90,10 @@ const Section = memo(({ section, resizingInProggress, setHandlers }) => {
                 onPointerMove={onPointerMove}
 
                 // DOM reference
-                ref={SectionRef}
-                className={`section section-layout ${lowerAddSectionButton + upperAddSectionButton} ${section.first ? 'first' : ''}`}
+                ref={sectionRef}
+                className={`section section-layout ${lowerAddSectionButton + upperAddSectionButton} ${sectionProperties.first ? 'first' : ''}`}
                 tabIndex={0}
-                id={section.id}
+                id={sectionId}
             >
                 {/* REAL ELEMENTS GO IN THIS GRID */}
                 <div className='section-contents section-layout full'>
@@ -89,31 +102,34 @@ const Section = memo(({ section, resizingInProggress, setHandlers }) => {
                         className="grid-center"
                         ref={contentsRef}
                     >
-                        {Object.entries(section.elements).map(([id, element], index) => (
+
+                        {Object.entries(sectionProperties.elements).map(([id, element], _) =>
                             <EditBox
-                                key={index}
+                                key={id}
                                 id={id}
                                 contentsRef={contentsRef}
-                                secId={section.id}
+                                secId={sectionId}
                                 width={element.width}
                                 height={element.height}
                                 offsetX={element.offsetX}
                                 offsetY={element.offsetY}
                             />
-                        ))}
+                        )}
                     </div>
                 </div>
 
                 {/* cover - not in grid*/}
-                {(!resizingInProggress || resizingInProggress === section.id) &&
+                {(!resizingInProggress || resizingInProggress === sectionId) &&
                     < SectionCover
+                        setSectionHandlers={setSectionHandlers}
                         handleSectionFocus={handleSectionFocus}
-                        section={section}
+                        section={sectionProperties}
+                        sectionId={sectionId}
                     />
                 }
             </section>
         </sectionContext.Provider>
 
     )
-})
+}
 export default Section

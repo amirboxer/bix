@@ -70,7 +70,7 @@
         }
     }
 
-    .wrapper{
+    .wrapper {
         grid-column: -1;
     }
 
@@ -205,13 +205,14 @@
             }
         }
     }
-}
 
 
-
-.intersecting{
-    background: repeating-linear-gradient(-45deg, rgb(93, 106, 122), rgb(93, 106, 122) 1.5px, rgb(67, 74, 89) 1px, rgb(67, 74, 89) 6.3px);
-    z-index: 1;
-    opacity: 0.279;
-    pointer-events: none;
+    &.dragged-over {
+        .intersecting {
+            background: repeating-linear-gradient(-45deg, rgb(93, 106, 122), rgb(93, 106, 122) 1.5px, rgb(67, 74, 89) 1px, rgb(67, 74, 89) 6.3px);
+            z-index: 1;
+            opacity: 0.279;
+            pointer-events: none;
+        }
+    }
 }

@@ -1,16 +1,18 @@
 // cmps
 import SectionRenameModal from './SectionRenamemodal';
-import SectionResize from './ResizeSection';
+import ResizeSection from './ResizeSection';
 import AddSection from './AddSection';
 
 //react hooks
 import { useState, useEffect, useRef } from 'react';
 
-function SectionCover({ handleSectionFocus, section }) {
+function SectionCover({ setSectionHandlers, handleSectionFocus, section, sectionId }) {
     //states    
     const [sectionFocused, setSectionFocused] = useState(false);
     const [sectionNameTagWidth, setSectionNameTagWidth] = useState(null);
     const [currName, setCurrName] = useState(section.name);
+    const [draggedOver, setDraggedOver] = useState(null);
+    const [highlightDeadzones, setHighlightDeadzones] = useState(false);
 
     // references
     const nameTexRef = useRef(null);
@@ -18,6 +20,11 @@ function SectionCover({ handleSectionFocus, section }) {
 
     useEffect(() => {
         handleSectionFocus(setSectionFocused);
+        setSectionHandlers({
+            setDraggedOver: setDraggedOver,
+            setHighlightDeadzones: setHighlightDeadzones,
+        }, sectionId);
+
         return () => {
             handleSectionFocus(null);
         }
@@ -29,46 +36,33 @@ function SectionCover({ handleSectionFocus, section }) {
 
     }, [currName]);
 
-
-    // useEffect(() => {
-    //     const rect = coverRef.current.getBoundingClientRect();
-    //     console.log(coverRef.current);
-        
-    //     coverRef.current.addEventListener('elementsIntersect', function (e) {
-    //         console.log('catch');
-            
-
-    //         if ((rect.top < e.detail.top && e.detail.top < rect.bottom) ||
-    //             (rect.top < e.detail.bottom && e.detail.bottom < rect.bottom)) console.log(section.name);
-    //     });
-    // }, [])
-
-
     // functions
     function setOpenNameModalRef(callBack) {
         openNameModalRef.current = callBack;
     }
+    
+    if (draggedOver && draggedOver != sectionId) console.log(section.name);
 
     return (
-        <div className={`section-cover section-layout ${sectionFocused ? 'focused' : 'blur-hover'}`}
-            // ref={coverRef}
+        <div className={`section-cover section-layout ${sectionFocused ? 'focused' : 'blur-hover'} ${draggedOver ? 'dragged-over' : ''}`}
         >
-            {/* center of section marked by dootted lines */}
 
             {/* left deadzone */}
-            <div className="out-of-gridline left intersecting"></div>
+            <div className={`out-of-gridline left ${highlightDeadzones && 'intersecting'}`}></div>
 
             {/* center */}
             <div className="grid-center">
+                {/* center of section marked by dootted lines */}
                 <span className="gridline left"></span>
                 <span className="gridline right"></span>
             </div>
 
             {/* right deadzone - IN grid*/}
-            <div className="out-of-gridline right intersecting"></div>
+            <div className={`out-of-gridline right ${highlightDeadzones && 'intersecting'}`}></div>
 
             {/* resize buttom*/}
-            <SectionResize
+            <ResizeSection
+                sectionId={sectionId}
                 section={section}
             />
 

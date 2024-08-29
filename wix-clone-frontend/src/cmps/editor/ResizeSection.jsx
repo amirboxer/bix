@@ -5,7 +5,7 @@ import { EditBoardContext } from './EditBoard';
 //react hooks
 import { useRef, useContext } from 'react';
 
-function SectionResize({ section }) {
+function ResizeSection({ section, sectionId }) {
     // useRef
     const ref = useRef(null)
 
@@ -17,8 +17,7 @@ function SectionResize({ section }) {
     function onStartDrag(e) {
         let diff = 0;
         let start = e.clientY;
-        setResizingInProggress(section.id);
-
+        setResizingInProggress(sectionId);
 
         // start dragging
         const drag = e => {
@@ -61,4 +60,4 @@ function SectionResize({ section }) {
     )
 }
 
-export default SectionResize
+export default ResizeSection

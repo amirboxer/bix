@@ -26,19 +26,15 @@ function DragResizeBox({
     const [indicator, setIndicator] = useState(null);
 
     // context
-    const { setResizeAndDragHandler, setEndDragAndResizeHandler, editBoardRef, draggingInProggres } = useContext(EditBoardContext);
+    const { setResizeAndDragHandler, setEndDragAndResizeHandler, editBoardRef, draggingInProggres} = useContext(EditBoardContext);
 
-    // References for interactions - draging or chainging size
+    // References
     const isResizingRef = useRef(false);
-
-    // Reference for position
     const initialPointerCoord = useRef(initialPointerCoords);
-
-    // ref for functions
-    const outOfGridlinesThrottld = useRef(null);
-
-    // Direction for resizing direction
     const resizeAxis = useRef({ horizontal: 0, vertical: 0 });
+    const outOfGridlinesThrottld = useRef(null);
+    const backToGridlinesThrottld = useRef(null);
+    const isIntersecting = useRef(null);
 
     // useEffects
     useEffect(() => {
@@ -46,7 +42,7 @@ function DragResizeBox({
         setResizeAndDragHandler(handleResizeAndDrag);
         setEndDragAndResizeHandler(endPointerInteraction);
         outOfGridlinesThrottld.current = throttle(outOfGridlines, 100); // dispatch event when intersectiong out of gridline
-
+        backToGridlinesThrottld.current = throttle(backToGridlines, 100); // dispatch event when !!! stopped !!! intersectiong out of gridline
         return () => {
             setResizeAndDragHandler(null);
             setEndDragAndResizeHandler(null);
@@ -85,7 +81,8 @@ function DragResizeBox({
     }
 
     // Handle resizing and dragging
-    function handleResizeAndDrag({ pageX, pageY }) {
+    function handleResizeAndDrag(e) {
+        const {pageX, pageY} = e;
         const [deltaX, deltaY] = calculatePointerDelta(pageX, pageY);
         initialPointerCoord.current = { pageX, pageY };
 
@@ -97,8 +94,9 @@ function DragResizeBox({
             handleDrag(deltaX, deltaY, pageY);
         }
 
-        // check if stepping into section deadzone
-        outOfGridlinesThrottld.current()
+        // check if stepping into section deadzone or back from deadzone
+        outOfGridlinesThrottld.current();
+        backToGridlinesThrottld.current();
     }
 
     // End dragging or resizing
@@ -148,29 +146,42 @@ function DragResizeBox({
         setBoxOffsetTop(prev => prev + adjustment);
     }
 
-    function outOfGridlines() {
+    function isoutOfGridlines() {
         const rect = EditBoxRef.current;
-        if (rect.offsetLeft <= 0 || contentsRef.current.getBoundingClientRect().width <= rect.offsetLeft + rect.getBoundingClientRect().width) {
+        return (rect.offsetLeft <= 0 || contentsRef.current.getBoundingClientRect().width <= rect.offsetLeft + rect.getBoundingClientRect().width);
+    }
+
+    function outOfGridlines() {
+        if (isoutOfGridlines()) {
+            const rect = EditBoxRef.current;
             const intersectionEvent = new CustomEvent('elementsIntersect', {
                 detail: { top: rect.getBoundingClientRect().top, bottom: rect.getBoundingClientRect().bottom },
                 bubbles: true,
                 cancelable: true,
             });
+            isIntersecting.current = true;
             EditBoxRef.current.dispatchEvent(intersectionEvent);
         }
     }
+
+    function backToGridlines() {
+        if (isIntersecting.current && !isoutOfGridlines()) {
+            const rect = EditBoxRef.current;
+            const intersectionEvent = new CustomEvent('elementsStopIntersect', {
+                bubbles: true,
+                cancelable: true,
+            });
+            isIntersecting.current = false;
+            EditBoxRef.current.dispatchEvent(intersectionEvent);
+        }
+    }
+
 
     return (
         <>
             {/* {indicator && } */}
             <Indicator indicator={indicator} />
-            <div className="handler resize-box"
-                style={{
-                    left: 0,
-                    top: 0,
-                    height: "100%",
-                    width: "100%",
-                }}>
+            <div className="handler drag-resize-box" >
 
                 {/* grebber */}
                 < span className="handler grabber"
