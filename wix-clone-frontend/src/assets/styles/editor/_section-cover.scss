@@ -1,12 +1,12 @@
 .section-cover {
     font-family: sans-serif;
     $outline-color: none;
-    outline-offset: -3px;
+    outline-offset: -2px;
     display: grid;
     position: absolute;
     width: 100%;
     height: 100%;
-    outline: 3px solid transparent;
+    outline: 2px solid transparent;
 
     &.blur-hover {
         $outline-color: $clr5;
@@ -29,8 +29,26 @@
         }
     }
 
-    &.focused:not(.dragged-over),
+    &.focused {
+        --outline-color: var(--clr1);
+        outline-color: var(--outline-color);
+        pointer-events: none;
+
+
+        .section-name {
+            background-color: var(--outline-color);
+            display: grid;
+        }
+
+        &.dragged-over,
+        &.not-dragged-over {
+            --outline-color: var(--clr5); // Override
+        }
+    }
+
+    &.focused:not(.not-dragged-over),
     &.dragged-over {
+
         .gridline {
             z-index: 1;
             pointer-events: none;
@@ -61,19 +79,6 @@
         }
     }
 
-    &.focused {
-        $outline-color: $clr1;
-
-        .section-name {
-            background-color: $outline-color;
-            display: grid;
-        }
-
-        outline-color: $outline-color;
-        pointer-events: none;
-
-    }
-
     .wrapper {
         grid-row: 1;
         grid-column: -1;
@@ -96,8 +101,6 @@
         grid-auto-flow: column;
         align-items: center;
 
-
-        // line-height: 1;
         color: $clr2;
 
         cursor: pointer;
@@ -223,7 +226,7 @@
             pointer-events: none;
         }
 
-        &:not(.current) .attach-to-section {
+        &:not(.focused) .attach-to-section {
             pointer-events: none;
             font-family: sans-serif;
 
@@ -244,6 +247,24 @@
                 border-radius: 2px;
                 margin-top: 10px;
             }
+        }
+
+
+
+    }
+
+    &.dragged-over,
+    &.not-dragged-over {
+
+        .section-resize-button,
+        .add-section-button {
+            display: none;
+        }
+
+        &:not(.not-dragged-over):not(.focused) {
+            outline-color: $clr1;
+            border:4px solid $clr5;
+
         }
     }
 }

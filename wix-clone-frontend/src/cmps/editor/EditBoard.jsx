@@ -71,15 +71,7 @@ export function EditBoard() {
         if (draggingInProggres.current && originalSecId) {
             const sectionId = getSectionIdByRange(e.nativeEvent.y); // current section id of the element after moving
             // check if element is in the realm of a different section after moving
-            Object.entries(sectionsHandlers.current).forEach(([id, handlers], __) => {
-                // if (sectionId === id && sectionId != originalSecId) {
-                if (sectionId === id) {
-                    handlers.setDraggedOver(originalSecId);
-
-                } else {
-                    handlers.setDraggedOver(null);
-                }
-            })
+            Object.entries(sectionsHandlers.current).forEach(([_, handlers], __) => handlers.setDraggedOver(sectionId))
         }
     }
 
@@ -92,7 +84,7 @@ export function EditBoard() {
             if (draggingInProggres.current) {
                 const currentSectionId = getSectionIdByRange(e.nativeEvent.y); // current section id of the element after moving
                 const currSectionHandlers = sectionsHandlers.current[currentSectionId];
-                currSectionHandlers.setDraggedOver(null);
+                Object.entries(sectionsHandlers.current).forEach(([id, handlers], __) => handlers.setDraggedOver(null));
 
                 // check if element is in the realm of a different section after moving, if so register the change
                 if (currentSectionId != originalSecId) {

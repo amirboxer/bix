@@ -42,7 +42,7 @@ function SectionCover({ setSectionHandlers, handleSectionFocus, section, section
     }
 
     return (
-        <div className={`section-cover section-layout ${sectionFocused ? 'focused' : 'blur-hover'} ${draggedOver ? draggedOver === sectionId ? 'dragged-over current' : 'dragged-over' : ''}`}
+        <div className={`section-cover section-layout ${sectionFocused ? 'focused' : 'blur-hover'} ${draggedOver ? draggedOver === sectionId ? 'dragged-over' : 'not-dragged-over' : ''}`}
         >
             {/* left deadzone */}
             <div className={`out-of-gridline left ${highlightDeadzones && 'intersecting'}`}></div>
@@ -53,9 +53,9 @@ function SectionCover({ setSectionHandlers, handleSectionFocus, section, section
                 <span className="gridline left"></span>
 
                 {/* {draggedOver && draggedOver != sectionId && */}
-                    <div className="attach-to-section">
-                        <span className='inner-sign'>Attach to Section ({`${section.name}`})</span>
-                    </div>
+                <div className="attach-to-section">
+                    <span className='inner-sign'>Attach to Section ({`${section.name}`})</span>
+                </div>
                 {/* } */}
                 <span className="gridline right"></span>
             </div>

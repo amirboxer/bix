@@ -26,6 +26,15 @@ function Section({ section, sectionId, resizingInProggress, setSectionHandlers }
     const sectionRef = useRef(null);
     const contentsRef = useRef(null);
 
+    ///
+    const b1 = useRef(null)
+    const b2 = useRef(null)
+    function setB1b2(h1, h2) {
+        b1.current = h1;
+        b2.current = h2;
+    }
+    //////
+
     //useEffect
     useEffect(() => {
         setSectionHandlers({
@@ -118,3 +127,26 @@ function Section({ section, sectionId, resizingInProggress, setSectionHandlers }
     )
 }
 export default Section
+
+
+function ShowSectionResizeBotton({ h }) {
+    useEffect(() => {
+        h(setLowerAddSectionButton, setUpperAddSectionButton);
+        // Your code here
+    }, [])
+
+
+    const [lowerAddSectionButton, setLowerAddSectionButton] = useState('');
+    const [upperAddSectionButton, setUpperAddSectionButton] = useState('');
+    return (
+        <span
+            className={lowerAddSectionButton + upperAddSectionButton}
+
+            style={{
+                position: 'absolute',
+                pointerEvents: 'none',
+                height: 0,
+            }}
+        ></span>
+    )
+}
