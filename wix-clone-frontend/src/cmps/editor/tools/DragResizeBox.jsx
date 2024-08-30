@@ -19,10 +19,15 @@ function DragResizeBox({
         setBoxWidth,
         setBoxHeight,
         setBoxOffsetLeft,
-        setBoxOffsetTop
+        setBoxOffsetTop,
     },
+    vals: {
+        boxWidth,
+        boxHeight,
+        boxOffsetLeft,
+        boxOffsetTop
+    }
 }) {
-
     //states
     const [indicator, setIndicator] = useState(null);
 
@@ -30,7 +35,6 @@ function DragResizeBox({
     const { setResizeAndDragHandler, setEndDragAndResizeHandler, editBoardRef, draggingInProggres } = useContext(EditBoardContext);
 
     // References
-    const isResizingRef = useRef(false);
     const initialPointerCoord = useRef(initialPointerCoords);
     const resizeAxis = useRef({ horizontal: 0, vertical: 0 });
     const outOfGridlinesThrottld = useRef(null);
@@ -39,7 +43,7 @@ function DragResizeBox({
 
     // useEffects
     useEffect(() => {
-        draggingInProggres.current = autoDrag ? true : false;
+        draggingInProggres.current = autoDrag ? 'dragging' : false;
         setResizeAndDragHandler(handleResizeAndDrag);
         setEndDragAndResizeHandler(endPointerInteraction);
         outOfGridlinesThrottld.current = throttle(outOfGridlines, 100); // dispatch event when intersectiong out of gridline
@@ -62,16 +66,11 @@ function DragResizeBox({
         { className: "resize-corner top-left", deltaX: -1, deltaY: -1 },
     ];
 
-    // Function to start tracking pointer movement
+    // on pointer down - Function to start tracking pointer movement - event handler
     function startPointerTracking(e, horizontalDir, verticalDir, type) {
         initialPointerCoord.current = { pageX: e.pageX, pageY: e.pageY };
         resizeAxis.current = { horizontal: horizontalDir, vertical: verticalDir };
-
-        if (type === 'dragging') {
-            draggingInProggres.current = true;
-        } else {
-            isResizingRef.current = true;
-        }
+        draggingInProggres.current = type;
         e.stopPropagation();
     }
 
@@ -87,11 +86,11 @@ function DragResizeBox({
         const [deltaX, deltaY] = calculatePointerDelta(pageX, pageY);
         initialPointerCoord.current = { pageX, pageY };
 
-        if (isResizingRef.current) {
+        if (draggingInProggres.current === 'resizing') {
             handleResize(deltaX, deltaY);
         }
 
-        if (draggingInProggres.current) {
+        if (draggingInProggres.current === 'dragging') {
             handleDrag(deltaX, deltaY, pageY);
         }
 
@@ -103,7 +102,6 @@ function DragResizeBox({
     // End dragging or resizing
     function endPointerInteraction() {
         draggingInProggres.current = false;
-        isResizingRef.current = false;
         initialPointerCoord.current = { pageX: null, pageY: null };
     }
 
@@ -167,7 +165,6 @@ function DragResizeBox({
 
     function backToGridlines() {
         if (isIntersecting.current && !isoutOfGridlines()) {
-            const rect = editBoxRef.current;
             const intersectionEvent = new CustomEvent('elementsStopIntersect', {
                 bubbles: true,
                 cancelable: true,
@@ -185,17 +182,32 @@ function DragResizeBox({
 
                 {/* grebber */}
                 < span className="handler grabber"
+                    // containers
                     data-el-id={id}
                     data-sec-id={secId}
+                    // position and location
+                    data-width={boxWidth}
+                    data-height={boxHeight}
+                    data-offsetleft={boxOffsetLeft}
+                    data-offsettop={boxOffsetTop}
+
                     onPointerDown={e => startPointerTracking(e, 0, 0, 'dragging')}>
                 </span>
 
                 {/* resizers */}
                 {handlers.map(({ className, deltaX, deltaY }, index) => (
                     <span
+                        // containers
+                        data-el-id={id}
+                        data-sec-id={secId}
+                        // position and location
+                        data-width={boxWidth}
+                        data-height={boxHeight}
+                        data-offsetleft={boxOffsetLeft}
+                        data-offsettop={boxOffsetTop}
                         key={index}
                         className={`handler ${className}`}
-                        onPointerDown={e => startPointerTracking(e, deltaX, deltaY)}
+                        onPointerDown={e => startPointerTracking(e, deltaX, deltaY, 'resizing')}
                     >
                     </span>
                 ))}

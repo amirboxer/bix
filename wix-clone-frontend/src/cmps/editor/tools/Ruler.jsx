@@ -1,8 +1,8 @@
 // react hooks
 import React, { useState, useEffect, useRef } from 'react';
 
-// costum hooks
-import useResizeObserver from '../../../assets/costum-hooks/resizeObserver.js';
+// observers
+import useResizeObserver from '../../../assets/observers/resizeObserver.js';
 
 // cmp
 import RulerGraduations from './RulerGraduations';

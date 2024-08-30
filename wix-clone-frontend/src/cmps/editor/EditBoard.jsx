@@ -12,20 +12,8 @@ export const EditBoardContext = createContext();
 import { utilService } from '../../services/util.service';
 const uId = utilService.uId;
 
-function focusOnMount(target, tragetId) {
-    const observer = new MutationObserver(callback);
-    const config = { attributes: false, childList: true, subtree: true };
-    observer.observe(target, config);
-
-    function callback(mutationList) {
-        mutationList.forEach(mutation => {
-            if (mutation.addedNodes[0] && mutation.addedNodes[0].id === tragetId) {
-                const focusEditBox = new CustomEvent('focusEditBox', {cancelable: true});
-                mutation.addedNodes[0].dispatchEvent(focusEditBox);
-            }
-        });
-    }
-}
+// observers
+import focusOnMount from '../../assets/observers/focusOnMount';
 
 export function EditBoard() {
     // temporrary
@@ -40,7 +28,6 @@ export function EditBoard() {
     const [resizingInProggress, setResizingInProggress] = useState(false); // resizing of sections
 
     // references
-    // section refs
     const sectionsHandlers = useRef({}); // handlers for section chnages
     const editBoardRef = useRef(null); // Ref to the main editing board element for direct DOM manipulations.
     const draggingInProggres = useRef(false) // draggning elements
@@ -49,31 +36,31 @@ export function EditBoard() {
 
     // useEffects
     useEffect(() => {
-        editBoardRef.current.addEventListener('elementsIntersect', function (e) {
+        function onElementsIntersect() {
             Object.entries(sectionsHandlers.current).map(([_, handlers], __) => {
                 handlers.setHighlightDeadzones(true);
             })
-        });
-        editBoardRef.current.addEventListener('elementsStopIntersect', function (e) {
+        }
+
+        function onElementsStopIntersect() {
             Object.entries(sectionsHandlers.current).map(([_, handlers], __) => {
                 handlers.setHighlightDeadzones(false);
             })
-        });
+        }
 
-        // return () =>  editBoardRef.current.removeEventListener('elementsIntersect', handleIntersection);
+        editBoardRef.current.addEventListener('elementsIntersect', onElementsIntersect);
+        editBoardRef.current.addEventListener('elementsStopIntersect', onElementsStopIntersect);
 
-    }, [])
+        return () => {
+            editBoardRef.current.removeEventListener('elementsIntersect', onElementsIntersect);
+            editBoardRef.current.removeEventListener('elementsStopIntersect', onElementsStopIntersect);
+        }
+    }, []);
 
-    function getSectionIdByRange(y) {
-        return Object.entries(sectionsHandlers.current).find(([_, handlers], __) => {
-            const sectionRect = handlers.getSectionRef().getBoundingClientRect();
-            return (sectionRect.top <= y && y < sectionRect.bottom);
-        })[0]
-    }
+
 
     // Event handlers
     function onPointerMove(e) {
-
         // handle resizing and dragging
         if (handleElDragAndResize.current) handleElDragAndResize.current(e);
 
@@ -87,32 +74,25 @@ export function EditBoard() {
     }
 
     function onPointerUp(e) {
-
         const originalSecId = e.target.dataset.secId;
         const elId = e.target.dataset.elId;
 
-        if (originalSecId && elId) {
+        if (originalSecId) {
             if (draggingInProggres.current) {
-                const currentSectionId = getSectionIdByRange(e.nativeEvent.y); // current section id of the element after moving
+                // update sections refernce
+                const [width, height, osl, ost] = [+e.target.dataset.width, +e.target.dataset.height, +e.target.dataset.offsetleft, +e.target.dataset.offsettop];
+                newsections.current[originalSecId].elements[elId] = { ...newsections.current[originalSecId].elements[elId], width: width, height: height, offsetX: osl, offsetY: ost }
 
-
-
-
-
-
-
-                const currSectionHandlers = sectionsHandlers.current[currentSectionId];
-                Object.entries(sectionsHandlers.current).forEach(([id, handlers], __) => handlers.setDraggedOver(null));
-
-
-
+                // update general sections reference
+                const currentSectionId = getSectionIdByRange(e.clientY);   // current section id of the element after moving
+                const currSectionHandlers = sectionsHandlers.current[currentSectionId];   // handlers of current section after moving
+                Object.entries(sectionsHandlers.current).forEach(([_, handlers], __) => handlers.setDraggedOver(null));
 
                 // check if element is in the realm of a different section after moving, if so register the change
                 if (currentSectionId != originalSecId) {
 
-
-
-                    const el = { ...sectionsHandlers.current[originalSecId].getSectionProperties().elements[elId] }  // original element
+                    // element with updated properties updated 
+                    let el = newsections.current[originalSecId].elements[elId];
 
                     // calc new position
                     const distanceFromTop = e.target.getBoundingClientRect().top - currSectionHandlers.getSectionRef().getBoundingClientRect().top;
@@ -120,25 +100,24 @@ export function EditBoard() {
                     // attach to section currently being hovered
                     currSectionHandlers.setSectionProperties(prev => ({ ...prev, elements: { ...prev.elements, [elId]: { ...el, offsetX: e.target.parentElement.parentElement.offsetLeft, offsetY: distanceFromTop } } }));
 
+                    // next two lines : remove focus from current section
                     sectionsHandlers.current[originalSecId].getSectionRef().focus({ preventScroll: true });
-
                     sectionsHandlers.current[originalSecId].getSectionRef().blur();
-                    focusOnMount(currSectionHandlers.getSectionRef(), elId);
 
                     // delete from previous section
                     sectionsHandlers.current[originalSecId].setSectionProperties(prev => {
                         const { [elId]: _, ...remainingElements } = prev.elements;
                         return { ...prev, elements: remainingElements };
                     });
+
+                    // set focus on new focus and the elements that moced into it
+                    focusOnMount(currSectionHandlers.getSectionRef(), elId);
                 }
             }
-
-
-            // end dragging and resizing of element on board
-            if (handleEndDragAndResize.current) handleEndDragAndResize.current(e);
-
         }
 
+        // end dragging and resizing of element on board
+        if (handleEndDragAndResize.current) handleEndDragAndResize.current(e);
     }
 
     // pass downs
@@ -151,8 +130,15 @@ export function EditBoard() {
     }
 
     function setSectionHandlers(handelrs, secId) {
-        // sectionsHandlers.current[secId] = handelrs;
         sectionsHandlers.current[secId] = { ...sectionsHandlers.current[secId], ...handelrs };
+    }
+
+    // function
+    function getSectionIdByRange(y) {
+        return Object.entries(sectionsHandlers.current).find(([_, handlers], __) => {
+            const sectionRect = handlers.getSectionRef().getBoundingClientRect();
+            return (sectionRect.top <= y && y < sectionRect.bottom);
+        })[0]
     }
 
     return (

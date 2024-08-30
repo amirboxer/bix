@@ -16,12 +16,12 @@ function EditBox({
 
     // States
     const [initialPointerCoords, setInitialPointerCoords] = useState({ posX: null, posY: null });
+    const [isFocused, setIsFocused] = useState(false);
     const [autoDrag, setAutoDrag] = useState(true);
     const [boxWidth, setBoxWidth] = useState(width);
     const [boxHeight, setBoxHeight] = useState(height);
     const [boxOffsetLeft, setBoxOffsetLeft] = useState(offsetX);
     const [boxOffsetTop, setBoxOffsetTop] = useState(offsetY);
-    const [isFocused, setIsFocused] = useState(false);
 
     //references
     const editBoxRef = useRef(null);
@@ -38,7 +38,7 @@ function EditBox({
         setTimeout(() => {
             setIsFocused(true);
             setAutoDrag(autoDrag);
-            !autoDrag?  editBoxRef.current.focus(): null;
+            !autoDrag ? editBoxRef.current.focus() : null;
             setInitialPointerCoords({ pageX: e.pageX, pageY: e.pageY });
         }, 0);
     }
@@ -61,7 +61,6 @@ function EditBox({
 
                 ok, cool
             </div>
-
 
             <div
                 id={id}
@@ -87,6 +86,7 @@ function EditBox({
                         editBoxRef={editBoxRef}
                         initialPointerCoords={initialPointerCoords}
                         setters={{ setBoxHeight, setBoxWidth, setBoxOffsetLeft, setBoxOffsetTop }}
+                        vals={{ boxWidth, boxHeight, boxOffsetLeft, boxOffsetTop }}
                     />
                 }
             </div>

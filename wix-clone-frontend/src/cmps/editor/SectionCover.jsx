@@ -8,7 +8,7 @@ import { useState, useEffect, useRef } from 'react';
 
 function SectionCover({ setSectionHandlers, setAddSectionBtnHandlers, handleSectionFocus, section, sectionId }) {
     //states    
-    const [sectionFocused, setSectionFocused] = useState(true);
+    const [sectionFocused, setSectionFocused] = useState(false);
     const [sectionNameTagWidth, setSectionNameTagWidth] = useState(null);
     const [currName, setCurrName] = useState(section.name);
     const [draggedOver, setDraggedOver] = useState(null);
