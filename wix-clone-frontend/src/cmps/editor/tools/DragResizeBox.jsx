@@ -125,7 +125,7 @@ function DragResizeBox({
     }
 
     // Handle dragging logic
-    function handleDrag(deltaX, deltaY, pageY) {
+    function handleDrag(deltaX, deltaY) {
         // set new offsets
         setBoxOffsetLeft(prev => prev + deltaX);
         setBoxOffsetTop(prev => prev + deltaY);

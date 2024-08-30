@@ -18,8 +18,7 @@ function Section({ section, sectionId, resizingInProggress, setSectionHandlers }
     const [height, setHeight] = useState(sectionProperties.height);
     const [lowerAddSectionButton, setLowerAddSectionButton] = useState('');
     const [upperAddSectionButton, setUpperAddSectionButton] = useState('');
-    const [showAttachSign, setShowAttachSign] = useState(false);
-    // console.log(sectionProperties.elements, section.name);
+    // console.log(section.name);
 
 
     // referances
@@ -33,22 +32,18 @@ function Section({ section, sectionId, resizingInProggress, setSectionHandlers }
             setSectionProperties: setSectionProperties,
             getSectionProperties: () => sectionProperties,
             getSectionRef: () => sectionRef.current,
-            setShowAttachSign: setShowAttachSign,
         }, sectionId)
         return () => null
     }, [sectionProperties])
 
     // event handlers
     function onFocus() {
-
         (!resizingInProggress || resizingInProggress === sectionId)
             && sectionFocused.current
             && sectionFocused.current(true);
     }
 
     function onBlur(e) {
-        // console.log(sectionProperties.name);
-
         !e.currentTarget.contains(e.relatedTarget)
             && !resizingInProggress
             && sectionFocused.current
@@ -70,16 +65,8 @@ function Section({ section, sectionId, resizingInProggress, setSectionHandlers }
         sectionFocused.current = handler;
     }
 
-    // console.log(sectionProperties.name)
-
     return (
         <sectionContext.Provider value={{ setHeight }}>
-            {showAttachSign &&
-                <div className={`attach-to-section ${sectionProperties.first ? 'first' : ''}`}>
-                    <span className='inner-sign'>Attach to Section ({`${sectionProperties.name}`})</span>
-                </div>
-            }
-
             <section
                 // style
                 style={{ height: height }}
@@ -91,7 +78,7 @@ function Section({ section, sectionId, resizingInProggress, setSectionHandlers }
 
                 // DOM reference
                 ref={sectionRef}
-                className={`section section-layout ${lowerAddSectionButton + upperAddSectionButton} ${sectionProperties.first ? 'first' : ''}`}
+                className={`section section-layout ${lowerAddSectionButton + upperAddSectionButton} ${!sectionProperties.order ? 'first' : ''}`}
                 tabIndex={0}
                 id={sectionId}
             >
@@ -102,7 +89,6 @@ function Section({ section, sectionId, resizingInProggress, setSectionHandlers }
                         className="grid-center"
                         ref={contentsRef}
                     >
-
                         {Object.entries(sectionProperties.elements).map(([id, element], _) =>
                             <EditBox
                                 key={id}
@@ -129,7 +115,6 @@ function Section({ section, sectionId, resizingInProggress, setSectionHandlers }
                 }
             </section>
         </sectionContext.Provider>
-
     )
 }
 export default Section

@@ -29,17 +29,8 @@
         }
     }
 
-    &.focused {
-        $outline-color: $clr1;
-
-        .section-name {
-            background-color: $outline-color;
-            display: grid;
-        }
-
-        outline-color: $outline-color;
-        pointer-events: none;
-
+    &.focused:not(.dragged-over),
+    &.dragged-over {
         .gridline {
             z-index: 1;
             pointer-events: none;
@@ -70,7 +61,21 @@
         }
     }
 
+    &.focused {
+        $outline-color: $clr1;
+
+        .section-name {
+            background-color: $outline-color;
+            display: grid;
+        }
+
+        outline-color: $outline-color;
+        pointer-events: none;
+
+    }
+
     .wrapper {
+        grid-row: 1;
         grid-column: -1;
     }
 
@@ -206,6 +211,9 @@
         }
     }
 
+    .attach-to-section {
+        display: none;
+    }
 
     &.dragged-over {
         .intersecting {
@@ -213,6 +221,29 @@
             z-index: 1;
             opacity: 0.279;
             pointer-events: none;
+        }
+
+        &:not(.current) .attach-to-section {
+            pointer-events: none;
+            font-family: sans-serif;
+
+            position: sticky;
+            top: 0;
+            height: 0;
+            z-index: 10;
+
+
+            display: grid;
+            justify-content: center;
+
+            .inner-sign {
+                font-size: 14px;
+                color: $clr2;
+                padding: 7px 9px;
+                background-color: $clr1;
+                border-radius: 2px;
+                margin-top: 10px;
+            }
         }
     }
 }

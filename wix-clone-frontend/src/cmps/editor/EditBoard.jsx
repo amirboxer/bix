@@ -15,20 +15,12 @@ const uId = utilService.uId;
 
 export function EditBoard() {
 
-
     // temporrary
-    // const newsections = useRef({
-    //     [uId('sec')]: { order: 0, height: 700, range: { start: 0, end: 700 }, name: 'Sandom1', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 252 } }, first: true },
-    //     [uId('sec')]: { order: 1, height: 500, range: { start: 700, end: 1200 }, name: 'Sandom2', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
-    //     [uId('sec')]: { order: 2, height: 600, range: { start: 1200, end: 1800 }, name: 'Sandom3', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
-    //     [uId('sec')]: { order: 3, height: 450, range: { start: 1800, end: 2250 }, name: 'Sandom4', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
-    // });
-
     const newsections = useRef({
-        1: { order: 1, height: 700, name: 'Sandom1', elements: { 11: { width: 230, height: 80, offsetX: 200, offsetY: 252 } }, first: true },
-        2: { order: 2, height: 500, name: 'Sandom2', elements: { 22: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
-        3: { order: 3, height: 600, name: 'Sandom3', elements: { 33: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
-        4: { order: 4, height: 450, name: 'Sandom4', elements: { 44: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
+        [uId('sec')]: { order: 0, height: 700, name: 'Sandom1', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } } },
+        [uId('sec')]: { order: 1, height: 500, name: 'Sandom2', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
+        [uId('sec')]: { order: 2, height: 600, name: 'Sandom3', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
+        [uId('sec')]: { order: 3, height: 450, name: 'Sandom4', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
     });
 
     // states
@@ -48,10 +40,6 @@ export function EditBoard() {
     useEffect(() => {
         editBoardRef.current.addEventListener('elementsIntersect', function (e) {
             Object.entries(sectionsHandlers.current).map(([_, handlers], __) => {
-
-                // const rect = handlers.getSectionRef().getBoundingClientRect();
-                // if ((rect.top < e.detail.top && e.detail.top < rect.bottom) ||
-                //     (rect.top < e.detail.bottom && e.detail.bottom < rect.bottom))
                 handlers.setHighlightDeadzones(true);
             })
         });
@@ -85,12 +73,10 @@ export function EditBoard() {
             // check if element is in the realm of a different section after moving
             Object.entries(sectionsHandlers.current).forEach(([id, handlers], __) => {
                 // if (sectionId === id && sectionId != originalSecId) {
-                    if (sectionId === id) {
-                    handlers.setShowAttachSign(true);
+                if (sectionId === id) {
                     handlers.setDraggedOver(originalSecId);
 
                 } else {
-                    handlers.setShowAttachSign(false);
                     handlers.setDraggedOver(null);
                 }
             })
@@ -100,21 +86,17 @@ export function EditBoard() {
     function onPointerUp(e) {
 
         const originalSecId = e.target.dataset.secId;
-        const elId = e.target.dataset.elId; 
-        
+        const elId = e.target.dataset.elId;
+
         if (originalSecId && elId) {
-
             if (draggingInProggres.current) {
-
                 const currentSectionId = getSectionIdByRange(e.nativeEvent.y); // current section id of the element after moving
+                const currSectionHandlers = sectionsHandlers.current[currentSectionId];
+                currSectionHandlers.setDraggedOver(null);
 
                 // check if element is in the realm of a different section after moving, if so register the change
                 if (currentSectionId != originalSecId) {
-                    const currSectionHandlers = sectionsHandlers.current[currentSectionId];
 
-                    // turn off change section sign
-                    currSectionHandlers.setShowAttachSign(false);
-                    currSectionHandlers.setDraggedOver(null);
 
                     const el = { ...sectionsHandlers.current[originalSecId].getSectionProperties().elements[elId] }  // original element
 
@@ -124,6 +106,10 @@ export function EditBoard() {
                     // attach to section currently being hovered
                     currSectionHandlers.setSectionProperties(prev => ({ ...prev, elements: { ...prev.elements, [elId]: { ...el, offsetX: e.target.parentElement.parentElement.offsetLeft, offsetY: distanceFromTop } } }));
 
+                    sectionsHandlers.current[originalSecId].getSectionRef().focus({ preventScroll: true });
+
+                    sectionsHandlers.current[originalSecId].getSectionRef().blur();
+
                     // delete from previous section
                     sectionsHandlers.current[originalSecId].setSectionProperties(prev => {
                         const { [elId]: _, ...remainingElements } = prev.elements;
@@ -132,11 +118,12 @@ export function EditBoard() {
                 }
             }
 
-            // e.target.parentElement.parentElement.blur();
 
             // end dragging and resizing of element on board
             if (handleEndDragAndResize.current) handleEndDragAndResize.current(e);
+
         }
+
     }
 
     // pass downs

@@ -52,29 +52,7 @@
     }
 }
 
-.attach-to-section {
-    pointer-events: none;
-    font-family: sans-serif;
 
-    position: sticky;
-    top: 0;
-    height: 0;
-    z-index: 10;
-
-
-    display: grid;
-    justify-content: center;
-
-    .inner-sign {
-
-        font-size: 14px;
-        color: $clr2;
-        padding: 7px 9px;
-        background-color: $clr1;
-        border-radius: 2px;
-        margin-top: 10px;
-    }
-}
 
 .section-layout {
     display: grid;

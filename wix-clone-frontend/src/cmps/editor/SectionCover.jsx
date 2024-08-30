@@ -40,13 +40,10 @@ function SectionCover({ setSectionHandlers, handleSectionFocus, section, section
     function setOpenNameModalRef(callBack) {
         openNameModalRef.current = callBack;
     }
-    
-    if (draggedOver && draggedOver != sectionId) console.log(section.name);
 
     return (
-        <div className={`section-cover section-layout ${sectionFocused ? 'focused' : 'blur-hover'} ${draggedOver ? 'dragged-over' : ''}`}
+        <div className={`section-cover section-layout ${sectionFocused ? 'focused' : 'blur-hover'} ${draggedOver ? draggedOver === sectionId ? 'dragged-over current' : 'dragged-over' : ''}`}
         >
-
             {/* left deadzone */}
             <div className={`out-of-gridline left ${highlightDeadzones && 'intersecting'}`}></div>
 
@@ -54,6 +51,12 @@ function SectionCover({ setSectionHandlers, handleSectionFocus, section, section
             <div className="grid-center">
                 {/* center of section marked by dootted lines */}
                 <span className="gridline left"></span>
+
+                {/* {draggedOver && draggedOver != sectionId && */}
+                    <div className="attach-to-section">
+                        <span className='inner-sign'>Attach to Section ({`${section.name}`})</span>
+                    </div>
+                {/* } */}
                 <span className="gridline right"></span>
             </div>
 
