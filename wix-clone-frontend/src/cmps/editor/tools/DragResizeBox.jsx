@@ -9,10 +9,11 @@ const throttle = utilService.throttle;
 import { EditBoardContext } from '../EditBoard';
 
 function DragResizeBox({
+    autoDrag = false,
     id,
     secId,
     contentsRef,
-    EditBoxRef,
+    editBoxRef,
     initialPointerCoords,
     setters: {
         setBoxWidth,
@@ -26,7 +27,7 @@ function DragResizeBox({
     const [indicator, setIndicator] = useState(null);
 
     // context
-    const { setResizeAndDragHandler, setEndDragAndResizeHandler, editBoardRef, draggingInProggres} = useContext(EditBoardContext);
+    const { setResizeAndDragHandler, setEndDragAndResizeHandler, editBoardRef, draggingInProggres } = useContext(EditBoardContext);
 
     // References
     const isResizingRef = useRef(false);
@@ -38,11 +39,11 @@ function DragResizeBox({
 
     // useEffects
     useEffect(() => {
-        draggingInProggres.current = true;
+        draggingInProggres.current = autoDrag ? true : false;
         setResizeAndDragHandler(handleResizeAndDrag);
         setEndDragAndResizeHandler(endPointerInteraction);
         outOfGridlinesThrottld.current = throttle(outOfGridlines, 100); // dispatch event when intersectiong out of gridline
-        backToGridlinesThrottld.current = throttle(backToGridlines, 100); // dispatch event when !!! stopped !!! intersectiong out of gridline
+        backToGridlinesThrottld.current = throttle(backToGridlines, 100); // dispatch event when !!! stopped !!! intersectiong out of gridlinef
         return () => {
             setResizeAndDragHandler(null);
             setEndDragAndResizeHandler(null);
@@ -82,7 +83,7 @@ function DragResizeBox({
 
     // Handle resizing and dragging
     function handleResizeAndDrag(e) {
-        const {pageX, pageY} = e;
+        const { pageX, pageY } = e;
         const [deltaX, deltaY] = calculatePointerDelta(pageX, pageY);
         initialPointerCoord.current = { pageX, pageY };
 
@@ -121,7 +122,7 @@ function DragResizeBox({
         }
 
         // set Indicator info
-        setIndicator({ type: 'resizing', leftVal: Math.round(EditBoxRef.current.clientWidth), rightVal: Math.round(EditBoxRef.current.clientHeight) });
+        setIndicator({ type: 'resizing', leftVal: Math.round(editBoxRef.current.clientWidth), rightVal: Math.round(editBoxRef.current.clientHeight) });
     }
 
     // Handle dragging logic
@@ -131,7 +132,7 @@ function DragResizeBox({
         setBoxOffsetTop(prev => prev + deltaY);
 
         // set Indicator info
-        setIndicator({ type: 'dragging', leftVal: Math.round(EditBoxRef.current.offsetLeft + deltaX), rightVal: Math.round(window.scrollY + EditBoxRef.current.getBoundingClientRect().top - editBoardRef.current.offsetTop) });
+        setIndicator({ type: 'dragging', leftVal: Math.round(editBoxRef.current.offsetLeft + deltaX), rightVal: Math.round(window.scrollY + editBoxRef.current.getBoundingClientRect().top - editBoardRef.current.offsetTop) });
     }
 
     // Adjust offset for left
@@ -147,35 +148,34 @@ function DragResizeBox({
     }
 
     function isoutOfGridlines() {
-        const rect = EditBoxRef.current;
+        const rect = editBoxRef.current;
         return (rect.offsetLeft <= 0 || contentsRef.current.getBoundingClientRect().width <= rect.offsetLeft + rect.getBoundingClientRect().width);
     }
 
     function outOfGridlines() {
         if (isoutOfGridlines()) {
-            const rect = EditBoxRef.current;
+            const rect = editBoxRef.current;
             const intersectionEvent = new CustomEvent('elementsIntersect', {
                 detail: { top: rect.getBoundingClientRect().top, bottom: rect.getBoundingClientRect().bottom },
                 bubbles: true,
                 cancelable: true,
             });
             isIntersecting.current = true;
-            EditBoxRef.current.dispatchEvent(intersectionEvent);
+            editBoxRef.current.dispatchEvent(intersectionEvent);
         }
     }
 
     function backToGridlines() {
         if (isIntersecting.current && !isoutOfGridlines()) {
-            const rect = EditBoxRef.current;
+            const rect = editBoxRef.current;
             const intersectionEvent = new CustomEvent('elementsStopIntersect', {
                 bubbles: true,
                 cancelable: true,
             });
             isIntersecting.current = false;
-            EditBoxRef.current.dispatchEvent(intersectionEvent);
+            editBoxRef.current.dispatchEvent(intersectionEvent);
         }
     }
-
 
     return (
         <>

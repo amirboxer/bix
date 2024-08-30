@@ -7,11 +7,20 @@
             overflow: unset;
         }
 
-        &.show-upper-add-section-button,
-        &.show-lower-add-section-button+.section {
+        &.section:has(.show-upper-add-section-button) {
             .add-section-button {
                 display: initial;
                 pointer-events: auto;
+            }
+
+        }
+
+        &.section:has(.show-lower-add-section-button) {
+            &+.section {
+                .add-section-button {
+                    display: initial;
+                    pointer-events: auto;
+                }
             }
         }
     }
@@ -85,5 +94,5 @@
     // z-index: 1;
     border-radius: 20px;
     position: absolute;
-    background-color: rgb(255, 0, 0);
+    background-color: red;
 }

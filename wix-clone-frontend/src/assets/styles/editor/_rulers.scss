@@ -1,6 +1,7 @@
 .ruler-container {
     z-index: 10;
     height: max-content;
+    $graduation-clr: $clr26;
 
     &.top {
         height: 22px;
@@ -33,7 +34,7 @@
 
             .ruler-graduation {
                 // vars
-                $graduation-clr: black;
+
                 $graduation-height: 1px;
                 $graduation-pos: absolute;
                 $graduation-transY: translateY(25%);
@@ -90,6 +91,7 @@
                     display: grid;
                     left: 3px;
                     top: 5px;
+                    color: $clr27;
 
                     .ruler-digit {
                         line-height: 10px;
@@ -99,6 +101,10 @@
         }
 
         &.top {
+            -webkit-box-shadow: inset 0px 4px 6px -4px rgb(145, 144, 144);
+            -moz-box-shadow: inset 0px 4px 6px -4px rgb(145, 144, 144);
+            box-shadow: inset 0px 4px 6px -4px rgb(145, 144, 144);
+
 
             display: grid;
             position: absolute;
@@ -110,7 +116,6 @@
             transition: opacity .15s ease-in;
             transition-delay: .15s;
             opacity: 0.5;
-
             font-size: 9px;
             font-family: sans-serif;
 
@@ -120,7 +125,6 @@
 
             .ruler-graduation {
                 // vars
-                $graduation-clr: black;
                 $graduation-width: 1px;
                 $graduation-pos: absolute;
                 $graduation-transX: translateX(50%);
@@ -175,6 +179,7 @@
                     grid-auto-flow: column;
                     left: 3px;
                     bottom: 0px;
+                    color: $clr27;
 
                     .ruler-digit {
                         line-height: 10px;
@@ -201,6 +206,7 @@
     position: absolute;
     transform: translateY(-50%);
     right: 0;
+
     .picker {
         position: absolute;
         right: 0;

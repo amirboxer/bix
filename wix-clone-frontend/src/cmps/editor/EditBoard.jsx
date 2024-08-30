@@ -12,12 +12,25 @@ export const EditBoardContext = createContext();
 import { utilService } from '../../services/util.service';
 const uId = utilService.uId;
 
+function focusOnMount(target, tragetId) {
+    const observer = new MutationObserver(callback);
+    const config = { attributes: false, childList: true, subtree: true };
+    observer.observe(target, config);
+
+    function callback(mutationList) {
+        mutationList.forEach(mutation => {
+            if (mutation.addedNodes[0] && mutation.addedNodes[0].id === tragetId) {
+                const focusEditBox = new CustomEvent('focusEditBox', {cancelable: true});
+                mutation.addedNodes[0].dispatchEvent(focusEditBox);
+            }
+        });
+    }
+}
 
 export function EditBoard() {
-
     // temporrary
     const newsections = useRef({
-        [uId('sec')]: { order: 0, height: 700, name: 'Sandom1', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } } },
+        [uId('sec')]: { order: 0, height: 703, name: 'Sandom1', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } } },
         [uId('sec')]: { order: 1, height: 500, name: 'Sandom2', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
         [uId('sec')]: { order: 2, height: 600, name: 'Sandom3', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
         [uId('sec')]: { order: 3, height: 450, name: 'Sandom4', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
@@ -29,8 +42,6 @@ export function EditBoard() {
     // references
     // section refs
     const sectionsHandlers = useRef({}); // handlers for section chnages
-
-
     const editBoardRef = useRef(null); // Ref to the main editing board element for direct DOM manipulations.
     const draggingInProggres = useRef(false) // draggning elements
     const handleElDragAndResize = useRef(null); // Ref to the function handling pointer move events.
@@ -83,11 +94,22 @@ export function EditBoard() {
         if (originalSecId && elId) {
             if (draggingInProggres.current) {
                 const currentSectionId = getSectionIdByRange(e.nativeEvent.y); // current section id of the element after moving
+
+
+
+
+
+
+
                 const currSectionHandlers = sectionsHandlers.current[currentSectionId];
                 Object.entries(sectionsHandlers.current).forEach(([id, handlers], __) => handlers.setDraggedOver(null));
 
+
+
+
                 // check if element is in the realm of a different section after moving, if so register the change
                 if (currentSectionId != originalSecId) {
+
 
 
                     const el = { ...sectionsHandlers.current[originalSecId].getSectionProperties().elements[elId] }  // original element
@@ -101,6 +123,7 @@ export function EditBoard() {
                     sectionsHandlers.current[originalSecId].getSectionRef().focus({ preventScroll: true });
 
                     sectionsHandlers.current[originalSecId].getSectionRef().blur();
+                    focusOnMount(currSectionHandlers.getSectionRef(), elId);
 
                     // delete from previous section
                     sectionsHandlers.current[originalSecId].setSectionProperties(prev => {

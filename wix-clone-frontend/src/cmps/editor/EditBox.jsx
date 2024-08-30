@@ -2,7 +2,7 @@
 import DragResizeBox from './tools/DragResizeBox';
 
 // react hooks
-import { useState, useRef} from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 function EditBox({
     id,
@@ -15,30 +15,36 @@ function EditBox({
 }) {
 
     // States
-    const [initialPointerCoords, setInitialPointerCoords] = useState({ posX: null, posY: null })
+    const [initialPointerCoords, setInitialPointerCoords] = useState({ posX: null, posY: null });
+    const [autoDrag, setAutoDrag] = useState(true);
     const [boxWidth, setBoxWidth] = useState(width);
     const [boxHeight, setBoxHeight] = useState(height);
     const [boxOffsetLeft, setBoxOffsetLeft] = useState(offsetX);
     const [boxOffsetTop, setBoxOffsetTop] = useState(offsetY);
-
-    //references
-    const ref = useRef(null);
-
-    // State for managing appearance on focus and on blur
     const [isFocused, setIsFocused] = useState(false);
 
+    //references
+    const editBoxRef = useRef(null);
+
+    useEffect(() => {
+        const onFocusEditBox = () => handlePointerDown({ pageX: null, pageY: null }, false)
+        editBoxRef.current.addEventListener('focusEditBox', onFocusEditBox);
+
+        // return () => editBoxRef.current.removeEventListener('focusEditBox', onFocusEditBox)
+    }, [])
+
     // Handle focus logic and allow appearance
-    function handlePointerDown(e) {
+    function handlePointerDown(e, autoDrag = true) {
         setTimeout(() => {
             setIsFocused(true);
+            setAutoDrag(autoDrag);
+            !autoDrag?  editBoxRef.current.focus(): null;
             setInitialPointerCoords({ pageX: e.pageX, pageY: e.pageY });
-        }, 0)
+        }, 0);
     }
 
     // Handle blur logic and prevent appearance
     function handleBlur() {
-        // console.log('dcdcd');
-
         setIsFocused(false);
     }
 
@@ -59,7 +65,7 @@ function EditBox({
 
             <div
                 id={id}
-                ref={ref}
+                ref={editBoxRef}
                 className="edit-box"
                 style={{
                     top: boxOffsetTop,
@@ -74,10 +80,11 @@ function EditBox({
                 {/* resizer wrapper */}
                 {isFocused &&
                     <DragResizeBox
+                        autoDrag={autoDrag}
                         id={id}
                         secId={secId}
                         contentsRef={contentsRef}
-                        EditBoxRef={ref}
+                        editBoxRef={editBoxRef}
                         initialPointerCoords={initialPointerCoords}
                         setters={{ setBoxHeight, setBoxWidth, setBoxOffsetLeft, setBoxOffsetTop }}
                     />

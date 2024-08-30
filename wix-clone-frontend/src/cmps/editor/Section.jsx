@@ -16,24 +16,14 @@ function Section({ section, sectionId, resizingInProggress, setSectionHandlers }
     // states
     const [sectionProperties, setSectionProperties] = useState(section)
     const [height, setHeight] = useState(sectionProperties.height);
-    const [lowerAddSectionButton, setLowerAddSectionButton] = useState('');
-    const [upperAddSectionButton, setUpperAddSectionButton] = useState('');
-    // console.log(section.name);
-
+    console.log(section.name);
 
     // referances
     const sectionFocused = useRef(null);
     const sectionRef = useRef(null);
     const contentsRef = useRef(null);
-
-    ///
-    const b1 = useRef(null)
-    const b2 = useRef(null)
-    function setB1b2(h1, h2) {
-        b1.current = h1;
-        b2.current = h2;
-    }
-    //////
+    const showLowerAddSectionButton = useRef(null);
+    const showUpperAddSectionButton = useRef(null);
 
     //useEffect
     useEffect(() => {
@@ -41,7 +31,8 @@ function Section({ section, sectionId, resizingInProggress, setSectionHandlers }
             setSectionProperties: setSectionProperties,
             getSectionProperties: () => sectionProperties,
             getSectionRef: () => sectionRef.current,
-        }, sectionId)
+        }, sectionId);
+
         return () => null
     }, [sectionProperties])
 
@@ -65,13 +56,18 @@ function Section({ section, sectionId, resizingInProggress, setSectionHandlers }
         const ybottom = bounds.bottom - e.clientY;
         const yTop = e.clientY - bounds.top;
 
-        ybottom < 70 ? setLowerAddSectionButton('show-lower-add-section-button') : setLowerAddSectionButton('');
-        yTop < 70 ? setUpperAddSectionButton('show-upper-add-section-button') : setUpperAddSectionButton('');
-    }, 200);
+        ybottom < 70 ? showLowerAddSectionButton.current('show-lower-add-section-button') : showLowerAddSectionButton.current('');
+        yTop < 70 ? showUpperAddSectionButton.current('show-upper-add-section-button') : showUpperAddSectionButton.current('');
+    }, 150);
 
-    // pass-down callback function to cover.cmp
+    // pass-downs callback functions
     function handleSectionFocus(handler) {
         sectionFocused.current = handler;
+    }
+
+    function setAddSectionBtnHandlers(h1, h2) {
+        showLowerAddSectionButton.current = h1;
+        showUpperAddSectionButton.current = h2;
     }
 
     return (
@@ -87,7 +83,7 @@ function Section({ section, sectionId, resizingInProggress, setSectionHandlers }
 
                 // DOM reference
                 ref={sectionRef}
-                className={`section section-layout ${lowerAddSectionButton + upperAddSectionButton} ${!sectionProperties.order ? 'first' : ''}`}
+                className={`section section-layout ${!sectionProperties.order ? 'first' : ''}`}
                 tabIndex={0}
                 id={sectionId}
             >
@@ -117,6 +113,7 @@ function Section({ section, sectionId, resizingInProggress, setSectionHandlers }
                 {(!resizingInProggress || resizingInProggress === sectionId) &&
                     < SectionCover
                         setSectionHandlers={setSectionHandlers}
+                        setAddSectionBtnHandlers={setAddSectionBtnHandlers}
                         handleSectionFocus={handleSectionFocus}
                         section={sectionProperties}
                         sectionId={sectionId}
@@ -127,26 +124,3 @@ function Section({ section, sectionId, resizingInProggress, setSectionHandlers }
     )
 }
 export default Section
-
-
-function ShowSectionResizeBotton({ h }) {
-    useEffect(() => {
-        h(setLowerAddSectionButton, setUpperAddSectionButton);
-        // Your code here
-    }, [])
-
-
-    const [lowerAddSectionButton, setLowerAddSectionButton] = useState('');
-    const [upperAddSectionButton, setUpperAddSectionButton] = useState('');
-    return (
-        <span
-            className={lowerAddSectionButton + upperAddSectionButton}
-
-            style={{
-                position: 'absolute',
-                pointerEvents: 'none',
-                height: 0,
-            }}
-        ></span>
-    )
-}

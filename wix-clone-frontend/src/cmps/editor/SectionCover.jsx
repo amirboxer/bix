@@ -6,13 +6,15 @@ import AddSection from './AddSection';
 //react hooks
 import { useState, useEffect, useRef } from 'react';
 
-function SectionCover({ setSectionHandlers, handleSectionFocus, section, sectionId }) {
+function SectionCover({ setSectionHandlers, setAddSectionBtnHandlers, handleSectionFocus, section, sectionId }) {
     //states    
-    const [sectionFocused, setSectionFocused] = useState(false);
+    const [sectionFocused, setSectionFocused] = useState(true);
     const [sectionNameTagWidth, setSectionNameTagWidth] = useState(null);
     const [currName, setCurrName] = useState(section.name);
     const [draggedOver, setDraggedOver] = useState(null);
     const [highlightDeadzones, setHighlightDeadzones] = useState(false);
+    const [lowerAddSectionButton, setLowerAddSectionButton] = useState('');
+    const [upperAddSectionButton, setUpperAddSectionButton] = useState('');
 
     // references
     const nameTexRef = useRef(null);
@@ -24,6 +26,7 @@ function SectionCover({ setSectionHandlers, handleSectionFocus, section, section
             setDraggedOver: setDraggedOver,
             setHighlightDeadzones: setHighlightDeadzones,
         }, sectionId);
+        setAddSectionBtnHandlers(setLowerAddSectionButton, setUpperAddSectionButton);
 
         return () => {
             handleSectionFocus(null);
@@ -31,9 +34,7 @@ function SectionCover({ setSectionHandlers, handleSectionFocus, section, section
     }, []);
 
     useEffect(() => {
-        setSectionNameTagWidth(nameTexRef.current.clientWidth + 36);   // TODO ??????????????????????????????????????/
-        // console.log(nameTexRef.current.clientWidthF );
-
+        setSectionNameTagWidth(nameTexRef.current.clientWidth);
     }, [currName]);
 
     // functions
@@ -42,7 +43,9 @@ function SectionCover({ setSectionHandlers, handleSectionFocus, section, section
     }
 
     return (
-        <div className={`section-cover section-layout ${sectionFocused ? 'focused' : 'blur-hover'} ${draggedOver ? draggedOver === sectionId ? 'dragged-over' : 'not-dragged-over' : ''}`}
+        <div className={`section-cover section-layout ${sectionFocused ? 'focused' : 'blur-hover'}
+         ${draggedOver ? draggedOver === sectionId ? 'dragged-over' : 'not-dragged-over' : ''}
+         ${lowerAddSectionButton + upperAddSectionButton}`}
         >
             {/* left deadzone */}
             <div className={`out-of-gridline left ${highlightDeadzones && 'intersecting'}`}></div>
