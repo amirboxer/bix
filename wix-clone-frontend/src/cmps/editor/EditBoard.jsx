@@ -6,6 +6,7 @@ import Ruler from './tools/Ruler';
 import React, { useRef, createContext, useEffect, useState } from 'react';
 
 // Context
+import { EditPageContext } from '../../pages/Editor';
 export const EditBoardContext = createContext();
 
 // services
@@ -15,7 +16,7 @@ const uId = utilService.uId;
 // observers
 import focusOnMount from '../../assets/observers/focusOnMount';
 
-function EditBoard() {
+function EditBoard({zoomOutMode}) {
 
     const sectionsRef = useRef({
         [uId('sec')]: { order: 0, height: 400, name: 'Sandom1', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } } },
@@ -27,7 +28,12 @@ function EditBoard() {
         [uId('sec')]: { order: 6, height: 300, name: 'Sandom4', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
     });
 
-    const [addSectionMode, setAddSectionMode] = useState(false);
+    // states
+    const [initialNewSectionPick, setInitialNewSectionPick] = useState(false);
+
+    // context
+    const { edbref } = useContext(EditPageContext);
+
 
     // references
     const sectionsHandlers = useRef({}); // handlers for section chnages
@@ -41,8 +47,8 @@ function EditBoard() {
 
     // todo outsource
     useEffect(() => {
-        if (addSectionMode) { observeElementVisibility(editBoardRef.current, addSectionMode); }
-    }, [addSectionMode])
+        if (zoomOutMode === 'add-section') { observeElementVisibility(editBoardRef.current, initialNewSectionPick); }
+    }, [zoomOutMode])
 
     useEffect(() => {
         function onElementsIntersect() {
@@ -154,14 +160,14 @@ function EditBoard() {
     }
 
     return (
-        <EditBoardContext.Provider value={{ setResizeAndDragHandler, setEndDragAndResizeHandler, setAddSectionMode, editBoardRef, draggingInProggres, sectionsHandlers, sectionsRef }}>
+        <EditBoardContext.Provider value={{ setResizeAndDragHandler, setEndDragAndResizeHandler, setInitialNewSectionPick, editBoardRef, draggingInProggres, sectionsHandlers, sectionsRef }}>
             <section className="edit-board"
                 onPointerMove={onPointerMove}
                 onPointerUp={onPointerUp}
                 ref={editBoardRef}
             >
                 {/* right side ruler */}
-                {!addSectionMode &&
+                {!zoomOutMode &&
                     <Ruler
                         rightRulerlengthRef={sectionsContainerRef}
                         rulerSide="right"
@@ -174,7 +180,7 @@ function EditBoard() {
                     ref={sectionsContainerRef}
                 >
                     {/* top side ruler */}
-                    {!addSectionMode &&
+                    {!zoomOutMode &&
                         <Ruler rulerSide="top" />
                     }
 
@@ -216,7 +222,7 @@ export default EditBoard;
 
 
 
-function observeElementVisibility(root, sectionId, options = {
+function observeElementVisibility(root, sectionId, delay = 2000, options = {
     root: root,
     rootMargin: '0px 0px 0px 0px',
     threshold: 0,
@@ -225,12 +231,16 @@ function observeElementVisibility(root, sectionId, options = {
     const visibleElements = {};
 
     // if user clicked 'add section' focus on that first place holder in the beggining
-    if (sectionId) {
-        const el = document.getElementById(sectionId);
-        visibleElements[sectionId] = el;
-        el.style.height = "fit-content";
-        el.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
+
+
+    setTimeout(() => {
+        if (sectionId) {
+            const el = document.getElementById(sectionId);
+            visibleElements[sectionId] = el;
+            el.style.height = "fit-content";
+            el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }, 1000)
 
     setTimeout(() =>
         // Update the closest element to the center on scroll
@@ -259,7 +269,7 @@ function observeElementVisibility(root, sectionId, options = {
                     return closestToCenter;
                 }
             }, [Infinity, null]);
-        }), 1000)
+        }), Math.max(2000, delay))
 
     // Callback function for IntersectionObserver
     const intersectionCallback = (entries) => {

@@ -1,14 +1,18 @@
 
-import { useState} from 'react';
+import { useState, useEffect } from 'react';
 
-function LeftEditBar() {
+function LeftEditBar({ selectedCategorie = null, zoomOutMode }) {
     //states
-    const [leftPanelOpen, setLeftPanelOpen] = useState(false);
-    const [selectedCategorie, setselectedCategorie] = useState(null);
+    const [isSelected, setsSelectedCategorie] = useState(selectedCategorie);
+
+    // useEffects
+    useEffect(() => {
+        (zoomOutMode === 'add-section') && setsSelectedCategorie('add-section');
+    }, [zoomOutMode])
+
     // event handlers
     function onClick(categorie) {
-        setLeftPanelOpen(prev => !prev);
-        setselectedCategorie(prev => prev === categorie ? null : categorie);
+        setsSelectedCategorie(prev => prev === categorie ? null : categorie);
     }
     return (
         <div className="left-edit-bar">
@@ -17,7 +21,7 @@ function LeftEditBar() {
                     <div className="wrapper">
                         <button
                             onClick={() => onClick('add-section')}
-                            className={`add-section ${selectedCategorie === 'add-section' ? 'selected' : ''}`}
+                            className={`add-section ${isSelected === 'add-section' ? 'selected' : ''}`}
                         >
                             <span className="icon upper-part"></span>
                             <span className="icon middle-part"></span>
@@ -27,8 +31,8 @@ function LeftEditBar() {
                         {/* display on hovers */}
                         <span
                             style={{
-                                visibility: leftPanelOpen ? 'hidden' : '',
-                                opacity: leftPanelOpen ? '0' : '',
+                                visibility: (isSelected === 'add-section') ? 'hidden' : '',
+                                opacity: (isSelected === 'add-section') ? '0' : '',
                             }}
                             className="label-hover-box"
                         >Add Section
@@ -39,7 +43,7 @@ function LeftEditBar() {
 
             <div
                 style={{
-                    maxWidth: leftPanelOpen ? '' : '0vh',
+                    maxWidth: isSelected ? '' : '0vh',
                 }}
                 className="left-panel"> okkkkkkkkkokokok</div>
         </div>

@@ -4,15 +4,21 @@ import { useContext } from 'react';
 // contexts
 import { sectionContext } from './Section';
 import { EditBoardContext } from './EditBoard';
+import { EditPageContext } from '../../pages/Editor';
 
 function AddSection() {
     // from contexts
-    const { setAddSectionMode } = useContext(EditBoardContext);
+    const { setInitialNewSectionPick } = useContext(EditBoardContext);
     const { sectionId } = useContext(sectionContext);
+    const { setZoomOutMode } = useContext(EditPageContext);
 
+    function onClick(id) {
+        setInitialNewSectionPick(id)
+        setZoomOutMode('add-section')
+    }
     return (
         <button
-            onClick={() => setAddSectionMode('newSec' + sectionId)}
+            onClick={() =>onClick('newSec' + sectionId) }
             className="add-section-button handler"
         >
             <div className="button-content">
