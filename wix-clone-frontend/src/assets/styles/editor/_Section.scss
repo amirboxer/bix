@@ -60,11 +60,9 @@
     }
 }
 
-
-
 .section-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 980px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) $pageWidth minmax(0, 1fr);
     grid-template-rows: 1fr;
 
     &>* {

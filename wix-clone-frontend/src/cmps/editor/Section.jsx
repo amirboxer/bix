@@ -11,12 +11,11 @@ import EditBox from './EditBox';
 // services
 import { utilService } from '../../services/util.service';
 
-function Section({ section, sectionId, resizingInProggress, setSectionHandlers }) {
+function Section({ section, sectionId, setSectionHandlers }) {
 
     // states
     const [sectionProperties, setSectionProperties] = useState(section)
-    const [height, setHeight] = useState(sectionProperties.height);
-    console.log(section.name);
+    // console.log(section.name);
 
     // referances
     const sectionFocused = useRef(null);
@@ -38,14 +37,12 @@ function Section({ section, sectionId, resizingInProggress, setSectionHandlers }
 
     // event handlers
     function onFocus() {
-        (!resizingInProggress || resizingInProggress === sectionId)
-            && sectionFocused.current
+        sectionFocused.current
             && sectionFocused.current(true);
     }
 
     function onBlur(e) {
         !e.currentTarget.contains(e.relatedTarget)
-            && !resizingInProggress
             && sectionFocused.current
             && sectionFocused.current(false);
     }
@@ -71,10 +68,10 @@ function Section({ section, sectionId, resizingInProggress, setSectionHandlers }
     }
 
     return (
-        <sectionContext.Provider value={{ setHeight }}>
+        <sectionContext.Provider value={{ setSectionProperties, sectionId }}>
             <section
                 // style
-                style={{ height: height }}
+                style={{ height: sectionProperties.height }}
 
                 // event handlers
                 onFocus={onFocus}
@@ -110,15 +107,13 @@ function Section({ section, sectionId, resizingInProggress, setSectionHandlers }
                 </div>
 
                 {/* cover - not in grid*/}
-                {(!resizingInProggress || resizingInProggress === sectionId) &&
-                    < SectionCover
-                        setSectionHandlers={setSectionHandlers}
-                        setAddSectionBtnHandlers={setAddSectionBtnHandlers}
-                        handleSectionFocus={handleSectionFocus}
-                        section={sectionProperties}
-                        sectionId={sectionId}
-                    />
-                }
+                < SectionCover
+                    setSectionHandlers={setSectionHandlers}
+                    setAddSectionBtnHandlers={setAddSectionBtnHandlers}
+                    handleSectionFocus={handleSectionFocus}
+                    section={sectionProperties}
+                    sectionId={sectionId}
+                />
             </section>
         </sectionContext.Provider>
     )

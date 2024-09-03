@@ -1,0 +1,171 @@
+.left-edit-bar {
+    z-index: 1;
+    --icon-radious: 42px;
+    display: grid;
+    grid-template-columns: auto auto;
+
+    -webkit-box-shadow:  0px 2px 5px 2px rgba(0, 0, 0, 0.122);
+    -moz-box-shadow:  0px 2px 5px 2px rgba(0, 0, 0, 0.122);
+    box-shadow: 0px 2px 5px 2px rgba(0, 0, 0, 0.122);
+
+    ul {
+        --left-edit-bar-icon-height: 54px;
+        height: 100%;
+        width: fit-content;
+        padding-top: 18px;
+
+        li {
+            --padding-inline: 8px;
+            padding-inline: var(--padding-inline);
+            height: var(--left-edit-bar-icon-height);
+            display: flex;
+            justify-content: center;
+
+            .wrapper {
+                position: relative;
+                height: var(--icon-radious);
+                width: var(--icon-radious);
+
+                .add-section {
+                    position: relative;
+                    height: 100%;
+                    width: 100%;
+                    border-radius: 100%;
+
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 2px;
+
+                    .icon {
+                        background-color: $clr29;
+                    }
+
+                    .upper-part,
+                    .bottom-part {
+                        height: 2px;
+                        width: 16px;
+                    }
+
+                    .middle-part {
+                        height: 9px;
+                        width: 18px;
+                    }
+
+                    $anim-lengh: 0.3s;
+
+                    &:hover,
+                    &.selected {
+                        background-color: $clr5;
+                        .icon {
+                            background-color: $clr1;
+                        }
+                    }
+
+                    &.selected:hover {
+                        .bottom-part,
+                        .middle-part,
+                        .upper-part {
+                            animation: none;
+                        }
+                    }
+
+                    &:not(.selected):hover {
+                        .bottom-part {
+                            animation: bottom calc($anim-lengh * 1.25) linear;
+                        }
+
+                        .middle-part {
+                            animation: middle $anim-lengh linear;
+                        }
+
+                        .upper-part {
+                            animation: upper calc($anim-lengh * 1.25) linear;
+                        }
+                    }
+                }
+
+                .label-hover-box {
+                    display: none;
+                    transition-delay: var(--left-panel-trans-time);
+                    transition-property: visibility;
+
+                    z-index: 1;
+                    position: absolute;
+                    right: 0;
+                    top: 0;
+                    transform: translateX(calc(100% + var(--padding-inline) * 2));
+
+                    font-family: sans-serif;
+                    font-size: 14px;
+                    color: $clr28;
+                    white-space: nowrap;
+                    letter-spacing: 0.9px;
+
+                    background-color: $clr2;
+
+                    padding: 12px 15px;
+                    border-radius: 3px;
+
+                    -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.22);
+                    -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.22);
+                    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.22);
+                }
+
+                &:hover {
+                    .label-hover-box {
+                        display: inline-block;
+                    }
+                }
+            }
+        }
+    }
+
+    .left-panel {
+        overflow: hidden;
+        background-color: blue;
+        max-width: 100vh;
+        width: auto;
+        transition: max-width var(--left-panel-trans-time) linear;
+    }
+}
+
+@keyframes middle {
+    from {
+        transform: scaleY(0%);
+    }
+
+    to {
+        transform: scaleY(100%);
+    }
+}
+
+
+@keyframes upper {
+    from {
+        transform: translateY(10px);
+    }
+
+    80% {
+        transform: translateY(-60%);
+    }
+
+    to {
+        transform: translateY(0%);
+    }
+}
+
+@keyframes bottom {
+    from {
+        transform: translateY(-10px);
+    }
+
+    80% {
+        transform: translateY(60%);
+    }
+
+    to {
+        transform: translateY(0%);
+    }
+}

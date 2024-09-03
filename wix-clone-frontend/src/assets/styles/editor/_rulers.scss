@@ -10,7 +10,7 @@
         position: sticky;
         top: 0;
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 980px minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1fr) $pageWidth minmax(0, 1fr);
     }
 
     .ruler {
@@ -23,7 +23,6 @@
             transition-delay: .15s;
             opacity: 0.5;
 
-
             width: 22px;
             font-size: 9px;
             font-family: sans-serif;
@@ -34,7 +33,6 @@
 
             .ruler-graduation {
                 // vars
-
                 $graduation-height: 1px;
                 $graduation-pos: absolute;
                 $graduation-transY: translateY(25%);
@@ -44,7 +42,6 @@
 
                 position: relative;
                 height: 10px;
-
 
                 &:not(:nth-child(5n)):not(:nth-child(2)):not(:nth-child(1)) {
                     &::after {

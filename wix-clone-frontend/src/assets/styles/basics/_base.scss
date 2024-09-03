@@ -9,6 +9,7 @@
 body {
     margin: 0;
     padding: 0;
+    overflow: hidden;
 }
 
 button {
@@ -21,7 +22,7 @@ input {
     &:focus {
         outline: none;
     }
-    
+
     &::-moz-selection {
         /* Code for Firefox */
         background: $clr12;
@@ -31,7 +32,3 @@ input {
         background: $clr12;
     }
 }
-
-
-
-

@@ -27,12 +27,13 @@ function DragResizeBox({
         boxOffsetLeft,
         boxOffsetTop
     }
+    
 }) {
     //states
     const [indicator, setIndicator] = useState(null);
 
     // context
-    const { setResizeAndDragHandler, setEndDragAndResizeHandler, editBoardRef, draggingInProggres } = useContext(EditBoardContext);
+    const { setResizeAndDragHandler, setEndDragAndResizeHandler, editBoardRef, draggingInProggres} = useContext(EditBoardContext);
 
     // References
     const initialPointerCoord = useRef(initialPointerCoords);
@@ -179,7 +180,6 @@ function DragResizeBox({
             {/* {indicator && } */}
             <Indicator indicator={indicator} />
             <div className="handler drag-resize-box" >
-
                 {/* grebber */}
                 < span className="handler grabber"
                     // containers

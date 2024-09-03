@@ -9,7 +9,8 @@
 
 
 
-
+// pages
+@import "pages/editor";
 
 // Components
 @import "cmps/BringThemHome";
@@ -18,6 +19,8 @@
 
 // Components - editor
 @import "editor/edit-board";
+@import "editor/left-edit-bar";
+@import "editor/top-edit-bar";
 @import "editor/drag-resize-box";
 @import "editor/edit-box";
 @import "editor/section";

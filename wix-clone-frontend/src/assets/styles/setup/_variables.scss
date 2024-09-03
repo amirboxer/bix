@@ -25,8 +25,16 @@ $clr24: #116dfe;
 $clr25: rgba(0, 0, 0, 0.644);
 $clr26: #a6b2bb;
 $clr27: #637487;
+$clr28: #222841;
+$clr29: #2d3034;
+$clr30: #ece8ff;
+
+
+
+$pageWidth :980px;
 
 :root {
-    --clr1: #6f56f9; // Use a CSS variable for the default color
-    --clr5: #d9d2ff; // Use a CSS variable for the default color
+    --clr1: #6f56f9; 
+    --clr5: #d9d2ff;
+    --left-panel-trans-time: 1s;
   }

@@ -8,8 +8,7 @@ import useResizeObserver from '../../../assets/observers/resizeObserver.js';
 import RulerGraduations from './RulerGraduations';
 import GuideLine from './GuideLine.jsx';
 
-function Ruler({ rightRulerlengthRef, rulerSide }) {
-
+function Ruler({ rightRulerlengthRef, rulerSide}) {
     // states
     const [padding, setPadding] = useState(0);
     const [guideLines, setGuideLines] = useState([]);

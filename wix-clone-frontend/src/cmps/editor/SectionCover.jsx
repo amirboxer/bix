@@ -45,7 +45,8 @@ function SectionCover({ setSectionHandlers, setAddSectionBtnHandlers, handleSect
     return (
         <div className={`section-cover section-layout ${sectionFocused ? 'focused' : 'blur-hover'}
          ${draggedOver ? draggedOver === sectionId ? 'dragged-over' : 'not-dragged-over' : ''}
-         ${lowerAddSectionButton + upperAddSectionButton}`}
+         ${lowerAddSectionButton + upperAddSectionButton}
+          ${sectionId}`}
         >
             {/* left deadzone */}
             <div className={`out-of-gridline left ${highlightDeadzones && 'intersecting'}`}></div>
@@ -67,10 +68,7 @@ function SectionCover({ setSectionHandlers, setAddSectionBtnHandlers, handleSect
             <div className={`out-of-gridline right ${highlightDeadzones && 'intersecting'}`}></div>
 
             {/* resize buttom*/}
-            <ResizeSection
-                sectionId={sectionId}
-                section={section}
-            />
+            <ResizeSection />
 
             {/* section name disply and option to change the name of the section */}
             <div className='wrapper'>
