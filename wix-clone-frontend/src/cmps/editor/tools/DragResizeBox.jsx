@@ -27,7 +27,7 @@ function DragResizeBox({
         boxOffsetLeft,
         boxOffsetTop
     }
-    
+
 }) {
     //states
     const [indicator, setIndicator] = useState(null);
@@ -152,7 +152,7 @@ function DragResizeBox({
     }
 
     function outOfGridlines() {
-        if (isoutOfGridlines()) {
+        if (isoutOfGridlines() && !isIntersecting.current) {
             const rect = editBoxRef.current;
             const intersectionEvent = new CustomEvent('elementsIntersect', {
                 detail: { top: rect.getBoundingClientRect().top, bottom: rect.getBoundingClientRect().bottom },

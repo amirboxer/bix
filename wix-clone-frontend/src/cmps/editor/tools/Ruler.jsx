@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 // observers
-import useResizeObserver from '../../../assets/observers/resizeObserver.js';
+import useResizeObserver from '../../../observers/resizeObserver.js';
 
 // cmp
 import RulerGraduations from './RulerGraduations';

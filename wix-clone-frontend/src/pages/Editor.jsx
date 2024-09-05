@@ -3,6 +3,8 @@ import EditBoard from "../cmps/editor/EditBoard";
 import LeftEditBar from "../cmps/editor/LeftEditBar";
 import TopEditBar from "../cmps/editor/TopEditBar.jsx";
 
+
+
 // react hooks
 import React, { useRef, createContext, useEffect, useState } from 'react';
 
@@ -13,18 +15,11 @@ function Editor() {
     // states
     const [zoomOutMode, setZoomOutMode] = useState(false);
 
-const edbref = useRef(null)
+    // reference
+    const editBoardRef = useRef(null);
 
     return (
-        <EditPageContext.Provider value={{ zoomOutMode, setZoomOutMode, edbref }}>
-            {zoomOutMode &&
-                // only in zoom out
-                <style>{`.page-sections {
-                             margin-top: 30px;
-                             transform: translateY(-25%) scale(0.5);
-                    }`} </style>
-            }
-
+        <EditPageContext.Provider value={{ zoomOutMode, setZoomOutMode, editBoardRef }}>
             <main className="editor">
                 <TopEditBar />
                 <LeftEditBar
@@ -32,7 +27,6 @@ const edbref = useRef(null)
                 <EditBoard
                     zoomOutMode={zoomOutMode} />
             </main>
-
         </EditPageContext.Provider>
     )
 }

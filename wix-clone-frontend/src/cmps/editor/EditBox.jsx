@@ -2,9 +2,9 @@
 import DragResizeBox from './tools/DragResizeBox';
 
 // react hooks
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo } from 'react';
 
-function EditBox({
+const EditBox = memo(function EditBox({
     id,
     secId,
     contentsRef,
@@ -92,6 +92,6 @@ function EditBox({
             </div>
         </>
     )
-}
+})
 
 export default EditBox

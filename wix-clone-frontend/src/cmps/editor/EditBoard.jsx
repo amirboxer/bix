@@ -3,7 +3,7 @@ import Section from './Section';
 import Ruler from './tools/Ruler';
 
 // react hooks
-import React, { useRef, createContext, useEffect, useState } from 'react';
+import React, { useRef, createContext, useEffect, useState, useContext } from 'react';
 
 // Context
 import { EditPageContext } from '../../pages/Editor';
@@ -14,62 +14,75 @@ import { utilService } from '../../services/util.service';
 const uId = utilService.uId;
 
 // observers
-import focusOnMount from '../../assets/observers/focusOnMount';
+import focusOnMount from '../../observers/focusOnMount';
+import observeAddSecPlaceholders from '../../observers/intersect';
 
-function EditBoard({zoomOutMode}) {
-
-    const sectionsRef = useRef({
-        [uId('sec')]: { order: 0, height: 400, name: 'Sandom1', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } } },
-        [uId('sec')]: { order: 1, height: 500, name: 'Sandom2', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
-        [uId('sec')]: { order: 2, height: 500, name: 'Sandom3', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
-        [uId('sec')]: { order: 3, height: 500, name: 'Sandom4', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
-        [uId('sec')]: { order: 4, height: 500, name: 'Sandom4', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
-        [uId('sec')]: { order: 5, height: 500, name: 'Sandom4', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
-        [uId('sec')]: { order: 6, height: 300, name: 'Sandom4', elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
-    });
+function EditBoard({ zoomOutMode }) {
 
     // states
-    const [initialNewSectionPick, setInitialNewSectionPick] = useState(false);
+    const [pageSections, setPageSections] = useState({
+        [uId('sec')]: { name: 'Sandom1', order: 0, height: 400, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } } },
+        [uId('sec')]: { name: 'Sandom2', order: 1, height: 500, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
+        [uId('sec')]: { name: 'Sandom3', order: 2, height: 500, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
+        [uId('sec')]: { name: 'Sandom4', order: 3, height: 500, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
+        [uId('sec')]: { name: 'Sandom5', order: 4, height: 500, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
+        [uId('sec')]: { name: 'Sandom6', order: 5, height: 500, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
+        [uId('sec')]: { name: 'Sandom7', order: 6, height: 300, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
+    })
+
+    const [initialNewSectionPick, setInitialNewSectionPick] = useState(null);
 
     // context
-    const { edbref } = useContext(EditPageContext);
-
+    const { editBoardRef } = useContext(EditPageContext);
 
     // references
-    const sectionsHandlers = useRef({}); // handlers for section chnages
-    const editBoardRef = useRef(null); // Ref to the main editing board element for direct DOM manipulations.
     const sectionsContainerRef = useRef(null) // div containing all the page
     const draggingInProggres = useRef(false) // draggning elements
     const handleElDragAndResize = useRef(null); // Ref to the function handling pointer move events.
     const handleEndDragAndResize = useRef(null); // Ref to the function handling pointer up events.
+    const placeHolderObserver = useRef(null)
 
     // useEffects
-
-    // todo outsource
     useEffect(() => {
-        if (zoomOutMode === 'add-section') { observeElementVisibility(editBoardRef.current, initialNewSectionPick); }
+        if (zoomOutMode === 'add-section') {
+            placeHolderObserver.current.startObserving('.add-section-placeholder-container', initialNewSectionPick);
+            setInitialNewSectionPick(null);
+        }
+        if (zoomOutMode === 'end-add-section') {
+            placeHolderObserver.current.unboserveAll();
+        }
     }, [zoomOutMode])
 
     useEffect(() => {
         function onElementsIntersect() {
-            Object.entries(sectionsHandlers.current).map(([_, handlers], __) => {
-                handlers.setHighlightDeadzones(true);
-            })
+            setPageSections(prev =>
+                Object.entries(prev).reduce((updatedSections, [sectionId, section]) => {
+                    updatedSections[sectionId] = { ...section, highlightDeadzones: true };
+                    return updatedSections;
+                }, {})
+            );
         }
 
         function onElementsStopIntersect() {
-            Object.entries(sectionsHandlers.current).map(([_, handlers], __) => {
-                handlers.setHighlightDeadzones(false);
-            })
+            setPageSections(prev =>
+                Object.entries(prev).reduce((updatedSections, [sectionId, section]) => {
+                    updatedSections[sectionId] = { ...section, highlightDeadzones: false };
+                    return updatedSections;
+                }, {})
+            );
         }
 
         editBoardRef.current.addEventListener('elementsIntersect', onElementsIntersect);
         editBoardRef.current.addEventListener('elementsStopIntersect', onElementsStopIntersect);
+        placeHolderObserver.current = observeAddSecPlaceholders(editBoardRef.current);
 
         return () => {
             editBoardRef.current.removeEventListener('elementsIntersect', onElementsIntersect);
             editBoardRef.current.removeEventListener('elementsStopIntersect', onElementsStopIntersect);
+            placeHolderObserver.current.unboserveAll(true);
         }
+
+
     }, []);
 
     // Event handlers
@@ -77,12 +90,21 @@ function EditBoard({zoomOutMode}) {
         // handle resizing and dragging
         if (handleElDragAndResize.current) handleElDragAndResize.current(e);
 
-        const originalSecId = e.target.dataset.secId; // id of the original section
+        // id of the original section
+        const originalSecId = e.target.dataset.secId;
+
         // alert user if element is  being dragged out of it's original section
         if (draggingInProggres.current && originalSecId) {
-            const sectionId = getSectionIdByRange(e.nativeEvent.y); // current section id of the element after moving
+            // current section id of the element after moving
+            const currentlyDraggedOver = getSectionIdByRange(e.clientY);
+
             // check if element is in the realm of a different section after moving
-            Object.entries(sectionsHandlers.current).forEach(([_, handlers], __) => handlers.setDraggedOver(sectionId))
+            setPageSections(prev =>
+                Object.entries(prev).reduce((updatedSections, [sectionId, section]) => {
+                    updatedSections[sectionId] = { ...section, isDraggedOver: currentlyDraggedOver };
+                    return updatedSections;
+                }, {})
+            );
         }
     }
 
@@ -91,47 +113,56 @@ function EditBoard({zoomOutMode}) {
         const elId = e.target.dataset.elId;
 
         if (originalSecId) {
-            if (draggingInProggres.current) {
-                // update sections refernce
-                const [width, height, osl, ost] = [+e.target.dataset.width, +e.target.dataset.height, +e.target.dataset.offsetleft, +e.target.dataset.offsettop];
-                sectionsRef.current[originalSecId].elements[elId] = { ...sectionsRef.current[originalSecId].elements[elId], width: width, height: height, offsetX: osl, offsetY: ost }
+            // if element was dreagged out of section, id would be different
+            const currentSectionId = getSectionIdByRange(e.clientY);
 
-                // update general sections reference
-                const currentSectionId = getSectionIdByRange(e.clientY);   // current section id of the element after moving
-                const currSectionHandlers = sectionsHandlers.current[currentSectionId];   // handlers of current section after moving
-                Object.entries(sectionsHandlers.current).forEach(([_, handlers], __) => handlers.setDraggedOver(null));
+            if (draggingInProggres.current) {
+                // update sections state
+                const [width, height, osl, ost] = [+e.target.dataset.width, +e.target.dataset.height, +e.target.dataset.offsetleft, +e.target.dataset.offsettop];
+                const updatedEl = { ...pageSections[originalSecId].elements[elId], width: width, height: height, offsetX: osl, offsetY: ost };
+                setPageSections(prev =>
+                    Object.entries(prev).reduce((updatedSections, [sectionId, section]) => {
+                        if (sectionId === originalSecId) {
+                            updatedSections[sectionId] = { ...section, elements: { ...section.elements, [elId]: updatedEl } };
+                        } else {
+                            updatedSections[sectionId] = section;
+                        }
+                        return updatedSections;
+                    }, {})
+                );
 
                 // check if element is in the realm of a different section after moving, if so register the change
                 if (currentSectionId != originalSecId) {
-                    // element with updated properties updated 
-                    let el = sectionsRef.current[originalSecId].elements[elId];
-
                     // calc new position
-                    const distanceFromTop = e.target.getBoundingClientRect().top - currSectionHandlers.getSectionRef().getBoundingClientRect().top;
+                    const distanceFromTop = e.target.getBoundingClientRect().top - pageSections[currentSectionId].sectionRef.getBoundingClientRect().top;
 
                     // attach to section currently being hovered
-                    currSectionHandlers.setSectionProperties(prev => {
-                        const upadatedSection = { ...prev, elements: { ...prev.elements, [elId]: { ...el, offsetX: osl, offsetY: distanceFromTop } } };
-                        sectionsRef.current[currentSectionId] = upadatedSection; // update data structure
-                        return upadatedSection;  // update section state
-                    });
+                    const udsec = { ...pageSections[currentSectionId], elements: { ...pageSections[currentSectionId].elements, [elId]: { ...updatedEl, offsetX: osl, offsetY: distanceFromTop } } }
+                    setPageSections(prev => ({ ...prev, [currentSectionId]: udsec }))
 
                     // next two lines : remove focus from current section
-                    sectionsHandlers.current[originalSecId].getSectionRef().focus({ preventScroll: true });
-                    sectionsHandlers.current[originalSecId].getSectionRef().blur();
+                    pageSections[originalSecId].sectionRef.focus({ preventScroll: true });
+                    pageSections[originalSecId].sectionRef.blur();
 
                     // delete from previous section
-                    sectionsHandlers.current[originalSecId].setSectionProperties(prev => {
-                        const { [elId]: _, ...remainingElements } = prev.elements;
-                        const upadatedSection = { ...prev, elements: remainingElements };
-                        sectionsRef.current[originalSecId] = upadatedSection; // update data structure
-                        return upadatedSection   // update section state
-                    });
+                    setPageSections(prev => {
+                        const { [elId]: _, ...remainingElements } = prev[originalSecId].elements;
+                        const upadatedSection = { ...prev[originalSecId], elements: remainingElements };
+                        return { ...prev, [originalSecId]: upadatedSection }
+                    })
 
                     // set focus on new focus and the elements that moced into it
-                    focusOnMount(currSectionHandlers.getSectionRef(), elId);
+                    focusOnMount(pageSections[currentSectionId].sectionRef, elId);
                 }
             }
+
+            // cancle dragging for all section covers
+            setPageSections(prev =>
+                Object.entries(prev).reduce((updatedSections, [sectionId, section]) => {
+                    updatedSections[sectionId] = { ...section, isDraggedOver: false };
+                    return updatedSections;
+                }, {})
+            );
         }
 
         // end dragging and resizing of element on board
@@ -147,27 +178,31 @@ function EditBoard({zoomOutMode}) {
         handleEndDragAndResize.current = handler;
     }
 
-    function setSectionHandlers(handelrs, secId) {
-        sectionsHandlers.current[secId] = { ...sectionsHandlers.current[secId], ...handelrs };
-    }
-
-    // function
     function getSectionIdByRange(y) {
-        return Object.entries(sectionsHandlers.current).find(([_, handlers], __) => {
-            const sectionRect = handlers.getSectionRef().getBoundingClientRect();
+        return Object.entries(pageSections).find(([_, section], __) => {
+            const sectionRect = section.sectionRef.getBoundingClientRect();
             return (sectionRect.top <= y && y < sectionRect.bottom);
         })[0]
     }
 
     return (
-        <EditBoardContext.Provider value={{ setResizeAndDragHandler, setEndDragAndResizeHandler, setInitialNewSectionPick, editBoardRef, draggingInProggres, sectionsHandlers, sectionsRef }}>
+        <EditBoardContext.Provider value={{ setResizeAndDragHandler, setEndDragAndResizeHandler, setInitialNewSectionPick, setPageSections, editBoardRef, draggingInProggres }}>
+            {zoomOutMode === 'add-section' &&
+                // only in zoom out
+                <style>{`.page-sections {
+                             margin-top: 30px;
+                             width: calc(100% + 30%) !important;
+                             transform: translateY(-25%) scale(0.5) translateX(-23%);
+        
+                    }`} </style>
+            }
             <section className="edit-board"
                 onPointerMove={onPointerMove}
                 onPointerUp={onPointerUp}
                 ref={editBoardRef}
             >
                 {/* right side ruler */}
-                {!zoomOutMode &&
+                {zoomOutMode != 'add-section' &&
                     <Ruler
                         rightRulerlengthRef={sectionsContainerRef}
                         rulerSide="right"
@@ -180,12 +215,12 @@ function EditBoard({zoomOutMode}) {
                     ref={sectionsContainerRef}
                 >
                     {/* top side ruler */}
-                    {!zoomOutMode &&
+                    {zoomOutMode  != 'add-section' &&
                         <Ruler rulerSide="top" />
                     }
 
                     {/* setions */}
-                    {Object.entries(sectionsRef.current).map(([sectionId, section], idx) =>
+                    {Object.entries(pageSections).map(([sectionId, section], idx) =>
                         <React.Fragment key={sectionId}>
 
                             {/* place-holders for adding new sections */}
@@ -207,87 +242,16 @@ function EditBoard({zoomOutMode}) {
 
                             {/* section */}
                             <Section
-                                setSectionHandlers={setSectionHandlers}
                                 section={section}
                                 sectionId={sectionId}
+                                setPageSections={setPageSections}
                             />
                         </React.Fragment>)}
                 </div>
             </section>
+
         </EditBoardContext.Provider>
     )
 }
 
 export default EditBoard;
-
-
-
-function observeElementVisibility(root, sectionId, delay = 2000, options = {
-    root: root,
-    rootMargin: '0px 0px 0px 0px',
-    threshold: 0,
-}) {
-    // Object to keep track of currently visible elements
-    const visibleElements = {};
-
-    // if user clicked 'add section' focus on that first place holder in the beggining
-
-
-    setTimeout(() => {
-        if (sectionId) {
-            const el = document.getElementById(sectionId);
-            visibleElements[sectionId] = el;
-            el.style.height = "fit-content";
-            el.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-    }, 1000)
-
-    setTimeout(() =>
-        // Update the closest element to the center on scroll
-        root.addEventListener("scroll", () => {
-            Object.values(visibleElements).reduce((closestToCenter, currentElement) => {
-
-                const centerOfRoot = root.clientHeight / 2 + root.getBoundingClientRect().top;
-                const distanceFromCenter = Math.min(
-                    Math.abs(centerOfRoot - currentElement.getBoundingClientRect().top),
-                    Math.abs(centerOfRoot - currentElement.getBoundingClientRect().bottom)
-                );
-
-                // Update the closest element if the current element is closer
-                if (distanceFromCenter < closestToCenter[0]) {
-                    currentElement.style.height = "fit-content";
-
-                    if (closestToCenter[1]) {
-                        // Reset the previous closest element
-                        closestToCenter[1].style.height = "";
-                    }
-
-                    return [distanceFromCenter, currentElement];
-                } else {
-                    // Reset the current element if it is not the closest
-                    currentElement.style.height = "";
-                    return closestToCenter;
-                }
-            }, [Infinity, null]);
-        }), Math.max(2000, delay))
-
-    // Callback function for IntersectionObserver
-    const intersectionCallback = (entries) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                visibleElements[entry.target.id] = entry.target;
-            } else {
-                entry.target.style.height = "";
-                delete visibleElements[entry.target.id];
-            }
-        });
-    };
-
-    // Create IntersectionObserver instance
-    const observer = new IntersectionObserver(intersectionCallback, options);
-
-    // Observe elements with the specified class
-    document.querySelectorAll('.add-section-placeholder-container').forEach(element => {
-        observer.observe(element);
-    });
-}

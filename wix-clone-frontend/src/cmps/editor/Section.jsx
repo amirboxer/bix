@@ -1,5 +1,5 @@
 // react hooks
-import { useState, useRef, createContext, memo, useEffect } from 'react';
+import { useRef, createContext, memo, useEffect, useCallback } from 'react';
 
 // Context
 export const sectionContext = createContext();
@@ -10,13 +10,9 @@ import EditBox from './EditBox';
 
 // services
 import { utilService } from '../../services/util.service';
+const throttle = utilService.throttle;
 
-function Section({ section, sectionId, setSectionHandlers }) {
-
-    // states
-    const [sectionProperties, setSectionProperties] = useState(section)
-    // console.log(section.name);
-
+const Section = memo(function Section({ section, sectionId, setPageSections }) {
     // referances
     const sectionFocused = useRef(null);
     const sectionRef = useRef(null);
@@ -26,19 +22,12 @@ function Section({ section, sectionId, setSectionHandlers }) {
 
     //useEffect
     useEffect(() => {
-        setSectionHandlers({
-            setSectionProperties: setSectionProperties,
-            getSectionProperties: () => sectionProperties,
-            getSectionRef: () => sectionRef.current,
-        }, sectionId);
-
-        return () => null
-    }, [sectionProperties])
+        setPageSections(prev => ({ ...prev, [sectionId]: { ...prev[sectionId], sectionRef: sectionRef.current } }))
+    }, [])
 
     // event handlers
     function onFocus() {
-        sectionFocused.current
-            && sectionFocused.current(true);
+        sectionFocused.current && sectionFocused.current(true);
     }
 
     function onBlur(e) {
@@ -48,7 +37,7 @@ function Section({ section, sectionId, setSectionHandlers }) {
     }
 
     // showing / unshowing add section button
-    const onPointerMove = utilService.throttle((e) => {
+    const onPointerMove = throttle((e) => {
         const bounds = sectionRef.current.getBoundingClientRect();
         const ybottom = bounds.bottom - e.clientY;
         const yTop = e.clientY - bounds.top;
@@ -58,20 +47,23 @@ function Section({ section, sectionId, setSectionHandlers }) {
     }, 150);
 
     // pass-downs callback functions
-    function handleSectionFocus(handler) {
-        sectionFocused.current = handler;
-    }
+    const handleSectionFocus = useCallback(
+        function handleSectionFocus(handler) {
+            sectionFocused.current = handler;
+        }, [sectionFocused.current]);
 
-    function setAddSectionBtnHandlers(h1, h2) {
-        showLowerAddSectionButton.current = h1;
-        showUpperAddSectionButton.current = h2;
-    }
+
+    const setAddSectionBtnHandlers = useCallback(
+        function setAddSectionBtnHandlers(h1, h2) {
+            showLowerAddSectionButton.current = h1;
+            showUpperAddSectionButton.current = h2;
+        }, [showLowerAddSectionButton.current, showUpperAddSectionButton.current]);
 
     return (
-        <sectionContext.Provider value={{ setSectionProperties, sectionId }}>
+        <sectionContext.Provider value={{ sectionId }}>
             <section
                 // style
-                style={{ height: sectionProperties.height }}
+                style={{ height: section.height }}
 
                 // event handlers
                 onFocus={onFocus}
@@ -80,7 +72,7 @@ function Section({ section, sectionId, setSectionHandlers }) {
 
                 // DOM reference
                 ref={sectionRef}
-                className={`section section-layout ${!sectionProperties.order ? 'first' : ''}`}
+                className={`section section-layout ${!section.order ? 'first' : ''}`}
                 tabIndex={0}
                 id={sectionId}
             >
@@ -91,7 +83,7 @@ function Section({ section, sectionId, setSectionHandlers }) {
                         className="grid-center"
                         ref={contentsRef}
                     >
-                        {Object.entries(sectionProperties.elements).map(([id, element], _) =>
+                        {Object.entries(section.elements).map(([id, element], _) =>
                             <EditBox
                                 key={id}
                                 id={id}
@@ -108,14 +100,15 @@ function Section({ section, sectionId, setSectionHandlers }) {
 
                 {/* cover - not in grid*/}
                 < SectionCover
-                    setSectionHandlers={setSectionHandlers}
                     setAddSectionBtnHandlers={setAddSectionBtnHandlers}
                     handleSectionFocus={handleSectionFocus}
-                    section={sectionProperties}
+                    isDraggedOver={section.isDraggedOver}
+                    highlightDeadzones={section.highlightDeadzones}
+                    name={section.name}
                     sectionId={sectionId}
                 />
             </section>
         </sectionContext.Provider>
     )
-}
+})
 export default Section

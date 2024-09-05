@@ -1,11 +1,10 @@
 // contexts
-import { sectionContext } from './Section';
 import { EditBoardContext } from './EditBoard';
 
 //react hooks
 import { useRef, useContext, useState } from 'react';
 
-function ResizeSection() {
+function ResizeSection({ sectionId }) {
     // states
     const [resizingInProggress, setResizingInProggress] = useState()
 
@@ -13,19 +12,14 @@ function ResizeSection() {
     const ref = useRef(null);
 
     // from contexts
-    const { setSectionProperties, sectionId } = useContext(sectionContext);
-    const { sectionsRef } = useContext(EditBoardContext);
+    const { setPageSections } = useContext(EditBoardContext);
 
     function onDoubleClick() {
-        const elements = sectionsRef.current[sectionId].elements;
-        const updatedHeight = Object.values(elements).reduce((maxval, element) => {
-            return Math.max(element.offsetY + element.height, maxval);
-        }, 30);
-
-        setSectionProperties(prev => {
-            const updatedSection = { ...prev, height: updatedHeight }
-            sectionsRef.current[sectionId] = updatedSection;
-            return updatedSection;
+        setPageSections(prev => {
+            const updatedHeight = Object.values(prev[sectionId].elements).reduce((maxval, element) => {
+                return Math.max(element.offsetY + element.height, maxval);
+            }, 30);
+            return { ...prev, [sectionId]: { ...prev[sectionId], height: updatedHeight } }
         })
     }
 
@@ -43,11 +37,8 @@ function ResizeSection() {
 
             document.body.style = 'cursor: move';
             ref.current.style = 'cursor: move';
-            setSectionProperties(prev => {
-                const updatedSection = { ...prev, height: prev.height + diff }
-                sectionsRef.current[sectionId] = updatedSection;
-                return updatedSection;
-            })
+
+            setPageSections(prev => ({ ...prev, [sectionId]: { ...prev[sectionId], height: prev[sectionId].height + diff } }))
         }
 
         // add event to body to start draging

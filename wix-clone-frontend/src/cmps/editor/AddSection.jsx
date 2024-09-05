@@ -1,15 +1,14 @@
+
 // react hooks
 import { useContext } from 'react';
 
 // contexts
-import { sectionContext } from './Section';
 import { EditBoardContext } from './EditBoard';
 import { EditPageContext } from '../../pages/Editor';
 
-function AddSection() {
+function AddSection({sectionId}) {
     // from contexts
     const { setInitialNewSectionPick } = useContext(EditBoardContext);
-    const { sectionId } = useContext(sectionContext);
     const { setZoomOutMode } = useContext(EditPageContext);
 
     function onClick(id) {

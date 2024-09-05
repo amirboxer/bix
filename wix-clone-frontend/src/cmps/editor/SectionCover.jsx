@@ -4,15 +4,13 @@ import ResizeSection from './ResizeSection';
 import AddSection from './AddSection';
 
 //react hooks
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, memo } from 'react';
 
-function SectionCover({ setSectionHandlers, setAddSectionBtnHandlers, handleSectionFocus, section, sectionId }) {
+const SectionCover = memo(function SectionCover({ setAddSectionBtnHandlers, handleSectionFocus, isDraggedOver, highlightDeadzones, name, sectionId }) {
     //states    
     const [sectionFocused, setSectionFocused] = useState(false);
     const [sectionNameTagWidth, setSectionNameTagWidth] = useState(null);
-    const [currName, setCurrName] = useState(section.name);
-    const [draggedOver, setDraggedOver] = useState(null);
-    const [highlightDeadzones, setHighlightDeadzones] = useState(false);
+    const [currName, setCurrName] = useState(name);
     const [lowerAddSectionButton, setLowerAddSectionButton] = useState('');
     const [upperAddSectionButton, setUpperAddSectionButton] = useState('');
 
@@ -22,12 +20,7 @@ function SectionCover({ setSectionHandlers, setAddSectionBtnHandlers, handleSect
 
     useEffect(() => {
         handleSectionFocus(setSectionFocused);
-        setSectionHandlers({
-            setDraggedOver: setDraggedOver,
-            setHighlightDeadzones: setHighlightDeadzones,
-        }, sectionId);
         setAddSectionBtnHandlers(setLowerAddSectionButton, setUpperAddSectionButton);
-
         return () => {
             handleSectionFocus(null);
         }
@@ -43,10 +36,10 @@ function SectionCover({ setSectionHandlers, setAddSectionBtnHandlers, handleSect
     }
 
     return (
-        <div className={`section-cover section-layout ${sectionFocused ? 'focused' : 'blur-hover'}
-         ${draggedOver ? draggedOver === sectionId ? 'dragged-over' : 'not-dragged-over' : ''}
-         ${lowerAddSectionButton + upperAddSectionButton}
-          ${sectionId}`}
+        <div className={`section-cover section-layout
+            ${sectionFocused ? 'focused' : 'blur-hover'}
+            ${isDraggedOver ? isDraggedOver === sectionId ? 'dragged-over' : 'not-dragged-over' : ''}
+            ${lowerAddSectionButton + upperAddSectionButton} ${sectionId}`}
         >
             {/* left deadzone */}
             <div className={`out-of-gridline left ${highlightDeadzones && 'intersecting'}`}></div>
@@ -56,9 +49,8 @@ function SectionCover({ setSectionHandlers, setAddSectionBtnHandlers, handleSect
                 {/* center of section marked by dootted lines */}
                 <span className="gridline left"></span>
 
-                {/* {draggedOver && draggedOver != sectionId && */}
                 <div className="attach-to-section">
-                    <span className='inner-sign'>Attach to Section ({`${section.name}`})</span>
+                    <span className='inner-sign'>Attach to Section ({`${name}`})</span>
                 </div>
                 {/* } */}
                 <span className="gridline right"></span>
@@ -68,7 +60,7 @@ function SectionCover({ setSectionHandlers, setAddSectionBtnHandlers, handleSect
             <div className={`out-of-gridline right ${highlightDeadzones && 'intersecting'}`}></div>
 
             {/* resize buttom*/}
-            <ResizeSection />
+            <ResizeSection sectionId={sectionId} />
 
             {/* section name disply and option to change the name of the section */}
             <div className='wrapper'>
@@ -104,9 +96,9 @@ function SectionCover({ setSectionHandlers, setAddSectionBtnHandlers, handleSect
             </div>
 
             {/* add new section button */}
-            <AddSection />
+            <AddSection sectionId={sectionId}/>
         </div >
     )
-}
+})
 
 export default SectionCover;
