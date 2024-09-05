@@ -3,17 +3,15 @@
 import { useContext } from 'react';
 
 // contexts
-import { EditBoardContext } from './EditBoard';
 import { EditPageContext } from '../../pages/Editor';
 
 function AddSection({sectionId}) {
     // from contexts
-    const { setInitialNewSectionPick } = useContext(EditBoardContext);
-    const { setZoomOutMode } = useContext(EditPageContext);
+    const { setZoomOutMode, selectedPlaceholderToFill } = useContext(EditPageContext);
 
     function onClick(id) {
-        setInitialNewSectionPick(id)
-        setZoomOutMode('add-section')
+        selectedPlaceholderToFill.current = id;
+        setZoomOutMode('add-section');
     }
     return (
         <button

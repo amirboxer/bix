@@ -16,10 +16,13 @@
         }
 
         &.section:has(.show-lower-add-section-button) {
-            &+.section {
-                .add-section-button {
-                    display: initial;
-                    pointer-events: auto;
+
+            &+.add-section-placeholder-container{
+                &+.section {
+                    .add-section-button {
+                        display: initial;
+                        pointer-events: auto;
+                    }
                 }
             }
         }

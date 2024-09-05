@@ -25,12 +25,14 @@
                 position: relative;
                 height: var(--icon-radious);
                 width: var(--icon-radious);
-
-                .add-section {
-                    position: relative;
+                
+                button{
                     height: 100%;
                     width: 100%;
                     border-radius: 100%;
+
+                }
+                .add-section {
 
                     display: flex;
                     flex-direction: column;
@@ -130,6 +132,8 @@
         transition: max-width var(--left-panel-trans-time) linear;
     }
 }
+
+// animtion for add section button
 
 @keyframes middle {
     from {

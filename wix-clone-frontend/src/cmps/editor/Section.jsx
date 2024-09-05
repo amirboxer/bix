@@ -41,7 +41,6 @@ const Section = memo(function Section({ section, sectionId, setPageSections }) {
         const bounds = sectionRef.current.getBoundingClientRect();
         const ybottom = bounds.bottom - e.clientY;
         const yTop = e.clientY - bounds.top;
-
         ybottom < 70 ? showLowerAddSectionButton.current('show-lower-add-section-button') : showLowerAddSectionButton.current('');
         yTop < 70 ? showUpperAddSectionButton.current('show-upper-add-section-button') : showUpperAddSectionButton.current('');
     }, 150);

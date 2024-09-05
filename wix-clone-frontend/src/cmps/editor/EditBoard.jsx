@@ -3,15 +3,11 @@ import Section from './Section';
 import Ruler from './tools/Ruler';
 
 // react hooks
-import React, { useRef, createContext, useEffect, useState, useContext } from 'react';
+import React, { useRef, createContext, useEffect, useContext } from 'react';
 
 // Context
 import { EditPageContext } from '../../pages/Editor';
 export const EditBoardContext = createContext();
-
-// services
-import { utilService } from '../../services/util.service';
-const uId = utilService.uId;
 
 // observers
 import focusOnMount from '../../observers/focusOnMount';
@@ -19,37 +15,24 @@ import observeAddSecPlaceholders from '../../observers/intersect';
 
 function EditBoard({ zoomOutMode }) {
 
-    // states
-    const [pageSections, setPageSections] = useState({
-        [uId('sec')]: { name: 'Sandom1', order: 0, height: 400, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } } },
-        [uId('sec')]: { name: 'Sandom2', order: 1, height: 500, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
-        [uId('sec')]: { name: 'Sandom3', order: 2, height: 500, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
-        [uId('sec')]: { name: 'Sandom4', order: 3, height: 500, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
-        [uId('sec')]: { name: 'Sandom5', order: 4, height: 500, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
-        [uId('sec')]: { name: 'Sandom6', order: 5, height: 500, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
-        [uId('sec')]: { name: 'Sandom7', order: 6, height: 300, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
-    })
-
-    const [initialNewSectionPick, setInitialNewSectionPick] = useState(null);
-
     // context
-    const { editBoardRef } = useContext(EditPageContext);
+    const { editBoardRef, selectedPlaceholderToFill, pageSections, setPageSections } = useContext(EditPageContext);
 
     // references
     const sectionsContainerRef = useRef(null) // div containing all the page
     const draggingInProggres = useRef(false) // draggning elements
     const handleElDragAndResize = useRef(null); // Ref to the function handling pointer move events.
     const handleEndDragAndResize = useRef(null); // Ref to the function handling pointer up events.
-    const placeHolderObserver = useRef(null)
+    const placeHolderObserver = useRef(null);
 
     // useEffects
     useEffect(() => {
         if (zoomOutMode === 'add-section') {
-            placeHolderObserver.current.startObserving('.add-section-placeholder-container', initialNewSectionPick);
-            setInitialNewSectionPick(null);
+            placeHolderObserver.current.startObserving('.add-section-placeholder-container', selectedPlaceholderToFill.current);
         }
         if (zoomOutMode === 'end-add-section') {
             placeHolderObserver.current.unboserveAll();
+            selectedPlaceholderToFill.current = null;
         }
     }, [zoomOutMode])
 
@@ -74,7 +57,7 @@ function EditBoard({ zoomOutMode }) {
 
         editBoardRef.current.addEventListener('elementsIntersect', onElementsIntersect);
         editBoardRef.current.addEventListener('elementsStopIntersect', onElementsStopIntersect);
-        placeHolderObserver.current = observeAddSecPlaceholders(editBoardRef.current);
+        placeHolderObserver.current = observeAddSecPlaceholders(editBoardRef.current, (el) => selectedPlaceholderToFill.current = el);
 
         return () => {
             editBoardRef.current.removeEventListener('elementsIntersect', onElementsIntersect);
@@ -178,6 +161,8 @@ function EditBoard({ zoomOutMode }) {
         handleEndDragAndResize.current = handler;
     }
 
+
+    //functions
     function getSectionIdByRange(y) {
         return Object.entries(pageSections).find(([_, section], __) => {
             const sectionRect = section.sectionRef.getBoundingClientRect();
@@ -186,7 +171,7 @@ function EditBoard({ zoomOutMode }) {
     }
 
     return (
-        <EditBoardContext.Provider value={{ setResizeAndDragHandler, setEndDragAndResizeHandler, setInitialNewSectionPick, setPageSections, editBoardRef, draggingInProggres }}>
+        <EditBoardContext.Provider value={{ setResizeAndDragHandler, setEndDragAndResizeHandler, setPageSections, editBoardRef, draggingInProggres }}>
             {zoomOutMode === 'add-section' &&
                 // only in zoom out
                 <style>{`.page-sections {
@@ -215,12 +200,12 @@ function EditBoard({ zoomOutMode }) {
                     ref={sectionsContainerRef}
                 >
                     {/* top side ruler */}
-                    {zoomOutMode  != 'add-section' &&
+                    {zoomOutMode != 'add-section' &&
                         <Ruler rulerSide="top" />
                     }
 
                     {/* setions */}
-                    {Object.entries(pageSections).map(([sectionId, section], idx) =>
+                    {Object.entries(pageSections).sort((a, b) => a[1].order - b[1].order).map(([sectionId, section], idx) =>
                         <React.Fragment key={sectionId}>
 
                             {/* place-holders for adding new sections */}
@@ -228,6 +213,7 @@ function EditBoard({ zoomOutMode }) {
                                 <div
                                     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1 remove idx later
                                     id={'newSec' + sectionId}
+                                    data-order={idx}
                                     className='add-section-placeholder-container'
                                 >
                                     <div

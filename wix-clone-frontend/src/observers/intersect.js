@@ -1,11 +1,9 @@
-function observeAddSecPlaceholders(root, delay = 2000, options = {
+function observeAddSecPlaceholders(root,markSectionPlaceholder, delay = 2500, options = {
     root: root,
     rootMargin: '0px 0px 0px 0px',
     threshold: 0,
 }) {
-
     let elsToObserve = null;
-    console.log('hererer');
     
     // Object to keep track of currently visible elements
     let visibleElements = {};
@@ -34,6 +32,7 @@ function observeAddSecPlaceholders(root, delay = 2000, options = {
             // Update the closest element if the current element is closer
             if (distanceFromCenter < closestToCenter[0]) {
                 currentElement.style.height = "fit-content";
+                markSectionPlaceholder(currentElement);
                 
                 if (closestToCenter[1]) {
                     // Reset the previous closest element
@@ -68,7 +67,8 @@ function observeAddSecPlaceholders(root, delay = 2000, options = {
             // if user clicked 'add section' focus on that first place holder in the beggining
             setTimeout(() => {
                 if (sectionId) {
-                    const el = document.getElementById(sectionId);
+                    const el = Array.from(elsToObserve).find(el => el.id  === sectionId); 
+                    markSectionPlaceholder(el);
                     visibleElements[sectionId] = el;
                     el.style.height = "fit-content";
                     el.scrollIntoView({ behavior: "smooth", block: "center" });
