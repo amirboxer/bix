@@ -29,11 +29,26 @@ function DragResizeBox({
     }
 
 }) {
+
+    // const [sss, setsss] = useState({ 1: { 1: 1 }, 2: { 2: 2 }, 3: { 3: 3 }, 4: { 4: 4 } })
+    // setsss(prev =>
+    //     Object.entries(prev).reduce((acc, [id, el]) => {
+    //         if (id === 2) {
+    //             acc[id] = {22: 22};
+    //         }
+    //         else acc[id] = prev[id]
+    //         return acc;
+    //     }, {})
+    // );
+
+    // setsss(prev => {
+
+    // })
     //states
     const [indicator, setIndicator] = useState(null);
 
     // context
-    const { setResizeAndDragHandler, setEndDragAndResizeHandler, editBoardRef, draggingInProggres} = useContext(EditBoardContext);
+    const { setResizeAndDragHandler, setEndDragAndResizeHandler, editBoardRef, draggingInProggres } = useContext(EditBoardContext);
 
     // References
     const initialPointerCoord = useRef(initialPointerCoords);
@@ -131,7 +146,7 @@ function DragResizeBox({
         setBoxOffsetTop(prev => prev + deltaY);
 
         // set Indicator info
-        setIndicator({ type: 'dragging', leftVal: Math.round(editBoxRef.current.offsetLeft + deltaX), rightVal: Math.round(window.scrollY + editBoxRef.current.getBoundingClientRect().top - editBoardRef.current.offsetTop) });
+        setIndicator({ type: 'dragging', leftVal: Math.round(editBoxRef.current.offsetLeft + deltaX), rightVal: Math.round(editBoardRef.current.scrollTop + editBoxRef.current.getBoundingClientRect().top - editBoardRef.current.offsetTop) });
     }
 
     // Adjust offset for left
@@ -179,6 +194,7 @@ function DragResizeBox({
         <>
             {/* {indicator && } */}
             <Indicator indicator={indicator} />
+
             <div className="handler drag-resize-box" >
                 {/* grebber */}
                 < span className="handler grabber"

@@ -38,6 +38,7 @@ const Section = memo(function Section({ section, sectionId, setPageSections }) {
 
     // showing / unshowing add section button
     const onPointerMove = throttle((e) => {
+        if (!showLowerAddSectionButton.current || !showUpperAddSectionButton.current) return
         const bounds = sectionRef.current.getBoundingClientRect();
         const ybottom = bounds.bottom - e.clientY;
         const yTop = e.clientY - bounds.top;

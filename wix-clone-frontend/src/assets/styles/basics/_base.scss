@@ -3,8 +3,12 @@
     padding: 0;
     margin: 0;
     line-height: 1;
+    font-family: sans-serif;
 }
 
+ul {
+    list-style-type: none;
+}
 
 body {
     margin: 0;
@@ -31,4 +35,19 @@ input {
     &::selection {
         background: $clr12;
     }
+}
+
+.exit-button {
+    display: flex;
+    justify-content: center;
+    border-radius: 1000%;
+    height: max-content;
+    width: fit-content;
+    padding: 2px;
+    margin: 0;
+
+    &:hover {
+        background-color: $clr19;
+    }
+
 }

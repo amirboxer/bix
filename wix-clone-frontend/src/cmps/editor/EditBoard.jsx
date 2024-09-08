@@ -7,16 +7,17 @@ import React, { useRef, createContext, useEffect, useContext } from 'react';
 
 // Context
 import { EditPageContext } from '../../pages/Editor';
+
+// create context
 export const EditBoardContext = createContext();
 
 // observers
 import focusOnMount from '../../observers/focusOnMount';
 import observeAddSecPlaceholders from '../../observers/intersect';
 
-function EditBoard({ zoomOutMode }) {
-
+function EditBoard() {
     // context
-    const { editBoardRef, selectedPlaceholderToFill, pageSections, setPageSections } = useContext(EditPageContext);
+    const { editBoardRef, selectedPlaceholderToFill, pageSections, setPageSections, zoomOutMode } = useContext(EditPageContext);
 
     // references
     const sectionsContainerRef = useRef(null) // div containing all the page
@@ -64,8 +65,6 @@ function EditBoard({ zoomOutMode }) {
             editBoardRef.current.removeEventListener('elementsStopIntersect', onElementsStopIntersect);
             placeHolderObserver.current.unboserveAll(true);
         }
-
-
     }, []);
 
     // Event handlers
@@ -161,7 +160,6 @@ function EditBoard({ zoomOutMode }) {
         handleEndDragAndResize.current = handler;
     }
 
-
     //functions
     function getSectionIdByRange(y) {
         return Object.entries(pageSections).find(([_, section], __) => {
@@ -178,8 +176,9 @@ function EditBoard({ zoomOutMode }) {
                              margin-top: 30px;
                              width: calc(100% + 30%) !important;
                              transform: translateY(-25%) scale(0.5) translateX(-23%);
-        
-                    }`} </style>
+                        }`
+                }
+                </style>
             }
             <section className="edit-board"
                 onPointerMove={onPointerMove}
@@ -216,9 +215,7 @@ function EditBoard({ zoomOutMode }) {
                                     data-order={idx}
                                     className='add-section-placeholder-container'
                                 >
-                                    <div
-                                        className='add-section-placeholder'
-                                    >
+                                    <div className='add-section-placeholder'>
                                         <div className='dotted-border'>
                                             Choose a section and drop it anywhere on the page...
                                         </div>
@@ -235,7 +232,6 @@ function EditBoard({ zoomOutMode }) {
                         </React.Fragment>)}
                 </div>
             </section>
-
         </EditBoardContext.Provider>
     )
 }

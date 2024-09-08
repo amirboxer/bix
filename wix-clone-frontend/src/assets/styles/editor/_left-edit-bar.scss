@@ -1,16 +1,17 @@
 .left-edit-bar {
-    z-index: 1;
+    z-index: 11;
     --icon-radious: 42px;
-    display: grid;
-    grid-template-columns: auto auto;
 
-    -webkit-box-shadow:  0px 2px 5px 2px rgba(0, 0, 0, 0.122);
-    -moz-box-shadow:  0px 2px 5px 2px rgba(0, 0, 0, 0.122);
-    box-shadow: 0px 2px 5px 2px rgba(0, 0, 0, 0.122);
 
-    ul {
+    -webkit-box-shadow: 0px 2px 5px 2px rgba(31, 31, 31, 0.45);
+    -moz-box-shadow: 0px 2px 5px 2px rgba(31, 31, 31, 0.45);
+    box-shadow: 0px 2px 5px 2px rgba(31, 31, 31, 0.45);
+
+
+    background-color: $clr2;
+
+    .edit-options {
         --left-edit-bar-icon-height: 54px;
-        height: 100%;
         width: fit-content;
         padding-top: 18px;
 
@@ -25,47 +26,50 @@
                 position: relative;
                 height: var(--icon-radious);
                 width: var(--icon-radious);
-                
-                button{
+                $anim-lengh: 0.2s;
+
+                button {
                     height: 100%;
                     width: 100%;
                     border-radius: 100%;
-
                 }
-                .add-section {
 
+                .icon {
+                    background-color: $clr29;
+                }
+
+                // add section
+                .add-section {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
                     gap: 2px;
 
-                    .icon {
-                        background-color: $clr29;
-                    }
-
                     .upper-part,
                     .bottom-part {
                         height: 2px;
                         width: 16px;
+                        border-radius: 1px;
                     }
 
                     .middle-part {
                         height: 9px;
                         width: 18px;
+                        border-radius: 1px;
                     }
-
-                    $anim-lengh: 0.3s;
 
                     &:hover,
                     &.selected {
                         background-color: $clr5;
+
                         .icon {
                             background-color: $clr1;
                         }
                     }
 
                     &.selected:hover {
+
                         .bottom-part,
                         .middle-part,
                         .upper-part {
@@ -75,22 +79,89 @@
 
                     &:not(.selected):hover {
                         .bottom-part {
-                            animation: bottom calc($anim-lengh * 1.25) linear;
+                            animation: add-section-bottom calc($anim-lengh * 1.25 * 1.3) linear;
                         }
 
                         .middle-part {
-                            animation: middle $anim-lengh linear;
+                            animation: add-section-middle calc($anim-lengh * 1.3) linear;
                         }
 
                         .upper-part {
-                            animation: upper calc($anim-lengh * 1.25) linear;
+                            animation: add-section-upper calc($anim-lengh * 1.25 * 1.3) linear;
+                        }
+                    }
+                }
+
+                // add elements
+                .add-elements {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    .icon {
+                        border-radius: 100%;
+                        height: 24px;
+                        width: 24px;
+
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        position: relative;
+                    }
+
+                    .horizontal,
+                    .vertical {
+                        position: absolute;
+                        display: block;
+                        background-color: $clr2;
+                        border-radius: 1px;
+                    }
+
+                    .horizontal {
+                        height: 2px;
+                        width: 14px;
+                    }
+
+                    .vertical {
+                        height: 14px;
+                        width: 2px;
+                    }
+
+                    &:hover,
+                    &.selected {
+                        background-color: $clr31;
+
+                        .icon {
+                            background-color: $clr16;
+                        }
+
+                        .horizontal,
+                        .vertical {
+                            background-color: $clr31;
+                        }
+                    }
+
+                    &.selected:hover {
+
+                        .horizontal,
+                        .vertical {
+                            animation: none;
+                        }
+                    }
+
+                    &:not(.selected):hover {
+                        .horizontal {
+                            animation: add-element-horizontal $anim-lengh linear;
+                        }
+
+                        .vertical {
+                            animation: add-element-vertical $anim-lengh linear;
                         }
                     }
                 }
 
                 .label-hover-box {
                     display: none;
-                    transition-delay: var(--left-panel-trans-time);
                     transition-property: visibility;
 
                     z-index: 1;
@@ -99,7 +170,6 @@
                     top: 0;
                     transform: translateX(calc(100% + var(--padding-inline) * 2));
 
-                    font-family: sans-serif;
                     font-size: 14px;
                     color: $clr28;
                     white-space: nowrap;
@@ -123,19 +193,123 @@
             }
         }
     }
+}
 
-    .left-panel {
+.panel-wrapper {
+    z-index: 12;
+    position: relative;
+    height: 100%;
+
+    &.add-section {
         overflow: hidden;
-        background-color: blue;
-        max-width: 100vh;
-        width: auto;
-        transition: max-width var(--left-panel-trans-time) linear;
+        -webkit-box-shadow: 7px 0px 5px -3px rgba(31, 31, 31, 0.256);
+        -moz-box-shadow: 7px 0px 5px -3px rgba(31, 31, 31, 0.256);
+        box-shadow: 7px 0px 5px -3px rgba(31, 31, 31, 0.256);
+
+        .panel {
+            position: unset !important;
+        }
+    }
+
+    .panel {
+        height: 100%;
+        transition: max-width 1s linear;
+        max-width: 100vw;
+
+        overflow: hidden;
+
+        background-color: $clr32;
+
+        white-space: nowrap;
+
+        -webkit-box-shadow: 7px 0px 5px -3px rgba(31, 31, 31, 0.256);
+        -moz-box-shadow: 7px 0px 5px -3px rgba(31, 31, 31, 0.256);
+        box-shadow: 7px 0px 5px -3px rgba(31, 31, 31, 0.256);
+
+        position: absolute;
+
+        $head-font-size: 16px;
+        $head-pad-block: 16px;
+        $head-border-top: 6px;
+
+        .head {
+            font-size: $head-font-size;
+            font-weight: bold;
+
+            border-top: $head-border-top solid $clr16;
+            border-bottom: 1px solid $clr32;
+            padding: 16px 23px;
+
+            position: relative;
+            border-left: 1px solid $clr32;
+
+            background-color: $clr2;
+
+            .exit-button {
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
+
+        .contents {
+            border-left: 1px solid $clr32;
+            $head-border-bottom: 1px;
+            height: calc(100% - $head-font-size - $head-pad-block * 2 - $head-border-top - $head-border-bottom);
+            overflow: hidden;
+            width: fit-content;
+            display: grid;
+            grid-auto-columns: auto;
+            grid-auto-flow: column;
+            gap: 1px;
+
+            background-color: $clr32;
+
+            &>* {
+                background-color: $clr2;
+            }
+
+            .categories {
+                background-color: $clr19;
+            }
+
+            .sub-categories,
+            .categories {
+                width: max-content;
+                overflow: auto;
+             
+                .categorie-list {
+                    padding-block: 11px;
+
+                    li {
+                        cursor: pointer;
+                        padding-inline: 11px;
+
+                        .categorie {
+                            display: block;
+                            background-color: $clr10;
+                            border-radius: 50px;
+
+                            color: $clr16;
+                            font-size: 14px;
+
+                            padding: 8px 12px;
+
+                            width: fit-content;
+                        }
+                    }
+                }
+            }
+
+            .examples {}
+        }
     }
 }
 
-// animtion for add section button
 
-@keyframes middle {
+// animtions for add section button
+@keyframes add-section-middle {
     from {
         transform: scaleY(0%);
     }
@@ -145,8 +319,7 @@
     }
 }
 
-
-@keyframes upper {
+@keyframes add-section-upper {
     from {
         transform: translateY(10px);
     }
@@ -160,7 +333,7 @@
     }
 }
 
-@keyframes bottom {
+@keyframes add-section-bottom {
     from {
         transform: translateY(-10px);
     }
@@ -171,5 +344,26 @@
 
     to {
         transform: translateY(0%);
+    }
+}
+
+// animtion for add elements button 
+@keyframes add-element-vertical {
+    from {
+        transform: scaleY(0%);
+    }
+
+    to {
+        transform: scaleY(100%);
+    }
+}
+
+@keyframes add-element-horizontal {
+    from {
+        transform: scaleX(0%);
+    }
+
+    to {
+        transform: scaleX(100%);
     }
 }

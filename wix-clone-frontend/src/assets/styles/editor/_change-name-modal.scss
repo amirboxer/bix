@@ -3,7 +3,6 @@
     z-index: 2;
 
     .change-section-name-modal {
-        font-family: sans-serif;
         color: initial;
         position: absolute;
         transform: translate(calc(-100% - 25px), -50%);
@@ -21,7 +20,6 @@
         background-color: $clr2;
 
         &>* {
-            // line-height: 1;
             display: grid;
         }
 
@@ -36,24 +34,6 @@
             border-bottom: 1px solid $clr18;
 
             cursor: move;
-
-            .control-buttons {
-
-                .exit-button {
-                    display: flex;
-                    justify-content: center;
-                    border-radius: 1000%;
-                    height: max-content;
-                    width: fit-content;
-                    padding: 2px;
-                    margin: 0;
-
-                    &:hover {
-                        background-color: $clr19;
-                    }
-
-                }
-            }
         }
 
         .name-input {

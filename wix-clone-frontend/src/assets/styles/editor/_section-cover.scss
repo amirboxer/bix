@@ -1,5 +1,4 @@
 .section-cover {
-    font-family: sans-serif;
     $outline-color: none;
     outline-offset: -2px;
     display: grid;
@@ -230,13 +229,11 @@
 
         &:not(.focused) .attach-to-section {
             pointer-events: none;
-            font-family: sans-serif;
 
             position: sticky;
             top: 0;
             height: 0;
             z-index: 10;
-
 
             display: grid;
             justify-content: center;
@@ -250,9 +247,6 @@
                 margin-top: 10px;
             }
         }
-
-
-
     }
 
     &.dragged-over,
