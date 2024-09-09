@@ -30,20 +30,6 @@ function DragResizeBox({
 
 }) {
 
-    // const [sss, setsss] = useState({ 1: { 1: 1 }, 2: { 2: 2 }, 3: { 3: 3 }, 4: { 4: 4 } })
-    // setsss(prev =>
-    //     Object.entries(prev).reduce((acc, [id, el]) => {
-    //         if (id === 2) {
-    //             acc[id] = {22: 22};
-    //         }
-    //         else acc[id] = prev[id]
-    //         return acc;
-    //     }, {})
-    // );
-
-    // setsss(prev => {
-
-    // })
     //states
     const [indicator, setIndicator] = useState(null);
 

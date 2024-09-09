@@ -16,6 +16,7 @@ import focusOnMount from '../../observers/focusOnMount';
 import observeAddSecPlaceholders from '../../observers/intersect';
 
 function EditBoard() {
+    
     // context
     const { editBoardRef, selectedPlaceholderToFill, pageSections, setPageSections, zoomOutMode } = useContext(EditPageContext);
 
@@ -69,6 +70,7 @@ function EditBoard() {
 
     // Event handlers
     function onPointerMove(e) {
+
         // handle resizing and dragging
         if (handleElDragAndResize.current) handleElDragAndResize.current(e);
 

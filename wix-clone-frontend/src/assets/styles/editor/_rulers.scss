@@ -2,6 +2,7 @@
     z-index: 10;
     height: max-content;
     $graduation-clr: $clr26;
+    position: relative;
 
     &.top {
         height: 22px;

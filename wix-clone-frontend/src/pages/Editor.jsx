@@ -14,7 +14,7 @@ import React, { useRef, createContext, useState } from 'react';
 export const EditPageContext = createContext();
 
 function Editor() {
-    // states
+    // states temporary before redux 
     const [pageSections, setPageSections] = useState({
         [uId('sec')]: { name: 'Section1', order: 0, height: 400, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } } },
         [uId('sec')]: { name: 'Section2', order: 1, height: 500, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
@@ -23,8 +23,8 @@ function Editor() {
         [uId('sec')]: { name: 'Section5', order: 4, height: 500, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 102 } } },
     })
 
+    // states - in zoom mode
     const [zoomOutMode, setZoomOutMode] = useState(false);
-
 
     // reference
     const editBoardRef = useRef(null);
