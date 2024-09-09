@@ -1,5 +1,6 @@
 // react hooks
 import { useRef, createContext, memo, useEffect, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux'
 
 // Context
 export const sectionContext = createContext();
@@ -12,13 +13,20 @@ import EditBox from './EditBox';
 import { utilService } from '../../services/util.service';
 const throttle = utilService.throttle;
 
-const Section = memo(function Section({ section, sectionId, setPageSections }) {
+const Section = memo(function Section({ section, sectionId, setPageSections, idx }) {
     // referances
     const sectionFocused = useRef(null);
     const sectionRef = useRef(null);
     const contentsRef = useRef(null);
     const showLowerAddSectionButton = useRef(null);
     const showUpperAddSectionButton = useRef(null);
+
+
+    //
+    const dispatch = useDispatch()
+    const seccccccc = useSelector((storeState) => storeState.pageSections[idx + 1])
+    //
+
 
     //useEffect
     useEffect(() => {

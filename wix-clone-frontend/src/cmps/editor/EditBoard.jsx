@@ -5,6 +5,10 @@ import Ruler from './tools/Ruler';
 // react hooks
 import React, { useRef, createContext, useEffect, useContext } from 'react';
 
+// store
+import { useDispatch, useSelector } from 'react-redux'
+import { store } from '../../store/store';
+
 // Context
 import { EditPageContext } from '../../pages/Editor';
 
@@ -15,10 +19,17 @@ export const EditBoardContext = createContext();
 import focusOnMount from '../../observers/focusOnMount';
 import observeAddSecPlaceholders from '../../observers/intersect';
 
+
 function EditBoard() {
-    
+
     // context
     const { editBoardRef, selectedPlaceholderToFill, pageSections, setPageSections, zoomOutMode } = useContext(EditPageContext);
+
+
+    //store-states
+    console.log(store.getState().pageSections);
+    
+
 
     // references
     const sectionsContainerRef = useRef(null) // div containing all the page
@@ -227,6 +238,7 @@ function EditBoard() {
 
                             {/* section */}
                             <Section
+                                idx={idx}
                                 section={section}
                                 sectionId={sectionId}
                                 setPageSections={setPageSections}
