@@ -5,7 +5,7 @@ import DragResizeBox from './tools/DragResizeBox';
 import { useState, useRef, useEffect, memo } from 'react';
 
 const EditBox = memo(function EditBox({
-    id,
+    elId,
     secId,
     contentsRef,
     element,
@@ -52,7 +52,7 @@ const EditBox = memo(function EditBox({
             </div>
 
             <div
-                id={id}
+                id={elId}
                 ref={editBoxRef}
                 className="edit-box"
                 style={{
@@ -69,7 +69,7 @@ const EditBox = memo(function EditBox({
                 {isFocused &&
                     <DragResizeBox
                         autoDrag={autoDrag}
-                        id={id}
+                        elId={elId}
                         secId={secId}
                         contentsRef={contentsRef}
                         editBoxRef={editBoxRef}

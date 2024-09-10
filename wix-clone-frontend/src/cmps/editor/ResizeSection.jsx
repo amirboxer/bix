@@ -48,12 +48,13 @@ function ResizeSection({ sectionId }) {
         const endDrag = () => {
             document.body.style = '';
             ref.current.style = '';
+            // remove all events from body
             document.body.removeEventListener('pointermove', drag);
             document.body.removeEventListener('pointerup', endDrag);
+            
             setResizingInProggress(false);
         }
 
-        // remove all events from body
         document.body.addEventListener('pointerup', endDrag);
     }
 

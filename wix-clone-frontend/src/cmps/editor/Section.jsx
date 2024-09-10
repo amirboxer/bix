@@ -89,10 +89,10 @@ const Section = memo(function Section({ sectionId }) {
                         className="grid-center"
                         ref={contentsRef}
                     >
-                        {Object.entries(elements).map(([id, element], _) =>
+                        {Object.entries(elements).map(([elId, element], _) =>
                             <EditBox
-                                key={id}
-                                id={id}
+                                key={elId}
+                                elId={elId}
                                 contentsRef={contentsRef}
                                 secId={sectionId}
                                 element={element}

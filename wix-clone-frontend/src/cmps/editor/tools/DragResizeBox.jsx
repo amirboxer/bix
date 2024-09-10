@@ -1,16 +1,25 @@
 // react hooks
 import { useState, useRef, useEffect, useContext } from 'react';
+import { useDispatch } from 'react-redux'
 
 //utils
 import { utilService } from '../../../services/util.service';
 const throttle = utilService.throttle;
 
+// store
+import { getCoversDraggedOverAction } from '../../../store/actions/pageSections.actions';
+import { store } from '../../../store/store';
+import { updateElementInSection, addNewElementToSection, deleteElementFromSection } from '../../../store/actions/pageSections.actions';
+
 // context from EditBoard
 import { EditBoardContext } from '../EditBoard';
 
+// observers
+import focusOnMount from '../../../observers/focusOnMount';
+
 function DragResizeBox({
     autoDrag = false,
-    id,
+    elId,
     secId,
     contentsRef,
     editBoxRef,
@@ -27,14 +36,16 @@ function DragResizeBox({
         boxOffsetLeft,
         boxOffsetTop
     }
-
 }) {
-
     //states
     const [indicator, setIndicator] = useState(null);
 
+    // store
+    const [pageSections, _] = useState(store.getState().page.sectionsProps);
+    const dispatch = useDispatch();
+
     // context
-    const { setResizeAndDragHandler, setEndDragAndResizeHandler, editBoardRef, draggingInProggres } = useContext(EditBoardContext);
+    const { editBoardRef } = useContext(EditBoardContext);
 
     // References
     const initialPointerCoord = useRef(initialPointerCoords);
@@ -42,48 +53,51 @@ function DragResizeBox({
     const outOfGridlinesThrottld = useRef(null);
     const backToGridlinesThrottld = useRef(null);
     const isIntersecting = useRef(null);
+    const draggingInProggres = useRef(false) // draggning elements
+    const bodyCursor = useRef('move');
+
 
     // useEffects
     useEffect(() => {
         draggingInProggres.current = autoDrag ? 'dragging' : false;
-        setResizeAndDragHandler(handleResizeAndDrag);
-        setEndDragAndResizeHandler(endPointerInteraction);
+        if (draggingInProggres.current) {
+            document.body.addEventListener('pointermove', onPointerMove);
+            document.body.addEventListener('pointerup', onPointerUp);
+        }
         outOfGridlinesThrottld.current = throttle(outOfGridlines, 100); // dispatch event when intersectiong out of gridline
         backToGridlinesThrottld.current = throttle(backToGridlines, 100); // dispatch event when !!! stopped !!! intersectiong out of gridlinef
-        return () => {
-            setResizeAndDragHandler(null);
-            setEndDragAndResizeHandler(null);
-        }
     }, []);
 
     // Handlers configuration
     const handlers = [
-        { className: "resize-edge top horizontal", deltaX: 0, deltaY: -1 },
-        { className: "resize-edge bottom horizontal", deltaX: 0, deltaY: 1 },
-        { className: "resize-edge left vertical", deltaX: -1, deltaY: 0 },
-        { className: "resize-edge right vertical", deltaX: 1, deltaY: 0 },
-        { className: "resize-corner bottom-right", deltaX: 1, deltaY: 1 },
-        { className: "resize-corner bottom-left", deltaX: -1, deltaY: 1 },
-        { className: "resize-corner top-right", deltaX: 1, deltaY: -1 },
-        { className: "resize-corner top-left", deltaX: -1, deltaY: -1 },
+        { className: "resize-edge top horizontal", deltaX: 0, deltaY: -1, cursor: 'ns-resize' },
+        { className: "resize-edge bottom horizontal", deltaX: 0, deltaY: 1, cursor: 'ns-resize' },
+        { className: "resize-edge left vertical", deltaX: -1, deltaY: 0, cursor: 'ew-resize' },
+        { className: "resize-edge right vertical", deltaX: 1, deltaY: 0, cursor: 'ew-resize' },
+        { className: "resize-corner bottom-right", deltaX: 1, deltaY: 1, cursor: 'nwse-resize' },
+        { className: "resize-corner bottom-left", deltaX: -1, deltaY: 1, cursor: 'nesw-resize' },
+        { className: "resize-corner top-right", deltaX: 1, deltaY: -1, cursor: 'nesw-resize' },
+        { className: "resize-corner top-left", deltaX: -1, deltaY: -1, cursor: 'nwse-resize' },
     ];
 
+    // ---- event handler ---- //
     // on pointer down - Function to start tracking pointer movement - event handler
-    function startPointerTracking(e, horizontalDir, verticalDir, type) {
+    function onPointerDown(e, horizontalDir, verticalDir, type, cursor = 'move') {
+        bodyCursor.current = cursor;
         initialPointerCoord.current = { pageX: e.pageX, pageY: e.pageY };
         resizeAxis.current = { horizontal: horizontalDir, vertical: verticalDir };
         draggingInProggres.current = type;
+
         e.stopPropagation();
+
+        // add events to body
+        document.body.addEventListener('pointermove', onPointerMove);
+        document.body.addEventListener('pointerup', onPointerUp);
     }
 
-    // Calculate the difference between current and previous pointer positions
-    function calculatePointerDelta(pageX, pageY) {
-        const { pageX: startX, pageY: startY } = initialPointerCoord.current;
-        return [pageX - startX, pageY - startY];
-    }
-
-    // Handle resizing and dragging
-    function handleResizeAndDrag(e) {
+    // ---- event handler ---- //
+    // on pointer move
+    function onPointerMove(e) {
         const { pageX, pageY } = e;
         const [deltaX, deltaY] = calculatePointerDelta(pageX, pageY);
         initialPointerCoord.current = { pageX, pageY };
@@ -96,15 +110,66 @@ function DragResizeBox({
             handleDrag(deltaX, deltaY, pageY);
         }
 
+        // alert user if element is  being dragged out of it's original section
+        if (draggingInProggres.current && secId) {
+            // current section id of the element after moving
+            const currentlyDraggedOver = getSectionIdByRange(e.clientY);
+
+            // check if element is in the realm of a different section after moving
+            const action = getCoversDraggedOverAction(currentlyDraggedOver);
+            dispatch(action);
+        }
+
         // check if stepping into section deadzone or back from deadzone
         outOfGridlinesThrottld.current();
         backToGridlinesThrottld.current();
+
+        document.body.style = `cursor: ${bodyCursor.current}`;
+
     }
 
-    // End dragging or resizing
-    function endPointerInteraction() {
-        draggingInProggres.current = false;
-        initialPointerCoord.current = { pageX: null, pageY: null };
+    // ---- event handler ---- //
+    // on pointer up
+    function onPointerUp(e) {
+        // if element was dreagged out of section, id would be different
+        const currentSectionId = getSectionIdByRange(e.clientY);
+
+        // update sections state
+        const [width, height, osl, ost] = [+e.target.dataset.width, +e.target.dataset.height, +e.target.dataset.offsetleft, +e.target.dataset.offsettop];
+        const updatedEl = { ...pageSections[secId].elements[elId], width: width, height: height, offsetX: osl, offsetY: ost };
+        updateElementInSection(secId, elId, updatedEl);
+
+        // check if element is in the realm of a different section after moving, if so register the change
+        if (currentSectionId != secId) {
+            // calc new position
+            const distanceFromTop = e.target.getBoundingClientRect().top - pageSections[currentSectionId].section.sectionRef.getBoundingClientRect().top;
+
+            // attach to section currently being hovered
+            addNewElementToSection(currentSectionId, elId, { ...updatedEl, offsetX: osl, offsetY: distanceFromTop });
+
+            // next two lines : remove focus from current section
+            pageSections[secId].section.sectionRef.focus({ preventScroll: true });
+            pageSections[secId].section.sectionRef.blur();
+
+            // delete from previous section
+            deleteElementFromSection(secId, elId);
+
+            // set focus on new focus and the elements that moced into it
+            focusOnMount(pageSections[currentSectionId].section.sectionRef, elId);
+        }
+        // cancle dragging for all section covers
+        const endDragAtion = getCoversDraggedOverAction(false);
+        dispatch(endDragAtion);
+
+        document.body.removeEventListener('pointermove', onPointerMove);
+        document.body.removeEventListener('pointerup', onPointerUp);
+        document.body.style = '';
+    }
+
+    // Calculate the difference between current and previous pointer positions
+    function calculatePointerDelta(pageX, pageY) {
+        const { pageX: startX, pageY: startY } = initialPointerCoord.current;
+        return [pageX - startX, pageY - startY];
     }
 
     // Handle resizing logic
@@ -147,6 +212,7 @@ function DragResizeBox({
         setBoxOffsetTop(prev => prev + adjustment);
     }
 
+    // editBoard locations
     function isoutOfGridlines() {
         const rect = editBoxRef.current;
         return (rect.offsetLeft <= 0 || contentsRef.current.getBoundingClientRect().width <= rect.offsetLeft + rect.getBoundingClientRect().width);
@@ -176,6 +242,13 @@ function DragResizeBox({
         }
     }
 
+    function getSectionIdByRange(y) {
+        return Object.entries(pageSections).find(([_, sectionProps], __) => {
+            const sectionRect = sectionProps.section.sectionRef.getBoundingClientRect();
+            return (sectionRect.top <= y && y < sectionRect.bottom);
+        })[0];
+    }
+
     return (
         <>
             {/* {indicator && } */}
@@ -184,24 +257,18 @@ function DragResizeBox({
             <div className="handler drag-resize-box" >
                 {/* grebber */}
                 < span className="handler grabber"
-                    // containers
-                    data-el-id={id}
-                    data-sec-id={secId}
                     // position and location
                     data-width={boxWidth}
                     data-height={boxHeight}
                     data-offsetleft={boxOffsetLeft}
                     data-offsettop={boxOffsetTop}
-
-                    onPointerDown={e => startPointerTracking(e, 0, 0, 'dragging')}>
+                    //event
+                    onPointerDown={e => onPointerDown(e, 0, 0, 'dragging')}>
                 </span>
 
                 {/* resizers */}
-                {handlers.map(({ className, deltaX, deltaY }, index) => (
+                {handlers.map(({ className, deltaX, deltaY, cursor }, index) => (
                     <span
-                        // containers
-                        data-el-id={id}
-                        data-sec-id={secId}
                         // position and location
                         data-width={boxWidth}
                         data-height={boxHeight}
@@ -209,7 +276,8 @@ function DragResizeBox({
                         data-offsettop={boxOffsetTop}
                         key={index}
                         className={`handler ${className}`}
-                        onPointerDown={e => startPointerTracking(e, deltaX, deltaY, 'resizing')}
+                        //event
+                        onPointerDown={e => onPointerDown(e, deltaX, deltaY, 'resizing', cursor)}
                     >
                     </span>
                 ))}

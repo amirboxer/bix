@@ -4,9 +4,9 @@ import Ruler from './tools/Ruler';
 
 // react hooks
 import React, { useRef, createContext, useEffect, useContext } from 'react';
+import { useDispatch, useSelector } from 'react-redux'
 
 // store
-import { useDispatch, useSelector } from 'react-redux'
 import { store } from '../../store/store';
 import { getCoversDeadzonesAction, getCoversDraggedOverAction, updateElementInSection, addNewElementToSection, deleteElementFromSection } from '../../store/actions/pageSections.actions';
 
@@ -32,11 +32,7 @@ function EditBoard() {
 
     // references
     const sectionsContainerRef = useRef(null) // div containing all the page
-    const draggingInProggres = useRef(false) // draggning elements
-    const handleElDragAndResize = useRef(null); // Ref to the function handling pointer move events.
-    const handleEndDragAndResize = useRef(null); // Ref to the function handling pointer up events.
     const placeHolderObserver = useRef(null);
-
 
     // useEffects
     useEffect(() => {
@@ -71,95 +67,8 @@ function EditBoard() {
         }
     }, []);
 
-    // Event handlers
-    function onPointerMove(e) {
-
-        // handle resizing and dragging
-        if (handleElDragAndResize.current) handleElDragAndResize.current(e);
-
-        // id of the original section
-        const originalSecId = e.target.dataset.secId;
-
-        // alert user if element is  being dragged out of it's original section
-        if (draggingInProggres.current && originalSecId) {
-            // current section id of the element after moving
-            const currentlyDraggedOver = getSectionIdByRange(e.clientY);
-
-            // check if element is in the realm of a different section after moving
-            const action = getCoversDraggedOverAction(currentlyDraggedOver);
-            dispatch(action);
-        }
-    }
-
-    function onPointerUp(e) {
-        const pageSections = store.getState().page.sectionsProps;
-
-        const originalSecId = e.target.dataset.secId;
-        const elId = e.target.dataset.elId;
-
-        if (originalSecId) {
-            // if element was dreagged out of section, id would be different
-            const currentSectionId = getSectionIdByRange(e.clientY);
-
-            if (draggingInProggres.current) {
-                // update sections state
-                const [width, height, osl, ost] = [+e.target.dataset.width, +e.target.dataset.height, +e.target.dataset.offsetleft, +e.target.dataset.offsettop];
-                const updatedEl = { ...pageSections[originalSecId].elements[elId], width: width, height: height, offsetX: osl, offsetY: ost };
-                updateElementInSection(originalSecId, elId, updatedEl);
-
-
-                // check if element is in the realm of a different section after moving, if so register the change
-                if (currentSectionId != originalSecId) {
-                    // calc new position
-                    console.log();
-
-                    const distanceFromTop = e.target.getBoundingClientRect().top - pageSections[currentSectionId].section.sectionRef.getBoundingClientRect().top;
-
-                    // attach to section currently being hovered
-                    addNewElementToSection(currentSectionId, elId, { ...updatedEl, offsetX: osl, offsetY: distanceFromTop });
-
-                    // next two lines : remove focus from current section
-                    pageSections[originalSecId].section.sectionRef.focus({ preventScroll: true });
-                    pageSections[originalSecId].section.sectionRef.blur();
-
-                    // delete from previous section
-                    deleteElementFromSection(originalSecId, elId);
-
-                    // set focus on new focus and the elements that moced into it
-                    focusOnMount(pageSections[currentSectionId].section.sectionRef, elId);
-                }
-            }
-            // cancle dragging for all section covers
-            const endDragAtion = getCoversDraggedOverAction(false);
-            dispatch(endDragAtion);
-        }
-        // end dragging and resizing of element on board
-        if (handleEndDragAndResize.current) handleEndDragAndResize.current(e);
-    }
-
-    // pass downs
-    function setResizeAndDragHandler(handler) {
-        handleElDragAndResize.current = handler;
-    }
-
-    function setEndDragAndResizeHandler(handler) {
-        handleEndDragAndResize.current = handler;
-    }
-
-
-
-    //functions
-    function getSectionIdByRange(y) {
-        const pageSections = store.getState().page.sectionsProps;
-
-        return Object.entries(pageSections).find(([_, sectionProps], __) => {
-            const sectionRect = sectionProps.section.sectionRef.getBoundingClientRect();
-            return (sectionRect.top <= y && y < sectionRect.bottom);
-        })[0];
-    }
-
     return (
-        <EditBoardContext.Provider value={{ setResizeAndDragHandler, setEndDragAndResizeHandler, editBoardRef, draggingInProggres }}>
+        <EditBoardContext.Provider value={{editBoardRef}}>
             {zoomOutMode === 'add-section' &&
                 // only in zoom out
                 <style>{`.page-sections {
@@ -171,8 +80,6 @@ function EditBoard() {
                 </style>
             }
             <section className="edit-board"
-                onPointerMove={onPointerMove}
-                onPointerUp={onPointerUp}
                 ref={editBoardRef}
             >
                 {/* right side ruler */}
