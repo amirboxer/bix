@@ -1,5 +1,5 @@
 .edit-board {
-    overflow-y: auto;
+    // overflow-y: auto;
     overflow-x: hidden;
     position: relative;
 
@@ -7,7 +7,9 @@
 
     scrollbar-color: $clr6;
 
-    padding-bottom: 0px;
+
+    grid-column: 3;
+    grid-row: 3;
 
     .page-sections {
         width: calc(100% - 40px);

@@ -107,7 +107,6 @@ function LeftEditBar({ zoomOutMode }) {
 
 export default LeftEditBar
 
-
 const panelConfigurations = {
     'add-section': {
         title: 'Add Section',
@@ -201,7 +200,7 @@ function Panel({ selectedButton, onClosePanel }) {
     }, [panelOpen])
 
     // context
-    const { selectedPlaceholderToFill, setPageSections } = useContext(EditPageContext);
+    const { selectedPlaceholderToFill} = useContext(EditPageContext);
 
 
     function onExamplePick(e) {

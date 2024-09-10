@@ -1,6 +1,7 @@
 // cmps
 import Section from './Section';
 import Ruler from './tools/Ruler';
+import SuperSection from './SuperSection';
 
 // react hooks
 import React, { useRef, createContext, useEffect, useContext } from 'react';
@@ -8,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 // store
 import { store } from '../../store/store';
-import { getCoversDeadzonesAction, getCoversDraggedOverAction, updateElementInSection, addNewElementToSection, deleteElementFromSection } from '../../store/actions/pageSections.actions';
+import { getCoversDeadzonesAction } from '../../store/actions/pageSections.actions';
 
 // Context
 import { EditPageContext } from '../../pages/Editor';
@@ -17,9 +18,7 @@ import { EditPageContext } from '../../pages/Editor';
 export const EditBoardContext = createContext();
 
 // observers
-import focusOnMount from '../../observers/focusOnMount';
 import observeAddSecPlaceholders from '../../observers/intersect';
-
 
 function EditBoard() {
 
@@ -31,7 +30,7 @@ function EditBoard() {
     const dispatch = useDispatch();
 
     // references
-    const sectionsContainerRef = useRef(null) // div containing all the page
+    const sectionsContainerRef = useRef(null); // div containing all the page
     const placeHolderObserver = useRef(null);
 
     // useEffects
@@ -43,7 +42,7 @@ function EditBoard() {
             placeHolderObserver.current.unboserveAll();
             selectedPlaceholderToFill.current = null;
         }
-    }, [zoomOutMode])
+    }, [zoomOutMode]);
 
     useEffect(() => {
         function onElementsIntersect() {
@@ -68,7 +67,9 @@ function EditBoard() {
     }, []);
 
     return (
-        <EditBoardContext.Provider value={{editBoardRef}}>
+        <EditBoardContext.Provider value={{ editBoardRef }}>
+            <SuperSection />
+            
             {zoomOutMode === 'add-section' &&
                 // only in zoom out
                 <style>{`.page-sections {
@@ -79,7 +80,7 @@ function EditBoard() {
                 }
                 </style>
             }
-            <section className="edit-board"
+            <div className="edit-board"
                 ref={editBoardRef}
             >
                 {/* right side ruler */}
@@ -124,7 +125,7 @@ function EditBoard() {
                         </React.Fragment>)
                     }
                 </div>
-            </section>
+            </div>
         </EditBoardContext.Provider>
     )
 }

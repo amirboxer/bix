@@ -9,6 +9,7 @@ const EditBox = memo(function EditBox({
     secId,
     contentsRef,
     element,
+    superElement=false,
 }) {
     // States
     const [initialPointerCoords, setInitialPointerCoords] = useState({ posX: null, posY: null });
@@ -73,6 +74,7 @@ const EditBox = memo(function EditBox({
                         secId={secId}
                         contentsRef={contentsRef}
                         editBoxRef={editBoxRef}
+                        superElement={superElement}
                         initialPointerCoords={initialPointerCoords}
                         setters={{ setBoxHeight, setBoxWidth, setBoxOffsetLeft, setBoxOffsetTop }}
                         vals={{ boxWidth, boxHeight, boxOffsetLeft, boxOffsetTop }}

@@ -13,7 +13,6 @@ function ResizeSection({ sectionId }) {
     // useRef
     const ref = useRef(null);
 
-    // from contexts
     //store
     const diptach = useDispatch();
 

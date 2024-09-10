@@ -29,7 +29,7 @@ const page = {
 
         [uId('sec')]:
         {
-            section: { name: 'Section1', order: 1, height: 500, },
+            section: { name: 'Section1', order: 4, height: 500, },
             cover: { isDraggedOver: false, highlightDeadzones: false, },
             elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } },
         },
@@ -50,7 +50,7 @@ const page = {
 
         [uId('sec')]:
         {
-            section: { name: 'Section4', order: 4, height: 800, },
+            section: { name: 'Section4', order: 5, height: 800, },
             cover: { isDraggedOver: false, highlightDeadzones: false, },
             elements: { [uId('el')]: { width: 325, height: 75, offsetX: 200, offsetY: 512 }, },
         },

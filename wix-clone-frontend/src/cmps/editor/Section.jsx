@@ -78,7 +78,7 @@ const Section = memo(function Section({ sectionId }) {
 
                 // DOM reference
                 ref={sectionRef}
-                className={`section section-layout ${!sectionProps.order ? 'first' : ''}`}
+                className={`section section-layout ${!sectionProps.order ? 'first' : ''} ${sectionProps.name === 'superSection' ? sectionProps.name : ''}`}
                 tabIndex={0}
                 id={sectionId}
             >

@@ -3,10 +3,6 @@ import EditBoard from "../cmps/editor/EditBoard";
 import LeftEditBar from "../cmps/editor/LeftEditBar";
 import TopEditBar from "../cmps/editor/TopEditBar.jsx";
 
-// services
-import { utilService } from "../services/util.service.js";
-const uId = utilService.uId;
-
 // react hooks
 import React, { useRef, createContext, useState } from 'react';
 

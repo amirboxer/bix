@@ -23,6 +23,7 @@ function DragResizeBox({
     secId,
     contentsRef,
     editBoxRef,
+    superElement,
     initialPointerCoords,
     setters: {
         setBoxWidth,
@@ -55,7 +56,6 @@ function DragResizeBox({
     const isIntersecting = useRef(null);
     const draggingInProggres = useRef(false) // draggning elements
     const bodyCursor = useRef('move');
-
 
     // useEffects
     useEffect(() => {
@@ -125,7 +125,6 @@ function DragResizeBox({
         backToGridlinesThrottld.current();
 
         document.body.style = `cursor: ${bodyCursor.current}`;
-
     }
 
     // ---- event handler ---- //
@@ -148,10 +147,13 @@ function DragResizeBox({
             addNewElementToSection(currentSectionId, elId, { ...updatedEl, offsetX: osl, offsetY: distanceFromTop });
 
             // next two lines : remove focus from current section
+            /////////////////////////// TODO  SUPER SECTION IGNORE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             pageSections[secId].section.sectionRef.focus({ preventScroll: true });
             pageSections[secId].section.sectionRef.blur();
 
             // delete from previous section
+
+            /////////////////////////// TODO  SUPER SECTION IGNORE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             deleteElementFromSection(secId, elId);
 
             // set focus on new focus and the elements that moced into it
@@ -251,8 +253,10 @@ function DragResizeBox({
 
     return (
         <>
-            {/* {indicator && } */}
-            <Indicator indicator={indicator} />
+            <Indicator
+                indicator={indicator}
+                superElement={superElement}
+            />
 
             <div className="handler drag-resize-box" >
                 {/* grebber */}
@@ -267,7 +271,7 @@ function DragResizeBox({
                 </span>
 
                 {/* resizers */}
-                {handlers.map(({ className, deltaX, deltaY, cursor }, index) => (
+                {!superElement && handlers.map(({ className, deltaX, deltaY, cursor }, index) => (
                     <span
                         // position and location
                         data-width={boxWidth}
@@ -286,8 +290,8 @@ function DragResizeBox({
     )
 }
 
-function Indicator({ indicator }) {
-    return (indicator &&
+function Indicator({ indicator, superElement }) {
+    return (indicator && !superElement &&
         <div
             className={`edit-box-indicator ${indicator.type}`}
         >{indicator.type === 'dragging' && 'x' || 'W'}: {indicator.leftVal}, {indicator.type === 'dragging' && 'y' || 'H'}: {indicator.rightVal}

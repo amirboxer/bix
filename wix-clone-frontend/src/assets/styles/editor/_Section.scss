@@ -17,7 +17,7 @@
 
         &.section:has(.show-lower-add-section-button) {
 
-            &+.add-section-placeholder-container{
+            &+.add-section-placeholder-container {
                 &+.section {
                     .add-section-button {
                         display: initial;
@@ -96,4 +96,40 @@
     border-radius: 20px;
     position: absolute;
     background-color: red;
+}
+
+#superSection {
+    background-color: aqua;
+    height: 10px;
+    grid-column: 3;
+    grid-row: 2;
+
+    position: relative;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) $pageWidth minmax(0, 1fr) auto;
+
+    width: calc(100% - 40px);
+    min-width: $pageWidth;
+
+    .right-scroll-filler {
+        grid-column: -1;
+        overflow-y: scroll;
+        opacity: 0;
+    }
+
+    .grid-center {
+        background-color: red;
+    }
+
+    z-index: 100;
+
+    .edit-box {
+        z-index: 102 !important;
+    }
+
+    .tester {
+        z-index: 101 !important;
+        background-color: green;
+    }
 }
