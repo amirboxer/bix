@@ -1,95 +1,138 @@
 // serviecs
+import { pageService } from "../../services/page/page.service.js";
 import { utilService } from "../../services/util.service.js";
 const uId = utilService.uId;
 
-// action types
+//// action types
+// section
 export const ADJUST_SECTION_HEIGHT_ACCORDING_TO_DIFF = 'ADJUST_SECTION_HEIGHT_ACCORDING_TO_DIFF';
 export const MINIMIZE_SECTION_HIGHT = 'MINIMIZE_SECTION_HIGHT';
+export const SET_SECTION_REFERENCE = 'SET_SECTION_REFERENCE';
+export const ADD_NEW_SECTION = 'ADD_NEW_SECTION';
+// cover
 export const SET_COVERS_DEADZONES = 'SET_COVERS_DEADZONES';
 export const SET_COVERS_DRAGGED_OVER = 'SET_COVERS_DRAGGED_OVER';
 export const UPDATE_ELEMENT_IN_SECTION = 'UPDATE_ELEMENT_IN_SECTION';
+//elements
 export const ADD_NEW_ELEMENT_TO_SECTION = 'ADD_ELEMENT_TO_SECTION';
 export const DELETE_ELEMENT_FROM_SECTION = 'DELETE_ELEMENT_FROM_SECTION';
 
-const pageSections = {
-    [uId('sec')]:
-    {
-        section: { name: 'Section1', order: 0, height: 400, },
-        cover: { isDraggedOver: false, highlightDeadzones: false, },
-        elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } },
-    },
+const page = {
+    sectionsCount: 5,
+    sectionsProps: {
+        [uId('sec')]:
+        {
+            section: { name: 'Section0', order: 0, height: 400, },
+            cover: { isDraggedOver: false, highlightDeadzones: false, },
+            elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } },
+        },
 
-    [uId('sec')]:
-    {
-        section: { name: 'Section1', order: 1, height: 500, },
-        cover: { isDraggedOver: false, highlightDeadzones: false, },
-        elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } },
-    },
+        [uId('sec')]:
+        {
+            section: { name: 'Section1', order: 1, height: 500, },
+            cover: { isDraggedOver: false, highlightDeadzones: false, },
+            elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } },
+        },
 
-    [uId('sec')]:
-    {
-        section: { name: 'Section1', order: 2, height: 600, },
-        cover: { isDraggedOver: false, highlightDeadzones: false, },
-        elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } },
-    },
+        [uId('sec')]:
+        {
+            section: { name: 'Section2', order: 2, height: 600, },
+            cover: { isDraggedOver: false, highlightDeadzones: false, },
+            elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } },
+        },
 
-    [uId('sec')]:
-    {
-        section: { name: 'Section1', order: 3, height: 700, },
-        cover: { isDraggedOver: false, highlightDeadzones: false, },
-        elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } },
-    },
+        [uId('sec')]:
+        {
+            section: { name: 'Section3', order: 3, height: 700, },
+            cover: { isDraggedOver: false, highlightDeadzones: false, },
+            elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } },
+        },
 
-    [uId('sec')]:
-    {
-        section: { name: 'Section1', order: 4, height: 800, },
-        cover: { isDraggedOver: false, highlightDeadzones: false, },
-        elements: {
-            [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 },
-            [uId('el')]: { width: 55, height: 55, offsetX: 200, offsetY: 512 },
+        [uId('sec')]:
+        {
+            section: { name: 'Section4', order: 4, height: 800, },
+            cover: { isDraggedOver: false, highlightDeadzones: false, },
+            elements: { [uId('el')]: { width: 325, height: 75, offsetX: 200, offsetY: 512 }, },
         },
     },
 }
 
-export function pageSectionsReducer(state = pageSections, action) {
+export function pageSectionsReducer(state = page, action) {
     let updatedState = state;
     switch (action.type) {
-        // SECTION
+        // --- SECTION --- //
         case ADJUST_SECTION_HEIGHT_ACCORDING_TO_DIFF:
-            updatedState = { ...state, [action.sectionId]: { ...state[action.sectionId], section: { ...state[action.sectionId].section, height: action.diff + state[action.sectionId].section.height } } };
+            updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], section: { ...state.sectionsProps[action.sectionId].section, height: action.diff + state.sectionsProps[action.sectionId].section.height } } } };
             break;
 
         case MINIMIZE_SECTION_HIGHT:
-            const updatedHeight = Object.values(state[action.sectionId].elements).reduce((maxval, element) => Math.max(element.offsetY + element.height, maxval), 30);
-            updatedState = { ...state, [action.sectionId]: { ...state[action.sectionId], section: { ...state[action.sectionId].section, height: updatedHeight } } };
+            const updatedHeight = Object.values(state.sectionsProps[action.sectionId].elements).reduce((maxval, element) => Math.max(element.offsetY + element.height, maxval), 30);
+            updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], section: { ...state.sectionsProps[action.sectionId].section, height: updatedHeight } } } };
             break;
 
-        // COVER
-        case SET_COVERS_DEADZONES:
-            updatedState = Object.entries(state).reduce((newState, [sectionId, sectionProps]) => {
-                newState[sectionId] = { ...sectionProps, cover: { ...sectionProps.cover, highlightDeadzones: action.highlightDeadzones } };
-                return newState;
+        case SET_SECTION_REFERENCE:
+            updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], section: { ...state.sectionsProps[action.sectionId].section, sectionRef: action.ref } } } };
+            break;
+
+        case ADD_NEW_SECTION:
+            // fix orders in all section
+            const updatedPageOrders = Object.entries(state.sectionsProps).reduce((accumiltedSections, [sectionId, sectionProps]) => {
+                accumiltedSections[sectionId] = { ...sectionProps, section: { ...sectionProps.section, order: sectionProps.section.order + (sectionProps.section.order >= action.order ? 1 : 0) } }
+                return accumiltedSections
             }, {});
+            // add new page
+            updatedPageOrders[uId('sec')] = pageService.getEmptySection(action.order);
+            updatedState = { ...state, sectionsProps: updatedPageOrders };
+            break;
+
+        //  --- COVER--- //
+        case SET_COVERS_DEADZONES:
+            const updatedPage1 = Object.entries(state.sectionsProps).reduce((newPage, [sectionId, sectionProps]) => {
+                newPage[sectionId] = { ...sectionProps, cover: { ...sectionProps.cover, highlightDeadzones: action.highlightDeadzones } };
+                return newPage;
+            }, {});
+            updatedState = { ...state, sectionsCount: state.sectionsCount + 1, sectionsProps: updatedPage1 };
             break;
 
         case SET_COVERS_DRAGGED_OVER:
-            updatedState = Object.entries(state).reduce((newState, [sectionId, sectionProps]) => {
-                newState[sectionId] = { ...sectionProps, cover: { ...sectionProps.cover, isDraggedOver: action.isDraggedOver } };
-                return newState;
+            const updatedPage2 = Object.entries(state.sectionsProps).reduce((newPage, [sectionId, sectionProps]) => {
+                newPage[sectionId] = { ...sectionProps, cover: { ...sectionProps.cover, isDraggedOver: action.isDraggedOver } };
+                return newPage;
             }, {});
+            updatedState = { ...state, sectionsProps: updatedPage2 };
             break;
 
-        // ELEMENTS
+        // --- ELEMENTS --- //
         case UPDATE_ELEMENT_IN_SECTION:
-            updatedState = { ...state, [action.sectionId]: { ...state[action.sectionId], elements: { ...state[action.sectionId].elements, [action.elementId]: action.element } } };
+            updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], elements: { ...state.sectionsProps[action.sectionId].elements, [action.elementId]: action.element } } } };
+            break;
 
         case ADD_NEW_ELEMENT_TO_SECTION:
-            updatedState = { ...state, [action.sectionId]: { ...state[action.sectionId], elements: { ...state[action.sectionId].elements, [action.elementId]: action.element } } };
+            updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], elements: { ...state.sectionsProps[action.sectionId].elements, [action.elementId]: action.element } } } };
+            break;
 
         case DELETE_ELEMENT_FROM_SECTION:
-            let { [action.elementId]: _, ...remainingElements } = state[action.sectionId].elements;
-            updatedState = { ...state, [action.sectionId]: { ...state[action.sectionId], elements: remainingElements } }; 4
+            let { [action.elementId]: _, ...remainingElements } = state.sectionsProps[action.sectionId].elements;
+            updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], elements: remainingElements } } };
         default:
     }
     return updatedState;
+
 }
+
+
+// function tstttt() {
+//     console.log(page);
+
+//     const action = {
+//         type: ADD_NEW_SECTION,
+//         order :2,
+//     }
+//     console.log('after');
+//     console.log(pageSectionsReducer(page, action));
+
+
+// }
+
+
+// tstttt();

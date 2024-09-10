@@ -1,8 +1,10 @@
-// contexts
-import { EditBoardContext } from './EditBoard';
-
 //react hooks
-import { useRef, useContext, useState } from 'react';
+import { useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
+
+// store
+import { getMinimizeSectionHeightAction, getSectionHeightByDiffAction } from '../../store/actions/pageSections.actions';
+
 
 function ResizeSection({ sectionId }) {
     // states
@@ -12,15 +14,12 @@ function ResizeSection({ sectionId }) {
     const ref = useRef(null);
 
     // from contexts
-    const { setPageSections } = useContext(EditBoardContext);
+    //store
+    const diptach = useDispatch();
 
     function onDoubleClick() {
-        setPageSections(prev => {
-            const updatedHeight = Object.values(prev[sectionId].elements).reduce((maxval, element) => {
-                return Math.max(element.offsetY + element.height, maxval);
-            }, 30);
-            return { ...prev, [sectionId]: { ...prev[sectionId], height: updatedHeight } }
-        })
+        const action = getMinimizeSectionHeightAction(sectionId);
+        diptach(action);
     }
 
     // on pointer down drag & drop
@@ -38,7 +37,8 @@ function ResizeSection({ sectionId }) {
             document.body.style = 'cursor: move';
             ref.current.style = 'cursor: move';
 
-            setPageSections(prev => ({ ...prev, [sectionId]: { ...prev[sectionId], height: prev[sectionId].height + diff } }))
+            const action = getSectionHeightByDiffAction(sectionId, diff);
+            diptach(action);
         }
 
         // add event to body to start draging

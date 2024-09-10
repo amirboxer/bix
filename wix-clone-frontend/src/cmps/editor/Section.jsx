@@ -1,9 +1,9 @@
 // react hooks
-import { useRef, createContext, memo, useEffect, useCallback } from 'react';
+import { useRef, memo, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 
-// Context
-export const sectionContext = createContext();
+// store
+import { getSectionRefAction } from '../../store/actions/pageSections.actions';
 
 // cmps
 import SectionCover from './SectionCover';
@@ -13,7 +13,7 @@ import EditBox from './EditBox';
 import { utilService } from '../../services/util.service';
 const throttle = utilService.throttle;
 
-const Section = memo(function Section({ section, sectionId, setPageSections, idx }) {
+const Section = memo(function Section({ sectionId }) {
     // referances
     const sectionFocused = useRef(null);
     const sectionRef = useRef(null);
@@ -21,17 +21,16 @@ const Section = memo(function Section({ section, sectionId, setPageSections, idx
     const showLowerAddSectionButton = useRef(null);
     const showUpperAddSectionButton = useRef(null);
 
-
-    //
-    const dispatch = useDispatch()
-    const seccccccc = useSelector((storeState) => storeState.pageSections[idx + 1])
-    //
-
+    // store-state
+    const dispatch = useDispatch();
+    const sectionProps = useSelector((storeState) => storeState.page.sectionsProps[sectionId].section);
+    const elements = useSelector((storeState) => storeState.page.sectionsProps[sectionId].elements);
 
     //useEffect
     useEffect(() => {
-        setPageSections(prev => ({ ...prev, [sectionId]: { ...prev[sectionId], sectionRef: sectionRef.current } }))
-    }, [])
+        const action = getSectionRefAction(sectionId, sectionRef.current);
+        dispatch(action);
+    }, [sectionRef])
 
     // event handlers
     function onFocus() {
@@ -68,10 +67,9 @@ const Section = memo(function Section({ section, sectionId, setPageSections, idx
         }, [showLowerAddSectionButton.current, showUpperAddSectionButton.current]);
 
     return (
-        <sectionContext.Provider value={{ sectionId }}>
             <section
                 // style
-                style={{ height: section.height }}
+                style={{ height: sectionProps.height }}
 
                 // event handlers
                 onFocus={onFocus}
@@ -80,7 +78,7 @@ const Section = memo(function Section({ section, sectionId, setPageSections, idx
 
                 // DOM reference
                 ref={sectionRef}
-                className={`section section-layout ${!section.order ? 'first' : ''}`}
+                className={`section section-layout ${!sectionProps.order ? 'first' : ''}`}
                 tabIndex={0}
                 id={sectionId}
             >
@@ -91,16 +89,13 @@ const Section = memo(function Section({ section, sectionId, setPageSections, idx
                         className="grid-center"
                         ref={contentsRef}
                     >
-                        {Object.entries(section.elements).map(([id, element], _) =>
+                        {Object.entries(elements).map(([id, element], _) =>
                             <EditBox
                                 key={id}
                                 id={id}
                                 contentsRef={contentsRef}
                                 secId={sectionId}
-                                width={element.width}
-                                height={element.height}
-                                offsetX={element.offsetX}
-                                offsetY={element.offsetY}
+                                element={element}
                             />
                         )}
                     </div>
@@ -110,13 +105,10 @@ const Section = memo(function Section({ section, sectionId, setPageSections, idx
                 < SectionCover
                     setAddSectionBtnHandlers={setAddSectionBtnHandlers}
                     handleSectionFocus={handleSectionFocus}
-                    isDraggedOver={section.isDraggedOver}
-                    highlightDeadzones={section.highlightDeadzones}
-                    name={section.name}
+                    name={sectionProps.name}
                     sectionId={sectionId}
                 />
             </section>
-        </sectionContext.Provider>
     )
 })
 export default Section

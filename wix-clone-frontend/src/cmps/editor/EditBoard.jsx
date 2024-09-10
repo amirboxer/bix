@@ -8,6 +8,7 @@ import React, { useRef, createContext, useEffect, useContext } from 'react';
 // store
 import { useDispatch, useSelector } from 'react-redux'
 import { store } from '../../store/store';
+import { getCoversDeadzonesAction, getCoversDraggedOverAction, updateElementInSection, addNewElementToSection, deleteElementFromSection } from '../../store/actions/pageSections.actions';
 
 // Context
 import { EditPageContext } from '../../pages/Editor';
@@ -23,13 +24,11 @@ import observeAddSecPlaceholders from '../../observers/intersect';
 function EditBoard() {
 
     // context
-    const { editBoardRef, selectedPlaceholderToFill, pageSections, setPageSections, zoomOutMode } = useContext(EditPageContext);
+    const { editBoardRef, selectedPlaceholderToFill, zoomOutMode } = useContext(EditPageContext);
 
-
-    //store-states
-    console.log(store.getState().pageSections);
-    
-
+    //store-states 
+    const sectionsCount = useSelector((storeState) => storeState.page.sectionsCount);
+    const dispatch = useDispatch();
 
     // references
     const sectionsContainerRef = useRef(null) // div containing all the page
@@ -37,6 +36,7 @@ function EditBoard() {
     const handleElDragAndResize = useRef(null); // Ref to the function handling pointer move events.
     const handleEndDragAndResize = useRef(null); // Ref to the function handling pointer up events.
     const placeHolderObserver = useRef(null);
+
 
     // useEffects
     useEffect(() => {
@@ -51,21 +51,13 @@ function EditBoard() {
 
     useEffect(() => {
         function onElementsIntersect() {
-            setPageSections(prev =>
-                Object.entries(prev).reduce((updatedSections, [sectionId, section]) => {
-                    updatedSections[sectionId] = { ...section, highlightDeadzones: true };
-                    return updatedSections;
-                }, {})
-            );
+            const action = getCoversDeadzonesAction(true);
+            dispatch(action);
         }
 
         function onElementsStopIntersect() {
-            setPageSections(prev =>
-                Object.entries(prev).reduce((updatedSections, [sectionId, section]) => {
-                    updatedSections[sectionId] = { ...section, highlightDeadzones: false };
-                    return updatedSections;
-                }, {})
-            );
+            const action = getCoversDeadzonesAction(false);
+            dispatch(action);
         }
 
         editBoardRef.current.addEventListener('elementsIntersect', onElementsIntersect);
@@ -94,16 +86,14 @@ function EditBoard() {
             const currentlyDraggedOver = getSectionIdByRange(e.clientY);
 
             // check if element is in the realm of a different section after moving
-            setPageSections(prev =>
-                Object.entries(prev).reduce((updatedSections, [sectionId, section]) => {
-                    updatedSections[sectionId] = { ...section, isDraggedOver: currentlyDraggedOver };
-                    return updatedSections;
-                }, {})
-            );
+            const action = getCoversDraggedOverAction(currentlyDraggedOver);
+            dispatch(action);
         }
     }
 
     function onPointerUp(e) {
+        const pageSections = store.getState().page.sectionsProps;
+
         const originalSecId = e.target.dataset.secId;
         const elId = e.target.dataset.elId;
 
@@ -115,51 +105,34 @@ function EditBoard() {
                 // update sections state
                 const [width, height, osl, ost] = [+e.target.dataset.width, +e.target.dataset.height, +e.target.dataset.offsetleft, +e.target.dataset.offsettop];
                 const updatedEl = { ...pageSections[originalSecId].elements[elId], width: width, height: height, offsetX: osl, offsetY: ost };
-                setPageSections(prev =>
-                    Object.entries(prev).reduce((updatedSections, [sectionId, section]) => {
-                        if (sectionId === originalSecId) {
-                            updatedSections[sectionId] = { ...section, elements: { ...section.elements, [elId]: updatedEl } };
-                        } else {
-                            updatedSections[sectionId] = section;
-                        }
-                        return updatedSections;
-                    }, {})
-                );
+                updateElementInSection(originalSecId, elId, updatedEl);
+
 
                 // check if element is in the realm of a different section after moving, if so register the change
                 if (currentSectionId != originalSecId) {
                     // calc new position
-                    const distanceFromTop = e.target.getBoundingClientRect().top - pageSections[currentSectionId].sectionRef.getBoundingClientRect().top;
+                    console.log();
+
+                    const distanceFromTop = e.target.getBoundingClientRect().top - pageSections[currentSectionId].section.sectionRef.getBoundingClientRect().top;
 
                     // attach to section currently being hovered
-                    const udsec = { ...pageSections[currentSectionId], elements: { ...pageSections[currentSectionId].elements, [elId]: { ...updatedEl, offsetX: osl, offsetY: distanceFromTop } } }
-                    setPageSections(prev => ({ ...prev, [currentSectionId]: udsec }))
+                    addNewElementToSection(currentSectionId, elId, { ...updatedEl, offsetX: osl, offsetY: distanceFromTop });
 
                     // next two lines : remove focus from current section
-                    pageSections[originalSecId].sectionRef.focus({ preventScroll: true });
-                    pageSections[originalSecId].sectionRef.blur();
+                    pageSections[originalSecId].section.sectionRef.focus({ preventScroll: true });
+                    pageSections[originalSecId].section.sectionRef.blur();
 
                     // delete from previous section
-                    setPageSections(prev => {
-                        const { [elId]: _, ...remainingElements } = prev[originalSecId].elements;
-                        const upadatedSection = { ...prev[originalSecId], elements: remainingElements };
-                        return { ...prev, [originalSecId]: upadatedSection }
-                    })
+                    deleteElementFromSection(originalSecId, elId);
 
                     // set focus on new focus and the elements that moced into it
-                    focusOnMount(pageSections[currentSectionId].sectionRef, elId);
+                    focusOnMount(pageSections[currentSectionId].section.sectionRef, elId);
                 }
             }
-
             // cancle dragging for all section covers
-            setPageSections(prev =>
-                Object.entries(prev).reduce((updatedSections, [sectionId, section]) => {
-                    updatedSections[sectionId] = { ...section, isDraggedOver: false };
-                    return updatedSections;
-                }, {})
-            );
+            const endDragAtion = getCoversDraggedOverAction(false);
+            dispatch(endDragAtion);
         }
-
         // end dragging and resizing of element on board
         if (handleEndDragAndResize.current) handleEndDragAndResize.current(e);
     }
@@ -173,16 +146,20 @@ function EditBoard() {
         handleEndDragAndResize.current = handler;
     }
 
+
+
     //functions
     function getSectionIdByRange(y) {
-        return Object.entries(pageSections).find(([_, section], __) => {
-            const sectionRect = section.sectionRef.getBoundingClientRect();
+        const pageSections = store.getState().page.sectionsProps;
+
+        return Object.entries(pageSections).find(([_, sectionProps], __) => {
+            const sectionRect = sectionProps.section.sectionRef.getBoundingClientRect();
             return (sectionRect.top <= y && y < sectionRect.bottom);
-        })[0]
+        })[0];
     }
 
     return (
-        <EditBoardContext.Provider value={{ setResizeAndDragHandler, setEndDragAndResizeHandler, setPageSections, editBoardRef, draggingInProggres }}>
+        <EditBoardContext.Provider value={{ setResizeAndDragHandler, setEndDragAndResizeHandler, editBoardRef, draggingInProggres }}>
             {zoomOutMode === 'add-section' &&
                 // only in zoom out
                 <style>{`.page-sections {
@@ -199,7 +176,7 @@ function EditBoard() {
                 ref={editBoardRef}
             >
                 {/* right side ruler */}
-                {zoomOutMode != 'add-section' &&
+                {zoomOutMode !== 'add-section' &&
                     <Ruler
                         rightRulerlengthRef={sectionsContainerRef}
                         rulerSide="right"
@@ -215,17 +192,14 @@ function EditBoard() {
                     {zoomOutMode != 'add-section' &&
                         <Ruler rulerSide="top" />
                     }
-
                     {/* setions */}
-                    {Object.entries(pageSections).sort((a, b) => a[1].order - b[1].order).map(([sectionId, section], idx) =>
+                    {Object.entries(store.getState().page.sectionsProps).sort((sec1, sec2) => sec1[1].section.order - sec2[1].section.order).map(([sectionId, secProps], _) =>
                         <React.Fragment key={sectionId}>
-
                             {/* place-holders for adding new sections */}
-                            {idx != 0 &&
+                            {secProps.section.order != 0 &&
                                 <div
-                                    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1 remove idx later
                                     id={'newSec' + sectionId}
-                                    data-order={idx}
+                                    data-order={secProps.section.order}
                                     className='add-section-placeholder-container'
                                 >
                                     <div className='add-section-placeholder'>
@@ -238,12 +212,10 @@ function EditBoard() {
 
                             {/* section */}
                             <Section
-                                idx={idx}
-                                section={section}
                                 sectionId={sectionId}
-                                setPageSections={setPageSections}
                             />
-                        </React.Fragment>)}
+                        </React.Fragment>)
+                    }
                 </div>
             </section>
         </EditBoardContext.Provider>

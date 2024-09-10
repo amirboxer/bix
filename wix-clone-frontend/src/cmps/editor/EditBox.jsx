@@ -8,20 +8,16 @@ const EditBox = memo(function EditBox({
     id,
     secId,
     contentsRef,
-    width,
-    height,
-    offsetX,
-    offsetY,
+    element,
 }) {
-
     // States
     const [initialPointerCoords, setInitialPointerCoords] = useState({ posX: null, posY: null });
     const [isFocused, setIsFocused] = useState(false);
     const [autoDrag, setAutoDrag] = useState(true);
-    const [boxWidth, setBoxWidth] = useState(width);
-    const [boxHeight, setBoxHeight] = useState(height);
-    const [boxOffsetLeft, setBoxOffsetLeft] = useState(offsetX);
-    const [boxOffsetTop, setBoxOffsetTop] = useState(offsetY);
+    const [boxWidth, setBoxWidth] = useState(element.width);
+    const [boxHeight, setBoxHeight] = useState(element.height);
+    const [boxOffsetLeft, setBoxOffsetLeft] = useState(element.offsetX);
+    const [boxOffsetTop, setBoxOffsetTop] = useState(element.offsetY);
 
     //references
     const editBoxRef = useRef(null);
@@ -29,8 +25,6 @@ const EditBox = memo(function EditBox({
     useEffect(() => {
         const onFocusEditBox = () => handlePointerDown({ pageX: null, pageY: null }, false)
         editBoxRef.current.addEventListener('focusEditBox', onFocusEditBox);
-
-        // return () => editBoxRef.current.removeEventListener('focusEditBox', onFocusEditBox)
     }, [])
 
     // Handle focus logic and allow appearance
@@ -41,11 +35,6 @@ const EditBox = memo(function EditBox({
             !autoDrag ? editBoxRef.current.focus() : null;
             setInitialPointerCoords({ pageX: e.pageX, pageY: e.pageY });
         }, 0);
-    }
-
-    // Handle blur logic and prevent appearance
-    function handleBlur() {
-        setIsFocused(false);
     }
 
     return (
@@ -74,7 +63,7 @@ const EditBox = memo(function EditBox({
                 }}
                 tabIndex={0}
                 onPointerDown={handlePointerDown}
-                onBlur={handleBlur}>
+                onBlur={() => setIsFocused(false)}>
 
                 {/* resizer wrapper */}
                 {isFocused &&

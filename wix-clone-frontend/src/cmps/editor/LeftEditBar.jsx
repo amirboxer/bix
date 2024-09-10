@@ -9,13 +9,16 @@ import { EditPageContext } from '../../pages/Editor';
 import { utilService } from '../../services/util.service';
 const uId = utilService.uId;
 
+// store
+import { addNewSectionToPage } from '../../store/actions/pageSections.actions';
+
 
 function LeftEditBar({ zoomOutMode }) {
     //states
     const [selectedButton, setSelectedButton] = useState(null);
 
     // context
-    const { setZoomOutMode, selectedPlaceholderToFill, setPageSections } = useContext(EditPageContext);
+    const { setZoomOutMode } = useContext(EditPageContext);
 
     // useEffects
     useEffect(() => {
@@ -226,17 +229,7 @@ function Panel({ selectedButton, onClosePanel }) {
     // add-section
     function onAddSection(placeholder) {
         const order = +placeholder.dataset.order;
-        setPageSections(pageSections => {
-            const page = Object.entries(pageSections).reduce((accumiltedSections, [sectionId, section]) => {
-                if (section.order >= order) {
-                    accumiltedSections[sectionId] = { ...section, order: section.order + 1 };
-                }
-                else accumiltedSections[sectionId] = section
-                return accumiltedSections;
-            }, {})
-            page[uId('sec')] = { name: 'untitled', order: order, height: 800, isDraggedOver: false, highlightDeadzones: false, elements: { [uId('el')]: { width: 230, height: 120, offsetX: 300, offsetY: 155 } } };
-            return page;
-        });
+        addNewSectionToPage(order);
         onClick(selectedButton)
     }
 
