@@ -185,7 +185,26 @@ const panelConfigurations = {
     'add-elements': {
         title: 'Add Elements',
         categories: [
-            
+            'Text',
+            'Contact & Form',
+            'VIdeo & Music',
+            'Gallery',
+            'Text',
+            'Contact & Form',
+            'VIdeo & Music',
+            'Gallery',
+            'Text',
+            'Contact & Form',
+            'VIdeo & Music',
+            'Gallery',
+            'Text',
+            'Contact & Form',
+            'VIdeo & Music',
+            'Gallery',
+            'Text',
+            'Contact & Form',
+            'VIdeo & Music',
+            'Gallery',
             'Text',
             'Contact & Form',
             'VIdeo & Music',
@@ -213,5 +232,193 @@ const panelConfigurations = {
             'example2',
             'example3',
         ],
+    },
+};
+
+const panelConfigurations2 = {
+    'add-section':
+    {
+        'Add Section':
+        {
+            'Text':
+            {
+                sub1:
+                    [
+                        'Add Elements-Text-sub1-example1',
+                        'Add Elements-Text-sub1example2',
+                        'Add Elements-Text-sub1example3',
+                    ],
+                sub2:
+                    [
+                        'Add Elements-Text-sub2example1',
+                        'Add Elements-Text-sub2example2',
+                        'Add Elements-Text-sub2example3',
+                    ],
+                sub3:
+                    [
+                        'Add Elements-Text-sub3example1',
+                        'Add Elements-Text-sub3example2',
+                        'Add Elements-Text-sub3example3',
+                    ],
+
+            },
+            'Contact & Form':
+            {
+                sub1:
+                    [
+                        'Add Elements-Contact & Form-sub1-example1',
+                        'Add Elements-Contact & Form-sub1example2',
+                        'Add Elements-Contact & Form-sub1example3',
+                    ],
+                sub2:
+                    [
+                        'Add Elements-Contact & Form-sub2example1',
+                        'Add Elements-Contact & Form-sub2example2',
+                        'Add Elements-Contact & Form-sub2example3',
+                    ],
+                sub3:
+                    [
+                        'Add Elements-Contact & Form-sub3example1',
+                        'Add Elements-Contact & Form-sub3example2',
+                        'Add Elements-Contact & Form-sub3example3',
+                    ],
+
+            },
+            'VIdeo & Music':
+            {
+                sub1:
+                    [
+                        'Add Elements-VIdeo & Music-sub1-example1',
+                        'Add Elements-VIdeo & Music-sub1example2',
+                        'Add Elements-VIdeo & Music-sub1example3',
+                    ],
+                sub2:
+                    [
+                        'Add Elements-VIdeo & Music-sub2example1',
+                        'Add Elements-VIdeo & Music-sub2example2',
+                        'Add Elements-VIdeo & Music-sub2example3',
+                    ],
+                sub3:
+                    [
+                        'Add Elements-VIdeo & Music-sub3example1',
+                        'Add Elements-VIdeo & Music-sub3example2',
+                        'Add Elements-VIdeo & Music-sub3example3',
+                    ],
+
+            },
+            'Gallery': {
+                sub1:
+                    [
+                        'Add Elements-Gallery-sub1-example1',
+                        'Add Elements-Gallery-sub1example2',
+                        'Add Elements-Gallery-sub1example3',
+                    ],
+                sub2:
+                    [
+                        'Add Elements-Gallery-sub2example1',
+                        'Add Elements-Gallery-sub2example2',
+                        'Add Elements-Gallery-sub2example3',
+                    ],
+                sub3:
+                    [
+                        'Add Elements-Gallery-sub3example1',
+                        'Add Elements-Gallery-sub3example2',
+                        'Add Elements-Gallery-sub3example3',
+                    ],
+            },
+        },
+    },
+    
+    'add-elements':
+    {
+        'Add Elements':
+        {
+            'Text':
+            {
+                sub1:
+                    [
+                        'Add Elements-Text-sub1-example1',
+                        'Add Elements-Text-sub1example2',
+                        'Add Elements-Text-sub1example3',
+                    ],
+                sub2:
+                    [
+                        'Add Elements-Text-sub2example1',
+                        'Add Elements-Text-sub2example2',
+                        'Add Elements-Text-sub2example3',
+                    ],
+                sub3:
+                    [
+                        'Add Elements-Text-sub3example1',
+                        'Add Elements-Text-sub3example2',
+                        'Add Elements-Text-sub3example3',
+                    ],
+
+            },
+            'Contact & Form':
+            {
+                sub1:
+                    [
+                        'Add Elements-Contact & Form-sub1-example1',
+                        'Add Elements-Contact & Form-sub1example2',
+                        'Add Elements-Contact & Form-sub1example3',
+                    ],
+                sub2:
+                    [
+                        'Add Elements-Contact & Form-sub2example1',
+                        'Add Elements-Contact & Form-sub2example2',
+                        'Add Elements-Contact & Form-sub2example3',
+                    ],
+                sub3:
+                    [
+                        'Add Elements-Contact & Form-sub3example1',
+                        'Add Elements-Contact & Form-sub3example2',
+                        'Add Elements-Contact & Form-sub3example3',
+                    ],
+
+            },
+            'VIdeo & Music':
+            {
+                sub1:
+                    [
+                        'Add Elements-VIdeo & Music-sub1-example1',
+                        'Add Elements-VIdeo & Music-sub1example2',
+                        'Add Elements-VIdeo & Music-sub1example3',
+                    ],
+                sub2:
+                    [
+                        'Add Elements-VIdeo & Music-sub2example1',
+                        'Add Elements-VIdeo & Music-sub2example2',
+                        'Add Elements-VIdeo & Music-sub2example3',
+                    ],
+                sub3:
+                    [
+                        'Add Elements-VIdeo & Music-sub3example1',
+                        'Add Elements-VIdeo & Music-sub3example2',
+                        'Add Elements-VIdeo & Music-sub3example3',
+                    ],
+
+            },
+            'Gallery': {
+                sub1:
+                    [
+                        'Add Elements-Gallery-sub1-example1',
+                        'Add Elements-Gallery-sub1example2',
+                        'Add Elements-Gallery-sub1example3',
+                    ],
+                sub2:
+                    [
+                        'Add Elements-Gallery-sub2example1',
+                        'Add Elements-Gallery-sub2example2',
+                        'Add Elements-Gallery-sub2example3',
+                    ],
+                sub3:
+                    [
+                        'Add Elements-Gallery-sub3example1',
+                        'Add Elements-Gallery-sub3example2',
+                        'Add Elements-Gallery-sub3example3',
+                    ],
+            },
+        },
     },
 };
