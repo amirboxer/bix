@@ -99,18 +99,17 @@
 }
 
 #superSection {
-    background-color: aqua;
-    height: 10px;
     grid-column: 3;
     grid-row: 2;
-
-    position: relative;
 
     display: grid;
     grid-template-columns: minmax(0, 1fr) $pageWidth minmax(0, 1fr) auto;
 
-    width: calc(100% - 40px);
+    position: relative;
+    height: 0px;
     min-width: $pageWidth;
+    width: calc(100% - 40px);
+
 
     .right-scroll-filler {
         grid-column: -1;
@@ -118,18 +117,20 @@
         opacity: 0;
     }
 
-    .grid-center {
-        background-color: red;
-    }
+    z-index: 30;
 
-    z-index: 100;
+    .edit-box.example-prototype {
+        z-index: 31 !important;
+        background-color: rgba(96, 247, 255, 0.253);
+        border: 1px dashed rgb(42, 241, 255);
 
-    .edit-box {
-        z-index: 102 !important;
+        .grabber {
+            cursor: grab;
+        }
     }
 
     .tester {
-        z-index: 101 !important;
+        opacity: 0;
         background-color: green;
     }
 }

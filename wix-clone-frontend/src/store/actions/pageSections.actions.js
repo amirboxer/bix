@@ -10,6 +10,8 @@ import {
     UPDATE_ELEMENT_IN_SECTION,
     ADD_NEW_ELEMENT_TO_SECTION,
     DELETE_ELEMENT_FROM_SECTION,
+    ADD_SUPER_ELEMENT,
+    SET_SUPER_ELEMENT_PIVOT,
 } from "../reducers/pageSections.reducer";
 
 import { store } from "../store";
@@ -84,16 +86,33 @@ export function getMinimizeSectionHeightAction(sectionId) { // used in ResizeSec
     }
 }
 
-export function getCoversDeadzonesAction(highlightDeadzones) { // used in EditBoard cmp
+export function getCoversDeadzonesAction(highlightDeadzones) { // used in DragResizeBox cmp
     return {
         type: SET_COVERS_DEADZONES,
         highlightDeadzones,
     };
 }
 
-export function getCoversDraggedOverAction(isDraggedOver) { // used in EditBoard cmp
+export function getCoversDraggedOverAction(isDraggedOver) { // used in DragResizeBox cmp
     return {
         type: SET_COVERS_DRAGGED_OVER,
         isDraggedOver,
+    };
+}
+
+export function getSupperElementAction(width, height, offsetX, offsetY) { // used in LeftEditBar cmp
+    return {
+        type: ADD_SUPER_ELEMENT,
+        width,
+        height,
+        offsetX,
+        offsetY
+    };
+}
+
+export function getSupperElementPivotAtion(pivot) { // used in superSection cmp
+    return {
+        type: SET_SUPER_ELEMENT_PIVOT,
+        pivot,
     };
 }

@@ -375,22 +375,6 @@
     }
 }
 
-.new-element-draging-container {
-    background-color: rgba(221, 255, 0, 0.366);
-    height: 10px;
-    width: 10px;
-    position: absolute;
-    z-index: 20;
-    top: 0;
-    left: 0;
-
-    .example-prototype {
-        position: absolute;
-        background-color: rgba(96, 247, 255, 0.253);
-        border: 1px dashed rgb(42, 241, 255);
-    }
-}
-
 .example-drag {
     cursor: pointer;
     position: relative;

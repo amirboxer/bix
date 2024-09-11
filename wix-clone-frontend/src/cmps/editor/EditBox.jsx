@@ -9,7 +9,6 @@ const EditBox = memo(function EditBox({
     secId,
     contentsRef,
     element,
-    superElement=false,
 }) {
     // States
     const [initialPointerCoords, setInitialPointerCoords] = useState({ posX: null, posY: null });
@@ -23,10 +22,11 @@ const EditBox = memo(function EditBox({
     //references
     const editBoxRef = useRef(null);
 
+    //useEffect
     useEffect(() => {
         const onFocusEditBox = () => handlePointerDown({ pageX: null, pageY: null }, false)
         editBoxRef.current.addEventListener('focusEditBox', onFocusEditBox);
-    }, [])
+    }, []);
 
     // Handle focus logic and allow appearance
     function handlePointerDown(e, autoDrag = true) {
@@ -55,7 +55,7 @@ const EditBox = memo(function EditBox({
             <div
                 id={elId}
                 ref={editBoxRef}
-                className="edit-box"
+                className={`edit-box ${elId === 'superElement' ? 'example-prototype' : ''}`}
                 style={{
                     top: boxOffsetTop,
                     left: boxOffsetLeft,
@@ -74,7 +74,6 @@ const EditBox = memo(function EditBox({
                         secId={secId}
                         contentsRef={contentsRef}
                         editBoxRef={editBoxRef}
-                        superElement={superElement}
                         initialPointerCoords={initialPointerCoords}
                         setters={{ setBoxHeight, setBoxWidth, setBoxOffsetLeft, setBoxOffsetTop }}
                         vals={{ boxWidth, boxHeight, boxOffsetLeft, boxOffsetTop }}

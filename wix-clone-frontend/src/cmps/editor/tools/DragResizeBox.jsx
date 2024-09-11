@@ -1,6 +1,6 @@
 // react hooks
 import { useState, useRef, useEffect, useContext } from 'react';
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 //utils
 import { utilService } from '../../../services/util.service';
@@ -8,9 +8,8 @@ const throttle = utilService.throttle;
 
 // store
 import { getCoversDraggedOverAction } from '../../../store/actions/pageSections.actions';
-import { store } from '../../../store/store';
 import { updateElementInSection, addNewElementToSection, deleteElementFromSection } from '../../../store/actions/pageSections.actions';
-
+import { getSlideLeftPanelAction } from '../../../store/actions/edtior.actions';
 // context from EditBoard
 import { EditBoardContext } from '../EditBoard';
 
@@ -23,7 +22,6 @@ function DragResizeBox({
     secId,
     contentsRef,
     editBoxRef,
-    superElement,
     initialPointerCoords,
     setters: {
         setBoxWidth,
@@ -41,8 +39,12 @@ function DragResizeBox({
     //states
     const [indicator, setIndicator] = useState(null);
 
+    //states from store
+    const leftPanelRect = useSelector(storeState => storeState.editor.leftPanel.ref).getBoundingClientRect();
+    const pageSections = useSelector(storeState => storeState.page.sectionsProps);
+    const superElement = useSelector(storeState => storeState.page.superElement.element);
+
     // store
-    const [pageSections, _] = useState(store.getState().page.sectionsProps);
     const dispatch = useDispatch();
 
     // context
@@ -51,8 +53,8 @@ function DragResizeBox({
     // References
     const initialPointerCoord = useRef(initialPointerCoords);
     const resizeAxis = useRef({ horizontal: 0, vertical: 0 });
-    const outOfGridlinesThrottld = useRef(null);
-    const backToGridlinesThrottld = useRef(null);
+    const outOfGridlinesThrottled = useRef(null);
+    const backToGridlinesThrottled = useRef(null);
     const isIntersecting = useRef(null);
     const draggingInProggres = useRef(false) // draggning elements
     const bodyCursor = useRef('move');
@@ -64,8 +66,8 @@ function DragResizeBox({
             document.body.addEventListener('pointermove', onPointerMove);
             document.body.addEventListener('pointerup', onPointerUp);
         }
-        outOfGridlinesThrottld.current = throttle(outOfGridlines, 100); // dispatch event when intersectiong out of gridline
-        backToGridlinesThrottld.current = throttle(backToGridlines, 100); // dispatch event when !!! stopped !!! intersectiong out of gridlinef
+        outOfGridlinesThrottled.current = throttle(outOfGridlines, 100); // dispatch event when intersectiong out of gridline
+        backToGridlinesThrottled.current = throttle(backToGridlines, 100); // dispatch event when !!! stopped !!! intersectiong out of gridlinef
     }, []);
 
     // Handlers configuration
@@ -100,6 +102,7 @@ function DragResizeBox({
     function onPointerMove(e) {
         const { pageX, pageY } = e;
         const [deltaX, deltaY] = calculatePointerDelta(pageX, pageY);
+
         initialPointerCoord.current = { pageX, pageY };
 
         if (draggingInProggres.current === 'resizing') {
@@ -111,20 +114,35 @@ function DragResizeBox({
         }
 
         // alert user if element is  being dragged out of it's original section
-        if (draggingInProggres.current && secId) {
-            // current section id of the element after moving
-            const currentlyDraggedOver = getSectionIdByRange(e.clientY);
+        // current section id of the element after moving
+        const currentlyDraggedOver = getSectionIdByRange(e.clientY);
 
-            // check if element is in the realm of a different section after moving
-            const action = getCoversDraggedOverAction(currentlyDraggedOver);
-            dispatch(action);
-        }
+        // check if element is in the realm of a different section after moving
+        const action = getCoversDraggedOverAction(currentlyDraggedOver);
+        dispatch(action);
 
         // check if stepping into section deadzone or back from deadzone
-        outOfGridlinesThrottld.current();
-        backToGridlinesThrottld.current();
+        outOfGridlinesThrottled.current();
+        backToGridlinesThrottled.current();
 
-        document.body.style = `cursor: ${bodyCursor.current}`;
+        document.body.style = `cursor: ${elId === 'superElement' ? 'grab' : bodyCursor.current}`;
+        outOfLeftPanel(e);
+    }
+
+    function outOfLeftPanel(e) {
+        if (elId === 'superElement') {
+            const { clientX, clientY } = e;
+
+            const leftEdge = leftPanelRect.x;
+            const rightEdge = leftPanelRect.x + leftPanelRect.width;
+            const topEdge = leftPanelRect.y;
+            const bottomEdge = leftPanelRect.y + leftPanelRect.height;
+
+            if (clientX < leftEdge || rightEdge < clientX || clientY < topEdge || bottomEdge < clientY) {
+                const action = getSlideLeftPanelAction(false);
+                dispatch(action);
+            }
+        }
     }
 
     // ---- event handler ---- //
@@ -135,7 +153,11 @@ function DragResizeBox({
 
         // update sections state
         const [width, height, osl, ost] = [+e.target.dataset.width, +e.target.dataset.height, +e.target.dataset.offsetleft, +e.target.dataset.offsettop];
-        const updatedEl = { ...pageSections[secId].elements[elId], width: width, height: height, offsetX: osl, offsetY: ost };
+
+
+        const baseEl = elId !== 'superElement' ? pageSections[secId].elements[elId] : superElement;
+        const updatedEl = { ...baseEl, width: width, height: height, offsetX: osl, offsetY: ost };
+
         updateElementInSection(secId, elId, updatedEl);
 
         // check if element is in the realm of a different section after moving, if so register the change
@@ -147,17 +169,25 @@ function DragResizeBox({
             addNewElementToSection(currentSectionId, elId, { ...updatedEl, offsetX: osl, offsetY: distanceFromTop });
 
             // next two lines : remove focus from current section
-            /////////////////////////// TODO  SUPER SECTION IGNORE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            pageSections[secId].section.sectionRef.focus({ preventScroll: true });
-            pageSections[secId].section.sectionRef.blur();
+            if (elId !== 'superElement') {
+                pageSections[secId].section.sectionRef.focus({ preventScroll: true });
+                pageSections[secId].section.sectionRef.blur();
 
-            // delete from previous section
+                // delete from previous section
+                deleteElementFromSection(secId, elId);
+            }
 
-            /////////////////////////// TODO  SUPER SECTION IGNORE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            deleteElementFromSection(secId, elId);
-
-            // set focus on new focus and the elements that moced into it
-            focusOnMount(pageSections[currentSectionId].section.sectionRef, elId);
+            // set focus on new focus and the elements that moved into it
+            focusOnMount(pageSections[currentSectionId].section.sectionRef,
+                (mutationList, observer) => {
+                    mutationList.forEach(mutation => {
+                        if (mutation.addedNodes[0] && mutation.addedNodes[0].id === elId) {
+                            const focusEditBox = new CustomEvent('focusEditBox', { cancelable: true });
+                            mutation.addedNodes[0].dispatchEvent(focusEditBox);
+                        }
+                    });
+                    observer.disconnect()
+                });
         }
         // cancle dragging for all section covers
         const endDragAtion = getCoversDraggedOverAction(false);
@@ -229,7 +259,7 @@ function DragResizeBox({
                 cancelable: true,
             });
             isIntersecting.current = true;
-            editBoxRef.current.dispatchEvent(intersectionEvent);
+            editBoardRef.current.dispatchEvent(intersectionEvent);
         }
     }
 
@@ -240,22 +270,23 @@ function DragResizeBox({
                 cancelable: true,
             });
             isIntersecting.current = false;
-            editBoxRef.current.dispatchEvent(intersectionEvent);
+            editBoardRef.current.dispatchEvent(intersectionEvent);
         }
     }
 
     function getSectionIdByRange(y) {
-        return Object.entries(pageSections).find(([_, sectionProps], __) => {
+        const sectionProp = Object.entries(pageSections).find(([_, sectionProps], __) => {
             const sectionRect = sectionProps.section.sectionRef.getBoundingClientRect();
             return (sectionRect.top <= y && y < sectionRect.bottom);
-        })[0];
+        });
+        return sectionProp ? sectionProp[0] : null;
     }
 
     return (
         <>
             <Indicator
                 indicator={indicator}
-                superElement={superElement}
+                elId={elId}
             />
 
             <div className="handler drag-resize-box" >
@@ -271,7 +302,7 @@ function DragResizeBox({
                 </span>
 
                 {/* resizers */}
-                {!superElement && handlers.map(({ className, deltaX, deltaY, cursor }, index) => (
+                {elId !== 'superElement' && handlers.map(({ className, deltaX, deltaY, cursor }, index) => (
                     <span
                         // position and location
                         data-width={boxWidth}
@@ -290,8 +321,8 @@ function DragResizeBox({
     )
 }
 
-function Indicator({ indicator, superElement }) {
-    return (indicator && !superElement &&
+function Indicator({ indicator, elId }) {
+    return (indicator && elId !== 'superElement' &&
         <div
             className={`edit-box-indicator ${indicator.type}`}
         >{indicator.type === 'dragging' && 'x' || 'W'}: {indicator.leftVal}, {indicator.type === 'dragging' && 'y' || 'H'}: {indicator.rightVal}

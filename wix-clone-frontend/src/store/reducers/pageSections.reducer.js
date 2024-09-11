@@ -16,9 +16,13 @@ export const UPDATE_ELEMENT_IN_SECTION = 'UPDATE_ELEMENT_IN_SECTION';
 //elements
 export const ADD_NEW_ELEMENT_TO_SECTION = 'ADD_ELEMENT_TO_SECTION';
 export const DELETE_ELEMENT_FROM_SECTION = 'DELETE_ELEMENT_FROM_SECTION';
+//super element
+export const ADD_SUPER_ELEMENT = 'ADD_SUPER_ELEMENT';
+export const SET_SUPER_ELEMENT_PIVOT = 'SET_SUPER_ELEMENT_PIVOT';
 
 const page = {
     sectionsCount: 5,
+    superElement: {},
     sectionsProps: {
         [uId('sec')]:
         {
@@ -104,18 +108,36 @@ export function pageSectionsReducer(state = page, action) {
 
         // --- ELEMENTS --- //
         case UPDATE_ELEMENT_IN_SECTION:
-            updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], elements: { ...state.sectionsProps[action.sectionId].elements, [action.elementId]: action.element } } } };
+            if (action.sectionId === 'superSection') {
+                updatedState = { ...state, superElement: {...state.superElement, element: null} }
+            }
+            else {
+                updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], elements: { ...state.sectionsProps[action.sectionId].elements, [action.elementId]: action.element } } } };
+            }
             break;
 
         case ADD_NEW_ELEMENT_TO_SECTION:
-            updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], elements: { ...state.sectionsProps[action.sectionId].elements, [action.elementId]: action.element } } } };
+            // TODODODODODODODODO
+            const elementId = action.elementId === 'superElement' ? uId('el') : action.elementId;
+            updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], elements: { ...state.sectionsProps[action.sectionId].elements, [elementId]: action.element } } } };
             break;
 
         case DELETE_ELEMENT_FROM_SECTION:
             let { [action.elementId]: _, ...remainingElements } = state.sectionsProps[action.sectionId].elements;
             updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], elements: remainingElements } } };
+            break;
+        // --- SUPER_ELEMENT --- //
+        case ADD_SUPER_ELEMENT:
+            updatedState = { ...state, superElement: { ...state.superElement, element: { width: action.width, height: action.height, offsetX: action.offsetX, offsetY: action.offsetY } } };
+            break;
+
+        case SET_SUPER_ELEMENT_PIVOT:
+            updatedState = { ...state, superElement: { ...state.superElement, pivot: action.pivot } };
+            break;
+
         default:
     }
+
     return updatedState;
 
 }
