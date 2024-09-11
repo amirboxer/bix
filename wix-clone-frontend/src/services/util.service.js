@@ -49,7 +49,6 @@ function debounce(func, timeout = 300) {
     }
 }
 
-
 function throttle(func, limit) {
     let inThrottle;
     return function() {

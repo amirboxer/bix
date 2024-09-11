@@ -84,7 +84,7 @@ export function pageSectionsReducer(state = page, action) {
                 accumiltedSections[sectionId] = { ...sectionProps, section: { ...sectionProps.section, order: sectionProps.section.order + (sectionProps.section.order >= action.order ? 1 : 0) } }
                 return accumiltedSections
             }, {});
-            // add new page
+            // add new section
             updatedPageOrders[uId('sec')] = pageService.getEmptySection(action.order);
             updatedState = { ...state, sectionsProps: updatedPageOrders };
             break;
@@ -117,9 +117,7 @@ export function pageSectionsReducer(state = page, action) {
             break;
 
         case ADD_NEW_ELEMENT_TO_SECTION:
-            // TODODODODODODODODO
-            const elementId = action.elementId === 'superElement' ? uId('el') : action.elementId;
-            updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], elements: { ...state.sectionsProps[action.sectionId].elements, [elementId]: action.element } } } };
+            updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], elements: { ...state.sectionsProps[action.sectionId].elements, [action.elementId]: action.element } } } };
             break;
 
         case DELETE_ELEMENT_FROM_SECTION:

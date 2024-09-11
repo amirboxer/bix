@@ -1,14 +1,14 @@
 // react hooks
 import { useState, useEffect, useContext, useRef } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 
 // context
 import { EditPageContext } from "../../pages/Editor";
 
 // store
 import { store } from "../../store/store";
-import { getSupperElementAction } from "../../store/actions/pageSections.actions";
-import { getSlideLeftPanelAction, getSlideLefPanelRefAction } from "../../store/actions/edtior.actions";
+import { getAddSupperElementAction } from "../../store/actions/pageSections.actions";
+import { getSlideLefPanelRefAction } from "../../store/actions/edtior.actions";
 
 // observers
 import focusOnMount from "../../observers/focusOnMount";
@@ -16,7 +16,7 @@ import focusOnMount from "../../observers/focusOnMount";
 function LeftPanelSlider({ selectedButton, onClosePanel }) {
     // states
     const [panelConfig, setPanelConfig] = useState(null);
-    const panelOpen = useSelector((storeState) => storeState.editor.leftPanel.open);
+    const [panelOpen, setPanelOpen] = useState(false);
 
     // references
     const panelRef = useRef(null);
@@ -26,25 +26,28 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
 
     // useEffects
     useEffect(() => {
-        const action = getSlideLefPanelRefAction(panelRef.current);
+        const action = getSlideLefPanelRefAction(panelRef);
         dispatch(action);
     }, [])
 
     useEffect(() => {
         if (selectedButton) {
-            const action = getSlideLeftPanelAction(true);
-            dispatch(action);
+            setPanelOpen(true);
             setPanelConfig(panelConfigurations[selectedButton]);
+            panelRef.current.focus();
         }
         else {
-            const action = getSlideLeftPanelAction(false);
-            dispatch(action);
-
+            setPanelOpen(false);
         }
     }, [selectedButton]);
 
     // context
     const { selectedPlaceholderToFill } = useContext(EditPageContext);
+
+    function onBLur(e) {
+        if (e.relatedTarget && e.relatedTarget.id === 'left-edit-bar-btn') return;
+        onClosePanel(selectedButton);
+    }
 
     function onExamplePick(e) {
         // superSection bias to be removed
@@ -60,7 +63,7 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
         // for pointerDown event for later dragging
         const { pageX, pageY } = e;
 
-        const action = getSupperElementAction(width, height, offsetX - pivotX, offsetY - pivotY);
+        const action = getAddSupperElementAction(width, height, offsetX - pivotX, offsetY - pivotY);
         dispatch(action);
 
         // set focus on new element
@@ -80,7 +83,7 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
                         mutation.addedNodes[0].dispatchEvent(pointerdown);
                     }
                 });
-                observer.disconnect()
+                observer.disconnect();
             });
     }
 
@@ -95,6 +98,8 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
         <>
             <div className={`panel-wrapper ${selectedButton}`}>
                 <div
+                    tabIndex={0}
+                    onBlur={onBLur}
                     ref={panelRef}
                     className="panel"
                     style={{
@@ -180,26 +185,7 @@ const panelConfigurations = {
     'add-elements': {
         title: 'Add Elements',
         categories: [
-            'Text',
-            'Contact & Form',
-            'VIdeo & Music',
-            'Gallery',
-            'Text',
-            'Contact & Form',
-            'VIdeo & Music',
-            'Gallery',
-            'Text',
-            'Contact & Form',
-            'VIdeo & Music',
-            'Gallery',
-            'Text',
-            'Contact & Form',
-            'VIdeo & Music',
-            'Gallery',
-            'Text',
-            'Contact & Form',
-            'VIdeo & Music',
-            'Gallery',
+            
             'Text',
             'Contact & Form',
             'VIdeo & Music',

@@ -2,9 +2,11 @@
 // left pane;
 export const SLIDE_LEFT_PANEL = 'SLIDE_LEFT_PANEL';
 export const SET_LEFT_PANEL_REDERENCE = 'SET_LEFT_PANEL_REDERENCE';
+export const SET_SELECTED_BUTTON = 'SET_SELECTED_BUTTON';
 
 const editor = {
-    leftPanel: { open: false, ref: null},
+    leftPanel: { open: false, ref: null },
+    leftEditBar: { selectedButton: null }
 }
 
 export function editorReducer(state = editor, action) {
@@ -17,6 +19,11 @@ export function editorReducer(state = editor, action) {
 
         case SET_LEFT_PANEL_REDERENCE:
             updatedState = { ...state, leftPanel: { ...state.leftPanel, ref: action.ref } }
+            break;
+
+        // --- LEFT EDIT BOARD --- //
+        case SET_SELECTED_BUTTON:
+            updatedState = { ...state, leftEditBar: { ...state.leftEditBar, selectedButton: action.selectedButton } }
             break;
 
         default:

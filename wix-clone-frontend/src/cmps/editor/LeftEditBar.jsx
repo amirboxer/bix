@@ -2,37 +2,38 @@
 import LeftPanelSlider from './LeftPanelSlider';
 
 // react hooks
-import { useState, useEffect, useContext } from 'react';
+import { useEffect, useContext } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 // context
 import { EditPageContext } from '../../pages/Editor';
 
+// store
+import { getLeftBarButtonAction } from '../../store/actions/edtior.actions';
+
 function LeftEditBar({ zoomOutMode }) {
     //states
-    const [selectedButton, setSelectedButton] = useState(null);
+    const selectedButton = useSelector(storeState => storeState.editor.leftEditBar.selectedButton);
 
     // context
     const { setZoomOutMode } = useContext(EditPageContext);
 
+    // store
+    const dispatch = useDispatch();
+
     // useEffects
     useEffect(() => {
-        (zoomOutMode === 'add-section') && setSelectedButton('add-section');
+        (zoomOutMode === 'add-section') && dispatch(getLeftBarButtonAction('add-section'));
     }, [zoomOutMode]);
 
     // event handlers
     function onClick(categorie) {
-        setSelectedButton(prev => prev === categorie ? null : categorie);
-
         // zoom out if adding sections
-        if (categorie === 'add-section') {
+        if (selectedButton === 'add-section')  setZoomOutMode('end-add-section');
+        else if (categorie === 'add-section')  setZoomOutMode('add-section');
 
-            if (selectedButton != 'add-section') {
-                setZoomOutMode('add-section');
-            }
-            else {
-                setZoomOutMode('end-add-section');
-            }
-        }
+        const action = getLeftBarButtonAction(selectedButton === categorie ? null : categorie);
+        dispatch(action);
     }
 
     return (
@@ -44,6 +45,8 @@ function LeftEditBar({ zoomOutMode }) {
                     <li>
                         <div className="wrapper">
                             <button
+                                tabIndex={0}
+                                id={'left-edit-bar-btn'}
                                 className={`add-elements ${selectedButton === 'add-elements' ? 'selected' : ''}`}
                                 onClick={() => onClick('add-elements')}
                             >
@@ -69,6 +72,8 @@ function LeftEditBar({ zoomOutMode }) {
                     <li>
                         <div className="wrapper">
                             <button
+                                tabIndex={0}
+                                id={'left-edit-bar-btn'}
                                 className={`add-section ${selectedButton === 'add-section' ? 'selected' : ''}`}
                                 onClick={() => onClick('add-section')}
                             >

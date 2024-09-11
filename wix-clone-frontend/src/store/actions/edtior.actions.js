@@ -2,6 +2,7 @@
 import {
     SLIDE_LEFT_PANEL,
     SET_LEFT_PANEL_REDERENCE,
+    SET_SELECTED_BUTTON,
 } from "../reducers/eidtor.reducer";
 
 import { store } from "../store";
@@ -28,4 +29,12 @@ export function getSlideLefPanelRefAction(ref) { // used in LeftPanel cmp
         ref,
     }
 }
+
+export function getLeftBarButtonAction(selectedButton) { // used in LeftEditBoard cmp
+    return {
+        type: SET_SELECTED_BUTTON,
+        selectedButton,
+    }
+}
+
 
