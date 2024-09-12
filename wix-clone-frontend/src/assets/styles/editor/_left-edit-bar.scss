@@ -282,7 +282,8 @@
             }
 
             .sub-categories,
-            .categories {
+            .categories,
+            .examples {
                 width: max-content;
                 overflow: auto;
 
@@ -309,7 +310,35 @@
                 }
             }
 
-            .examples {}
+            .examples {
+                .examples-list{
+                    height: 100%;
+                    background-color: $clr2;
+                    li{
+                        background-color: inherit;
+                    }
+                }
+
+                background-color: rgba(255, 255, 255);
+                -webkit-background-clip: text;
+                background-clip: text;
+                transition: background-color .4s;
+
+                &::-webkit-scrollbar {
+                    background-color: $clr2;
+                    width: 10px;
+                }
+
+                &::-webkit-scrollbar-thumb {
+                    background-color: inherit;
+                    border-radius: 10px;
+                    border: 2px solid $clr2;
+                }
+
+                &:hover {
+                    background-color: $clr33;  
+                }
+            }
         }
     }
 }

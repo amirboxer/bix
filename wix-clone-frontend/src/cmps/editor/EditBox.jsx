@@ -49,7 +49,7 @@ const EditBox = memo(function EditBox({
                     width: boxWidth,
                 }}>
 
-                ok, cool
+                Im a prototype element
             </div>
 
             <div

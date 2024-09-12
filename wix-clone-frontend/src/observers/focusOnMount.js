@@ -3,4 +3,4 @@ function focusOnMount(target, callback) {
     const config = { attributes: false, childList: true, subtree: true };
     observer.observe(target, config);
 }
-export default focusOnMount
+export default focusOnMount;

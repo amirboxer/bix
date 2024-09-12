@@ -79,14 +79,15 @@ export function pageSectionsReducer(state = page, action) {
             break;
 
         case ADD_NEW_SECTION:
+            
             // fix orders in all section
             const updatedPageOrders = Object.entries(state.sectionsProps).reduce((accumiltedSections, [sectionId, sectionProps]) => {
                 accumiltedSections[sectionId] = { ...sectionProps, section: { ...sectionProps.section, order: sectionProps.section.order + (sectionProps.section.order >= action.order ? 1 : 0) } }
                 return accumiltedSections
             }, {});
             // add new section
-            updatedPageOrders[uId('sec')] = pageService.getEmptySection(action.order);
-            updatedState = { ...state, sectionsProps: updatedPageOrders };
+            updatedPageOrders[action.sectionId] = pageService.getEmptySection(action.order);
+            updatedState = { ...state, sectionsProps: updatedPageOrders, sectionsCount: state.sectionsCount + 1 };
             break;
 
         //  --- COVER--- //
@@ -95,6 +96,7 @@ export function pageSectionsReducer(state = page, action) {
                 newPage[sectionId] = { ...sectionProps, cover: { ...sectionProps.cover, highlightDeadzones: action.highlightDeadzones } };
                 return newPage;
             }, {});
+            // TODO?????????????????????? TODO
             updatedState = { ...state, sectionsCount: state.sectionsCount + 1, sectionsProps: updatedPage1 };
             break;
 
@@ -103,6 +105,8 @@ export function pageSectionsReducer(state = page, action) {
                 newPage[sectionId] = { ...sectionProps, cover: { ...sectionProps.cover, isDraggedOver: action.isDraggedOver } };
                 return newPage;
             }, {});
+
+            // TODO?????????????????????? TODO
             updatedState = { ...state, sectionsProps: updatedPage2 };
             break;
 

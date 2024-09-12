@@ -54,10 +54,11 @@ export function deleteElementFromSection(sectionId, elementId) {
     store.dispatch(action);
 }
 
-export function addNewSectionToPage(order) {
+export function addNewSectionToPage(order, sectionId) {
     const action = {
         type: ADD_NEW_SECTION,
         order,
+        sectionId,
     }
     store.dispatch(action);
 }

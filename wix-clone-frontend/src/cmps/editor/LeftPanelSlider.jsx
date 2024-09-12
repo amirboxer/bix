@@ -7,16 +7,22 @@ import { EditPageContext } from "../../pages/Editor";
 
 // store
 import { store } from "../../store/store";
-import { getAddSupperElementAction } from "../../store/actions/pageSections.actions";
+import { getAddSupperElementAction, addNewSectionToPage } from "../../store/actions/pageSections.actions";
 import { getSlideLefPanelRefAction } from "../../store/actions/edtior.actions";
 
 // observers
 import focusOnMount from "../../observers/focusOnMount";
 
+// service
+import { utilService } from "../../services/util.service";
+const uId = utilService.uId
+
 function LeftPanelSlider({ selectedButton, onClosePanel }) {
     // states
-    const [panelConfig, setPanelConfig] = useState(null);
     const [panelOpen, setPanelOpen] = useState(false);
+    const [panelConfig, setPanelConfig] = useState(null); // object
+    const [currCategorie, setCurrCategorie] = useState(null); //string
+    const [currSubCategorie, setCurrSubCategorie] = useState(null);  // array
 
     // references
     const panelRef = useRef(null);
@@ -24,16 +30,28 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
     // store
     const dispatch = useDispatch();
 
+    // context
+    const { selectedPlaceholderToFill, editBoardRef } = useContext(EditPageContext);
+
     // useEffects
     useEffect(() => {
         const action = getSlideLefPanelRefAction(panelRef);
         dispatch(action);
-    }, [])
+    }, []);
 
     useEffect(() => {
         if (selectedButton) {
             setPanelOpen(true);
-            setPanelConfig(panelConfigurations[selectedButton]);
+
+            const config = panelConfigurations[selectedButton];
+            const [title] = Object.keys(config);
+            const currCat = Object.keys(config[title])[0];
+            const subCat = Object.keys(config[title][currCat])[0];
+
+            setPanelConfig(config);
+            setCurrCategorie(currCat);
+            setCurrSubCategorie(config[title][currCat][subCat]);
+
             panelRef.current.focus();
         }
         else {
@@ -41,9 +59,8 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
         }
     }, [selectedButton]);
 
-    // context
-    const { selectedPlaceholderToFill } = useContext(EditPageContext);
 
+    // event handlers
     function onBLur(e) {
         if (e.relatedTarget && e.relatedTarget.id === 'left-edit-bar-btn') return;
         onClosePanel(selectedButton);
@@ -90,8 +107,36 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
     // add-section
     function onAddSection(placeholder) {
         const order = +placeholder.dataset.order;
-        addNewSectionToPage(order);
-        onClick(selectedButton)
+        const sectionId = uId('sec');
+        addNewSectionToPage(order, sectionId);
+        onClosePanel(selectedButton);
+        focusOnMount(editBoardRef.current,
+            (mutationList, observer) => {
+                mutationList.forEach(mutation => {
+                    if (mutation.addedNodes[0] && mutation.addedNodes[0].id === sectionId) {
+                        mutation.addedNodes[0].focus();
+                        setTimeout(()=> mutation.addedNodes[0].scrollIntoView({ behavior: "smooth", block: "center" }), 1000);
+                    }
+                });
+                observer.disconnect()
+            });
+    }
+
+    // functions
+    function getTitle() {
+        return Object.keys(panelConfig)[0];
+    }
+
+    function getCategories() {
+        return panelConfig[getTitle()];
+    }
+
+    function getSubCategories() {
+        return getCategories()[currCategorie];
+    }
+
+    function getExamples() {
+        return Object.values(getSubCategories()).flat();
     }
 
     return (
@@ -110,7 +155,7 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
                         <>
                             {/* head */}
                             <div className='head'
-                            >{panelConfig.title}
+                            >{getTitle()}
 
                                 {/* close panel */}
                                 <button
@@ -123,36 +168,35 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
                             <div className='contents'>
 
                                 {/* categories */}
-                                {panelConfig.categories &&
-                                    <div className='categories'>
-                                        <ul className='categorie-list'>
-                                            {panelConfig.categories.map((categorie, idx) => <li key={idx}><span className='categorie'>{categorie}</span></li>)}
-                                        </ul>
-                                    </div>
-                                }
+                                <div className='categories'>
+                                    <ul className='categorie-list'>
+                                        {Object.keys(getCategories()).map((categorie, idx) =>
+                                            <li
+                                                onClick={() => onAddSection(selectedPlaceholderToFill.current)}
+                                                key={idx}>
+                                                <span className='categorie'>{categorie}</span>
+                                            </li>)}
+                                    </ul>
+                                </div>
 
                                 {/* sub - categories */}
-                                {panelConfig.subCategories &&
-                                    <div className='sub-categories'>
-                                        <ul className='categorie-list'>
-                                            {panelConfig.subCategories.map((categorie, idx) => <li key={idx}><span className='categorie'>{categorie}</span></li>)}
-                                        </ul>
-                                    </div>
-                                }
+                                <div className='sub-categories'>
+                                    <ul className='categorie-list'>
+                                        {Object.keys(getSubCategories()).map((categorie, idx) => <li key={idx}><span className='categorie'>{categorie}</span></li>)}
+                                    </ul>
+                                </div>
 
                                 {/* examples */}
-                                {panelConfig.examples &&
-                                    <div className='examples'>
-                                        <ul className='categorie-list'>
-                                            {panelConfig.examples.map((example, idx) =>
-                                                <li key={idx}>
-                                                    {/* uppon adding new element */}
-                                                    <div className='example-drag' onPointerDown={onExamplePick}></div>
-                                                    {example}
-                                                </li>)}
-                                        </ul>
-                                    </div>
-                                }
+                                <div className='examples'>
+                                    <ul className='examples-list'>
+                                        {getExamples().map((example, idx) =>
+                                            <li key={idx}>
+                                                {/* uppon adding new element */}
+                                                <div className='example-drag' onPointerDown={onExamplePick}></div>
+                                                {example}
+                                            </li>)}
+                                    </ul>
+                                </div>
                             </div>
                         </>}
                 </div>
@@ -163,9 +207,250 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
 
 export default LeftPanelSlider
 
-
-
 const panelConfigurations = {
+    'add-section':
+    {
+        'Add Section':
+        {
+            '+ Blank Section':
+            {
+                sub1:
+                    [
+                        'Add Elements-Text-sub1-example1',
+                        'Add Elements-Text-sub1example2',
+                        'Add Elements-Text-sub1example3',
+                    ],
+                sub2:
+                    [
+                        'Add Elements-Text-sub2example1',
+                        'Add Elements-Text-sub2example2',
+                        'Add Elements-Text-sub2example3',
+                    ],
+                sub3:
+                    [
+                        'Add Elements-Text-sub3example1',
+                        'Add Elements-Text-sub3example2',
+                        'Add Elements-Text-sub3example3',
+                    ],
+
+            },
+            'Contact & Form':
+            {
+                sub1:
+                    [
+                        'Add Elements-Contact & Form-sub1-example1',
+                        'Add Elements-Contact & Form-sub1example2',
+                        'Add Elements-Contact & Form-sub1example3',
+                    ],
+                sub2:
+                    [
+                        'Add Elements-Contact & Form-sub2example1',
+                        'Add Elements-Contact & Form-sub2example2',
+                        'Add Elements-Contact & Form-sub2example3',
+                    ],
+                sub3:
+                    [
+                        'Add Elements-Contact & Form-sub3example1',
+                        'Add Elements-Contact & Form-sub3example2',
+                        'Add Elements-Contact & Form-sub3example3',
+                    ],
+
+            },
+            'VIdeo & Music':
+            {
+                sub1:
+                    [
+                        'Add Elements-VIdeo & Music-sub1-example1',
+                        'Add Elements-VIdeo & Music-sub1example2',
+                        'Add Elements-VIdeo & Music-sub1example3',
+                    ],
+                sub2:
+                    [
+                        'Add Elements-VIdeo & Music-sub2example1',
+                        'Add Elements-VIdeo & Music-sub2example2',
+                        'Add Elements-VIdeo & Music-sub2example3',
+                    ],
+                sub3:
+                    [
+                        'Add Elements-VIdeo & Music-sub3example1',
+                        'Add Elements-VIdeo & Music-sub3example2',
+                        'Add Elements-VIdeo & Music-sub3example3',
+                    ],
+
+            },
+            'Gallery': {
+                sub1:
+                    [
+                        'Add Elements-Gallery-sub1-example1',
+                        'Add Elements-Gallery-sub1example2',
+                        'Add Elements-Gallery-sub1example3',
+                    ],
+                sub2:
+                    [
+                        'Add Elements-Gallery-sub2example1',
+                        'Add Elements-Gallery-sub2example2',
+                        'Add Elements-Gallery-sub2example3',
+                    ],
+                sub3:
+                    [
+                        'Add Elements-Gallery-sub3example1',
+                        'Add Elements-Gallery-sub3example2',
+                        'Add Elements-Gallery-sub3example3',
+                    ],
+            },
+        },
+    },
+
+    'add-elements':
+    {
+        'Add Elements':
+        {
+            'Text':
+            {
+                sub1:
+                    [
+                        'Add Elements-Text-sub1-example1',
+                        'Add Elements-Text-sub1example2',
+                        'Add Elements-Text-sub1example3',
+                    ],
+                sub2:
+                    [
+                        'Add Elements-Text-sub2example1',
+                        'Add Elements-Text-sub2example2',
+                        'Add Elements-Text-sub2example3',
+                    ],
+                sub3:
+                    [
+                        'Add Elements-Text-sub3example1',
+                        'Add Elements-Text-sub3example2',
+                        'Add Elements-Text-sub3example3',
+                    ],
+                sub4:
+                    [
+                        'Add Elements-Text-sub1-example1',
+                        'Add Elements-Text-sub1example2',
+                        'Add Elements-Text-sub1example3',
+                    ],
+                sub5:
+                    [
+                        'Add Elements-Text-sub2example1',
+                        'Add Elements-Text-sub2example2',
+                        'Add Elements-Text-sub2example3',
+                    ],
+                sub6:
+                    [
+                        'Add Elements-Text-sub3example1',
+                        'Add Elements-Text-sub3example2',
+                        'Add Elements-Text-sub3example3',
+                    ],
+                sub7:
+                    [
+                        'Add Elements-Text-sub1-example1',
+                        'Add Elements-Text-sub1example2',
+                        'Add Elements-Text-sub1example3',
+                    ],
+                sub8:
+                    [
+                        'Add Elements-Text-sub2example1',
+                        'Add Elements-Text-sub2example2',
+                        'Add Elements-Text-sub2example3',
+                    ],
+                sub9:
+                    [
+                        'Add Elements-Text-sub3example1',
+                        'Add Elements-Text-sub3example2',
+                        'Add Elements-Text-sub3example3',
+                    ],
+                sub10:
+                    [
+                        'Add Elements-Text-sub1-example1',
+                        'Add Elements-Text-sub1example2',
+                        'Add Elements-Text-sub1example3',
+                    ],
+                sub11:
+                    [
+                        'Add Elements-Text-sub2example1',
+                        'Add Elements-Text-sub2example2',
+                        'Add Elements-Text-sub2example3',
+                    ],
+                sub12:
+                    [
+                        'Add Elements-Text-sub3example1',
+                        'Add Elements-Text-sub3example2',
+                        'Add Elements-Text-sub3example3',
+                    ],
+
+            },
+            'Contact & Form':
+            {
+                sub1:
+                    [
+                        'Add Elements-Contact & Form-sub1-example1',
+                        'Add Elements-Contact & Form-sub1example2',
+                        'Add Elements-Contact & Form-sub1example3',
+                    ],
+                sub2:
+                    [
+                        'Add Elements-Contact & Form-sub2example1',
+                        'Add Elements-Contact & Form-sub2example2',
+                        'Add Elements-Contact & Form-sub2example3',
+                    ],
+                sub3:
+                    [
+                        'Add Elements-Contact & Form-sub3example1',
+                        'Add Elements-Contact & Form-sub3example2',
+                        'Add Elements-Contact & Form-sub3example3',
+                    ],
+
+            },
+            'VIdeo & Music':
+            {
+                sub1:
+                    [
+                        'Add Elements-VIdeo & Music-sub1-example1',
+                        'Add Elements-VIdeo & Music-sub1example2',
+                        'Add Elements-VIdeo & Music-sub1example3',
+                    ],
+                sub2:
+                    [
+                        'Add Elements-VIdeo & Music-sub2example1',
+                        'Add Elements-VIdeo & Music-sub2example2',
+                        'Add Elements-VIdeo & Music-sub2example3',
+                    ],
+                sub3:
+                    [
+                        'Add Elements-VIdeo & Music-sub3example1',
+                        'Add Elements-VIdeo & Music-sub3example2',
+                        'Add Elements-VIdeo & Music-sub3example3',
+                    ],
+
+            },
+            'Gallery': {
+                sub1:
+                    [
+                        'Add Elements-Gallery-sub1-example1',
+                        'Add Elements-Gallery-sub1example2',
+                        'Add Elements-Gallery-sub1example3',
+                    ],
+                sub2:
+                    [
+                        'Add Elements-Gallery-sub2example1',
+                        'Add Elements-Gallery-sub2example2',
+                        'Add Elements-Gallery-sub2example3',
+                    ],
+                sub3:
+                    [
+                        'Add Elements-Gallery-sub3example1',
+                        'Add Elements-Gallery-sub3example2',
+                        'Add Elements-Gallery-sub3example3',
+                    ],
+            },
+        },
+    },
+};
+
+
+const panelConfigurationss = {
     'add-section': {
         title: 'Add Section',
         categories: [
@@ -232,193 +517,5 @@ const panelConfigurations = {
             'example2',
             'example3',
         ],
-    },
-};
-
-const panelConfigurations2 = {
-    'add-section':
-    {
-        'Add Section':
-        {
-            'Text':
-            {
-                sub1:
-                    [
-                        'Add Elements-Text-sub1-example1',
-                        'Add Elements-Text-sub1example2',
-                        'Add Elements-Text-sub1example3',
-                    ],
-                sub2:
-                    [
-                        'Add Elements-Text-sub2example1',
-                        'Add Elements-Text-sub2example2',
-                        'Add Elements-Text-sub2example3',
-                    ],
-                sub3:
-                    [
-                        'Add Elements-Text-sub3example1',
-                        'Add Elements-Text-sub3example2',
-                        'Add Elements-Text-sub3example3',
-                    ],
-
-            },
-            'Contact & Form':
-            {
-                sub1:
-                    [
-                        'Add Elements-Contact & Form-sub1-example1',
-                        'Add Elements-Contact & Form-sub1example2',
-                        'Add Elements-Contact & Form-sub1example3',
-                    ],
-                sub2:
-                    [
-                        'Add Elements-Contact & Form-sub2example1',
-                        'Add Elements-Contact & Form-sub2example2',
-                        'Add Elements-Contact & Form-sub2example3',
-                    ],
-                sub3:
-                    [
-                        'Add Elements-Contact & Form-sub3example1',
-                        'Add Elements-Contact & Form-sub3example2',
-                        'Add Elements-Contact & Form-sub3example3',
-                    ],
-
-            },
-            'VIdeo & Music':
-            {
-                sub1:
-                    [
-                        'Add Elements-VIdeo & Music-sub1-example1',
-                        'Add Elements-VIdeo & Music-sub1example2',
-                        'Add Elements-VIdeo & Music-sub1example3',
-                    ],
-                sub2:
-                    [
-                        'Add Elements-VIdeo & Music-sub2example1',
-                        'Add Elements-VIdeo & Music-sub2example2',
-                        'Add Elements-VIdeo & Music-sub2example3',
-                    ],
-                sub3:
-                    [
-                        'Add Elements-VIdeo & Music-sub3example1',
-                        'Add Elements-VIdeo & Music-sub3example2',
-                        'Add Elements-VIdeo & Music-sub3example3',
-                    ],
-
-            },
-            'Gallery': {
-                sub1:
-                    [
-                        'Add Elements-Gallery-sub1-example1',
-                        'Add Elements-Gallery-sub1example2',
-                        'Add Elements-Gallery-sub1example3',
-                    ],
-                sub2:
-                    [
-                        'Add Elements-Gallery-sub2example1',
-                        'Add Elements-Gallery-sub2example2',
-                        'Add Elements-Gallery-sub2example3',
-                    ],
-                sub3:
-                    [
-                        'Add Elements-Gallery-sub3example1',
-                        'Add Elements-Gallery-sub3example2',
-                        'Add Elements-Gallery-sub3example3',
-                    ],
-            },
-        },
-    },
-    
-    'add-elements':
-    {
-        'Add Elements':
-        {
-            'Text':
-            {
-                sub1:
-                    [
-                        'Add Elements-Text-sub1-example1',
-                        'Add Elements-Text-sub1example2',
-                        'Add Elements-Text-sub1example3',
-                    ],
-                sub2:
-                    [
-                        'Add Elements-Text-sub2example1',
-                        'Add Elements-Text-sub2example2',
-                        'Add Elements-Text-sub2example3',
-                    ],
-                sub3:
-                    [
-                        'Add Elements-Text-sub3example1',
-                        'Add Elements-Text-sub3example2',
-                        'Add Elements-Text-sub3example3',
-                    ],
-
-            },
-            'Contact & Form':
-            {
-                sub1:
-                    [
-                        'Add Elements-Contact & Form-sub1-example1',
-                        'Add Elements-Contact & Form-sub1example2',
-                        'Add Elements-Contact & Form-sub1example3',
-                    ],
-                sub2:
-                    [
-                        'Add Elements-Contact & Form-sub2example1',
-                        'Add Elements-Contact & Form-sub2example2',
-                        'Add Elements-Contact & Form-sub2example3',
-                    ],
-                sub3:
-                    [
-                        'Add Elements-Contact & Form-sub3example1',
-                        'Add Elements-Contact & Form-sub3example2',
-                        'Add Elements-Contact & Form-sub3example3',
-                    ],
-
-            },
-            'VIdeo & Music':
-            {
-                sub1:
-                    [
-                        'Add Elements-VIdeo & Music-sub1-example1',
-                        'Add Elements-VIdeo & Music-sub1example2',
-                        'Add Elements-VIdeo & Music-sub1example3',
-                    ],
-                sub2:
-                    [
-                        'Add Elements-VIdeo & Music-sub2example1',
-                        'Add Elements-VIdeo & Music-sub2example2',
-                        'Add Elements-VIdeo & Music-sub2example3',
-                    ],
-                sub3:
-                    [
-                        'Add Elements-VIdeo & Music-sub3example1',
-                        'Add Elements-VIdeo & Music-sub3example2',
-                        'Add Elements-VIdeo & Music-sub3example3',
-                    ],
-
-            },
-            'Gallery': {
-                sub1:
-                    [
-                        'Add Elements-Gallery-sub1-example1',
-                        'Add Elements-Gallery-sub1example2',
-                        'Add Elements-Gallery-sub1example3',
-                    ],
-                sub2:
-                    [
-                        'Add Elements-Gallery-sub2example1',
-                        'Add Elements-Gallery-sub2example2',
-                        'Add Elements-Gallery-sub2example3',
-                    ],
-                sub3:
-                    [
-                        'Add Elements-Gallery-sub3example1',
-                        'Add Elements-Gallery-sub3example2',
-                        'Add Elements-Gallery-sub3example3',
-                    ],
-            },
-        },
     },
 };
