@@ -66,11 +66,15 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
         // onClosePanel(selectedButton);
     }
 
-    function onPointerEnter(categorie, primeOrSub) {
+    function onPointerEnter(categorie, primeOrSub, e) {
         const setCurrCategories = {
-            prime: function() {setCurrCategorie(categorie);},
-            sub: function() {setCurrSubCategorie(categorie)},
+            prime: function () { setCurrCategorie(categorie); },
+            sub: function () {
+                setCurrSubCategorie(categorie);
+                e.target.children[0].click();
+            },
         }
+
         setCurrCategories[primeOrSub]();
     }
 
@@ -144,7 +148,7 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
     }
 
     function getExamples() {
-        return Object.values(getSubCategories()).flat();
+        return Object.entries(getSubCategories());
     }
 
     return (
@@ -181,26 +185,30 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
                                         {Object.keys(getCategories()).map((categorie, idx) =>
                                             <li
                                                 onClick={() => onAddSection(selectedPlaceholderToFill.current)}
-                                                onPointerEnter={() => onPointerEnter(categorie, 'prime')}
                                                 key={idx}
                                             >
-                                                <span className={`categorie ${categorie === currCategorie ? 'current-categorie' : ''}`}>
+                                                <span
+                                                    className={`categorie ${categorie === currCategorie ? 'current-categorie' : ''}`}
+                                                    onPointerEnter={e => onPointerEnter(categorie, 'prime', e)}
+                                                >
                                                     {categorie}
                                                 </span>
                                             </li>)}
                                     </ul>
                                 </div>
-
+                                
                                 {/* sub - categories */}
                                 <div className='sub-categories'>
                                     <ul className='categorie-list'>
                                         {Object.keys(getSubCategories()).map((categorie, idx) =>
                                             <li
-                                                onPointerEnter={() => onPointerEnter(categorie, 'sub')}
                                                 key={idx}
                                             >
-                                                <span className={`categorie ${categorie === currSubCategorie ? 'current-categorie' : ''}`}
-                                                >{categorie}
+                                                <span
+                                                    onPointerEnter={e => onPointerEnter(categorie, 'sub', e)}
+                                                    className={`categorie ${categorie === currSubCategorie ? 'current-categorie' : ''}`}
+                                                >
+                                                    <a href={`#${categorie}`} draggable={false}>{categorie}</a>
                                                 </span>
                                             </li>)}
                                     </ul>
@@ -208,13 +216,27 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
 
                                 {/* examples */}
                                 <div className='examples'>
-                                    <ul className='categorie-list'>
-                                        {getExamples().map((example, idx) =>
-                                            <li key={idx}>
-                                                {/* uppon adding new element */}
-                                                <div className='example-drag' onPointerDown={onExamplePick}></div>
-                                                {example}
-                                            </li>)}
+                                    <ul className='examples-list'>
+                                        {getExamples().map(([subCat, examples], _) =>
+                                            <li
+                                                id={subCat}
+                                                key={subCat}
+                                                className="subcat"
+                                            >
+                                                <div className="subCat-title">
+                                                    {subCat}
+                                                </div>
+                                                <ul>
+                                                    {examples.map((example, idx) =>
+                                                        <li key={idx}>
+                                                            {/* uppon adding new element */}
+                                                            <div className='example-drag' onPointerDown={onExamplePick}></div>
+                                                            {example}
+                                                        </li>
+                                                    )}
+                                                </ul>
+                                            </li>
+                                        )}
                                     </ul>
                                 </div>
                             </div>
@@ -327,25 +349,34 @@ const panelConfigurations = {
         {
             'Text':
             {
-                sub1:
+                'Themed Text':
+                    [
+                        'Add Heading 1',
+                        'Add Heading 2',
+                        'Add Heading 3',
+                        'Add Heading 4',
+                        'Add Heading 5',
+                        'Add Heading 6',
+                    ],
+                'Titels':
                     [
                         'Add Elements-Text-sub1-example1',
                         'Add Elements-Text-sub1example2',
                         'Add Elements-Text-sub1example3',
                     ],
-                sub2:
+                'Paragraphs':
                     [
                         'Add Elements-Text-sub2example4',
                         'Add Elements-Text-sub2example5',
                         'Add Elements-Text-sub2example6',
                     ],
-                sub3:
+                'Collapsible Text':
                     [
                         'Add Elements-Text-sub3example7',
                         'Add Elements-Text-sub3example8',
                         'Add Elements-Text-sub3example9',
                     ],
-                sub4:
+                'Text Mask':
                     [
                         'Add Elements-Text-sub1-example10',
                         'Add Elements-Text-sub1example11',

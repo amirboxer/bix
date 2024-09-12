@@ -34,8 +34,6 @@ const Section = memo(function Section({ sectionId }) {
 
     // event handlers
     function onFocus() {
-        console.log('bvcxfghgfdfghjnhgfd');
-        
         sectionFocused.current && sectionFocused.current(true);
     }
 

@@ -267,6 +267,8 @@
             height: calc(100% - $head-font-size - $head-pad-block * 2 - $head-border-top - $head-border-bottom);
             width: fit-content;
             overflow: hidden;
+            font-size: 14px;
+
 
             display: grid;
             grid-auto-columns: auto;
@@ -286,11 +288,20 @@
             .sub-categories,
             .categories,
             .examples {
+                a {
+                    text-decoration: none;
+                    color: inherit;
+                }
+
+                scroll-behavior: smooth;
                 width: max-content;
                 overflow: auto;
 
+
+                color:$clr35;
+
                 .categorie-list {
-                    padding-block: 11px;
+                    padding-block: 15px;
 
                     li {
                         cursor: pointer;
@@ -303,19 +314,31 @@
                             border-radius: 50px;
                             padding: 8px 12px;
 
-                            font-size: 14px;
+
+                            &.current-categorie {
+                                background-color: $clr10;
+                                color: $clr16;
+                            }
                         }
                     }
                 }
             }
 
             .examples {
-                .categorie-list {
+                .examples-list {
                     height: 100%;
                     background-color: $clr2;
 
-                    li {
+                    .subcat {
                         background-color: inherit;
+                        padding: 25px;
+
+                        .subCat-title{
+                            padding-bottom: 7px;
+                            border-bottom: 1px solid $clr32;
+                            margin-bottom: 25px;
+                            color: $clr34;
+                        }
                     }
                 }
 
@@ -337,15 +360,6 @@
 
                 &:hover {
                     background-color: $clr33;
-                }
-            }
-
-            .categorie-list {
-                li {
-                    .current-categorie {
-                        background-color: $clr10;
-                        color: $clr16;
-                    }
                 }
             }
         }
