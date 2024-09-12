@@ -50,7 +50,7 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
 
             setPanelConfig(config);
             setCurrCategorie(currCat);
-            setCurrSubCategorie(config[title][currCat][subCat]);
+            setCurrSubCategorie(subCat);
 
             panelRef.current.focus();
         }
@@ -63,7 +63,15 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
     // event handlers
     function onBLur(e) {
         if (e.relatedTarget && e.relatedTarget.id === 'left-edit-bar-btn') return;
-        onClosePanel(selectedButton);
+        // onClosePanel(selectedButton);
+    }
+
+    function onPointerEnter(categorie, primeOrSub) {
+        const setCurrCategories = {
+            prime: function() {setCurrCategorie(categorie);},
+            sub: function() {setCurrSubCategorie(categorie)},
+        }
+        setCurrCategories[primeOrSub]();
     }
 
     function onExamplePick(e) {
@@ -115,7 +123,7 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
                 mutationList.forEach(mutation => {
                     if (mutation.addedNodes[0] && mutation.addedNodes[0].id === sectionId) {
                         mutation.addedNodes[0].focus();
-                        setTimeout(()=> mutation.addedNodes[0].scrollIntoView({ behavior: "smooth", block: "center" }), 1000);
+                        setTimeout(() => mutation.addedNodes[0].scrollIntoView({ behavior: "smooth", block: "center" }), 1000);
                     }
                 });
                 observer.disconnect()
@@ -173,8 +181,12 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
                                         {Object.keys(getCategories()).map((categorie, idx) =>
                                             <li
                                                 onClick={() => onAddSection(selectedPlaceholderToFill.current)}
-                                                key={idx}>
-                                                <span className='categorie'>{categorie}</span>
+                                                onPointerEnter={() => onPointerEnter(categorie, 'prime')}
+                                                key={idx}
+                                            >
+                                                <span className={`categorie ${categorie === currCategorie ? 'current-categorie' : ''}`}>
+                                                    {categorie}
+                                                </span>
                                             </li>)}
                                     </ul>
                                 </div>
@@ -182,13 +194,21 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
                                 {/* sub - categories */}
                                 <div className='sub-categories'>
                                     <ul className='categorie-list'>
-                                        {Object.keys(getSubCategories()).map((categorie, idx) => <li key={idx}><span className='categorie'>{categorie}</span></li>)}
+                                        {Object.keys(getSubCategories()).map((categorie, idx) =>
+                                            <li
+                                                onPointerEnter={() => onPointerEnter(categorie, 'sub')}
+                                                key={idx}
+                                            >
+                                                <span className={`categorie ${categorie === currSubCategorie ? 'current-categorie' : ''}`}
+                                                >{categorie}
+                                                </span>
+                                            </li>)}
                                     </ul>
                                 </div>
 
                                 {/* examples */}
                                 <div className='examples'>
-                                    <ul className='examples-list'>
+                                    <ul className='categorie-list'>
                                         {getExamples().map((example, idx) =>
                                             <li key={idx}>
                                                 {/* uppon adding new element */}
@@ -315,69 +335,69 @@ const panelConfigurations = {
                     ],
                 sub2:
                     [
-                        'Add Elements-Text-sub2example1',
-                        'Add Elements-Text-sub2example2',
-                        'Add Elements-Text-sub2example3',
+                        'Add Elements-Text-sub2example4',
+                        'Add Elements-Text-sub2example5',
+                        'Add Elements-Text-sub2example6',
                     ],
                 sub3:
                     [
-                        'Add Elements-Text-sub3example1',
-                        'Add Elements-Text-sub3example2',
-                        'Add Elements-Text-sub3example3',
+                        'Add Elements-Text-sub3example7',
+                        'Add Elements-Text-sub3example8',
+                        'Add Elements-Text-sub3example9',
                     ],
                 sub4:
                     [
-                        'Add Elements-Text-sub1-example1',
-                        'Add Elements-Text-sub1example2',
-                        'Add Elements-Text-sub1example3',
+                        'Add Elements-Text-sub1-example10',
+                        'Add Elements-Text-sub1example11',
+                        'Add Elements-Text-sub1example12',
                     ],
                 sub5:
                     [
-                        'Add Elements-Text-sub2example1',
-                        'Add Elements-Text-sub2example2',
-                        'Add Elements-Text-sub2example3',
+                        'Add Elements-Text-sub2example13',
+                        'Add Elements-Text-sub2example14',
+                        'Add Elements-Text-sub2example15',
                     ],
                 sub6:
                     [
-                        'Add Elements-Text-sub3example1',
-                        'Add Elements-Text-sub3example2',
-                        'Add Elements-Text-sub3example3',
+                        'Add Elements-Text-sub3example16',
+                        'Add Elements-Text-sub3example17',
+                        'Add Elements-Text-sub3example18',
                     ],
                 sub7:
                     [
-                        'Add Elements-Text-sub1-example1',
-                        'Add Elements-Text-sub1example2',
-                        'Add Elements-Text-sub1example3',
+                        'Add Elements-Text-sub1-example19',
+                        'Add Elements-Text-sub1example20',
+                        'Add Elements-Text-sub1example21',
                     ],
                 sub8:
                     [
-                        'Add Elements-Text-sub2example1',
-                        'Add Elements-Text-sub2example2',
-                        'Add Elements-Text-sub2example3',
+                        'Add Elements-Text-sub2example22',
+                        'Add Elements-Text-sub2example23',
+                        'Add Elements-Text-sub2example24',
                     ],
                 sub9:
                     [
-                        'Add Elements-Text-sub3example1',
-                        'Add Elements-Text-sub3example2',
-                        'Add Elements-Text-sub3example3',
+                        'Add Elements-Text-sub3example25',
+                        'Add Elements-Text-sub3example26',
+                        'Add Elements-Text-sub3example27',
                     ],
                 sub10:
                     [
-                        'Add Elements-Text-sub1-example1',
-                        'Add Elements-Text-sub1example2',
-                        'Add Elements-Text-sub1example3',
+                        'Add Elements-Text-sub1-example28',
+                        'Add Elements-Text-sub1example29',
+                        'Add Elements-Text-sub1example30',
                     ],
                 sub11:
                     [
-                        'Add Elements-Text-sub2example1',
-                        'Add Elements-Text-sub2example2',
-                        'Add Elements-Text-sub2example3',
+                        'Add Elements-Text-sub2example31',
+                        'Add Elements-Text-sub2example32',
+                        'Add Elements-Text-sub2example33',
                     ],
                 sub12:
                     [
-                        'Add Elements-Text-sub3example1',
-                        'Add Elements-Text-sub3example2',
-                        'Add Elements-Text-sub3example3',
+                        'Add Elements-Text-sub3example34',
+                        'Add Elements-Text-sub3example35',
+                        'Add Elements-Text-sub3example36',
                     ],
 
             },

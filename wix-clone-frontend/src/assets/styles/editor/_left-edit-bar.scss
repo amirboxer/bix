@@ -202,6 +202,7 @@
 
     grid-column: 2;
     grid-row: 3;
+    width: fit-content;
 
     z-index: 12;
     position: relative;
@@ -264,8 +265,9 @@
             border-left: 1px solid $clr32;
             $head-border-bottom: 1px;
             height: calc(100% - $head-font-size - $head-pad-block * 2 - $head-border-top - $head-border-bottom);
-            overflow: hidden;
             width: fit-content;
+            overflow: hidden;
+
             display: grid;
             grid-auto-columns: auto;
             grid-auto-flow: column;
@@ -296,25 +298,23 @@
 
                         .categorie {
                             display: block;
-                            background-color: $clr10;
+                            width: fit-content;
+
                             border-radius: 50px;
-
-                            color: $clr16;
-                            font-size: 14px;
-
                             padding: 8px 12px;
 
-                            width: fit-content;
+                            font-size: 14px;
                         }
                     }
                 }
             }
 
             .examples {
-                .examples-list{
+                .categorie-list {
                     height: 100%;
                     background-color: $clr2;
-                    li{
+
+                    li {
                         background-color: inherit;
                     }
                 }
@@ -336,13 +336,21 @@
                 }
 
                 &:hover {
-                    background-color: $clr33;  
+                    background-color: $clr33;
+                }
+            }
+
+            .categorie-list {
+                li {
+                    .current-categorie {
+                        background-color: $clr10;
+                        color: $clr16;
+                    }
                 }
             }
         }
     }
 }
-
 
 // animtions for add section button
 @keyframes add-section-middle {
