@@ -38,12 +38,12 @@ function SuperSection() {
                     className="grid-center"
                     ref={contentsRef}
                 >
-                    {superElement.element &&
+                    {superElement.elConfig &&
                         <EditBox
                             elId="superElement"
                             contentsRef={contentsRef}
                             secId="superSection"
-                            element={superElement.element}
+                            element={superElement}
                         />
                     }
                 </div>

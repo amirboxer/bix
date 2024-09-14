@@ -242,7 +242,6 @@
 
         .head {
             font-size: $head-font-size;
-            font-weight: bold;
 
             border-top: $head-border-top solid $clr16;
             border-bottom: 1px solid $clr32;
@@ -297,7 +296,6 @@
                 width: max-content;
                 overflow: auto;
 
-
                 color:$clr35;
 
                 .categorie-list {
@@ -331,13 +329,25 @@
 
                     .subcat {
                         background-color: inherit;
-                        padding: 25px;
+                        padding: 25px 25px 15px 25px;
 
-                        .subCat-title{
+                        .subCat-title {
                             padding-bottom: 7px;
                             border-bottom: 1px solid $clr32;
                             margin-bottom: 25px;
                             color: $clr34;
+                        }
+
+                        .example-container:not(:last-child) {
+                            font-size: 16px;
+                            // padding-bottom: 20px;
+                        }
+
+                        .example-drag {
+                            cursor: pointer;
+                            border: 1px solid black;
+                            height: fit-content;
+                            width: fit-content;
                         }
                     }
                 }
@@ -426,10 +436,3 @@
     }
 }
 
-.example-drag {
-    cursor: pointer;
-    position: relative;
-    background-color: green;
-    height: 40px;
-    width: 40px;
-}

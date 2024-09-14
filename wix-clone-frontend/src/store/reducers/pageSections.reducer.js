@@ -33,7 +33,7 @@ const page = {
 
         [uId('sec')]:
         {
-            section: { name: 'Section1', order: 4, height: 500, },
+            section: { name: 'Section1', order: 1, height: 500, },
             cover: { isDraggedOver: false, highlightDeadzones: false, },
             elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } },
         },
@@ -54,7 +54,7 @@ const page = {
 
         [uId('sec')]:
         {
-            section: { name: 'Section4', order: 5, height: 800, },
+            section: { name: 'Section4', order: 4, height: 800, },
             cover: { isDraggedOver: false, highlightDeadzones: false, },
             elements: { [uId('el')]: { width: 325, height: 75, offsetX: 200, offsetY: 512 }, },
         },
@@ -79,7 +79,6 @@ export function pageSectionsReducer(state = page, action) {
             break;
 
         case ADD_NEW_SECTION:
-            
             // fix orders in all section
             const updatedPageOrders = Object.entries(state.sectionsProps).reduce((accumiltedSections, [sectionId, sectionProps]) => {
                 accumiltedSections[sectionId] = { ...sectionProps, section: { ...sectionProps.section, order: sectionProps.section.order + (sectionProps.section.order >= action.order ? 1 : 0) } }
@@ -96,8 +95,7 @@ export function pageSectionsReducer(state = page, action) {
                 newPage[sectionId] = { ...sectionProps, cover: { ...sectionProps.cover, highlightDeadzones: action.highlightDeadzones } };
                 return newPage;
             }, {});
-            // TODO?????????????????????? TODO
-            updatedState = { ...state, sectionsCount: state.sectionsCount + 1, sectionsProps: updatedPage1 };
+            updatedState = { ...state, sectionsProps: updatedPage1 };
             break;
 
         case SET_COVERS_DRAGGED_OVER:
@@ -105,32 +103,34 @@ export function pageSectionsReducer(state = page, action) {
                 newPage[sectionId] = { ...sectionProps, cover: { ...sectionProps.cover, isDraggedOver: action.isDraggedOver } };
                 return newPage;
             }, {});
-
-            // TODO?????????????????????? TODO
             updatedState = { ...state, sectionsProps: updatedPage2 };
             break;
 
         // --- ELEMENTS --- //
         case UPDATE_ELEMENT_IN_SECTION:
             if (action.sectionId === 'superSection') {
-                updatedState = { ...state, superElement: {...state.superElement, element: null} }
+                updatedState = { ...state, superElement: {pivot: state.superElement.pivot} }
             }
             else {
                 updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], elements: { ...state.sectionsProps[action.sectionId].elements, [action.elementId]: action.element } } } };
             }
             break;
-
+            
         case ADD_NEW_ELEMENT_TO_SECTION:
-            updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], elements: { ...state.sectionsProps[action.sectionId].elements, [action.elementId]: action.element } } } };
+            const {pivot, ...remainingProps} = action.element;
+            console.log(remainingProps);
+            
+            updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], elements: { ...state.sectionsProps[action.sectionId].elements, [action.elementId]: remainingProps } } } };
             break;
 
         case DELETE_ELEMENT_FROM_SECTION:
             let { [action.elementId]: _, ...remainingElements } = state.sectionsProps[action.sectionId].elements;
             updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], elements: remainingElements } } };
             break;
+
         // --- SUPER_ELEMENT --- //
         case ADD_SUPER_ELEMENT:
-            updatedState = { ...state, superElement: { ...state.superElement, element: { width: action.width, height: action.height, offsetX: action.offsetX, offsetY: action.offsetY } } };
+            updatedState = { ...state, superElement: { ...state.superElement,  width: action.width, height: action.height, offsetX: action.offsetX, offsetY: action.offsetY,  elConfig: action.elConfig} };
             break;
 
         case SET_SUPER_ELEMENT_PIVOT:
@@ -141,22 +141,4 @@ export function pageSectionsReducer(state = page, action) {
     }
 
     return updatedState;
-
 }
-
-
-// function tstttt() {
-//     console.log(page);
-
-//     const action = {
-//         type: ADD_NEW_SECTION,
-//         order :2,
-//     }
-//     console.log('after');
-//     console.log(pageSectionsReducer(page, action));
-
-
-// }
-
-
-// tstttt();

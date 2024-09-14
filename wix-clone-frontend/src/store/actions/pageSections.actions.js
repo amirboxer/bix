@@ -101,13 +101,14 @@ export function getCoversDraggedOverAction(isDraggedOver) { // used in DragResiz
     };
 }
 
-export function getAddSupperElementAction(width, height, offsetX, offsetY) { // used in LeftEditBar cmp
+export function getAddSupperElementAction(width, height, offsetX, offsetY, elConfig) { // used in LeftEditBar cmp
     return {
         type: ADD_SUPER_ELEMENT,
         width,
         height,
         offsetX,
-        offsetY
+        offsetY,
+        elConfig,
     };
 }
 

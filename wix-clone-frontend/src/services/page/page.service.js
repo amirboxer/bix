@@ -1,5 +1,8 @@
+import React from "react";
+
 export const pageService = {
     getEmptySection,
+    buildElementFromConfig,
 }
 
 function getEmptySection(order) {
@@ -9,3 +12,8 @@ function getEmptySection(order) {
         elements: {},
     }
 }
+
+function buildElementFromConfig({type, props, innerText}) {
+    return React.createElement(type, props, innerText);
+}
+

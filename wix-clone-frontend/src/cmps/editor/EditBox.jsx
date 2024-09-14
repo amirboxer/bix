@@ -1,8 +1,12 @@
 // cmp-tools
 import DragResizeBox from './tools/DragResizeBox';
+import TextEditor from './text-editor/TextEditor';
 
 // react hooks
 import { useState, useRef, useEffect, memo } from 'react';
+
+// services
+import { pageService } from '../../services/page/page.service';
 
 const EditBox = memo(function EditBox({
     elId,
@@ -48,10 +52,10 @@ const EditBox = memo(function EditBox({
                     height: boxHeight,
                     width: boxWidth,
                 }}>
-
-                Im a prototype element
+                {element.elConfig && pageService.buildElementFromConfig(element.elConfig)}
             </div>
 
+            <TextEditor />
             <div
                 id={elId}
                 ref={editBoxRef}

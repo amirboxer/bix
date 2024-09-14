@@ -1,10 +1,10 @@
 // setup
 @import "setup/variables";
-
-
+@import "setup/typography";
 
 // basics
 @import "basics/base";
+@import "basics/helpers";
 
 
 
@@ -27,7 +27,7 @@
 @import "editor/rulers";
 @import "editor/section-cover";
 @import "editor/change-name-modal";
-
+@import "editor/text-editor";
 
 // .section-rename-button {
 //     display:none !important;

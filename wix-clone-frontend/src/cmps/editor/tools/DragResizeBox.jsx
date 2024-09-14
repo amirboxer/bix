@@ -44,7 +44,7 @@ function DragResizeBox({
     //states from store
     const leftPanelRef = useSelector(storeState => storeState.editor.leftPanel.ref);
     const pageSections = useSelector(storeState => storeState.page.sectionsProps);
-    const superElement = useSelector(storeState => storeState.page.superElement.element);
+    const superElement = useSelector(storeState => storeState.page.superElement);
 
     // store
     const dispatch = useDispatch();
@@ -159,6 +159,7 @@ function DragResizeBox({
             const newId = isSuperElement ? uId('el') : elId;
 
             if (!isSuperElement || isSuperElement && outOfLeftPanel(e)) {
+
                 addNewElementToSection(currentSectionId, newId, { ...updatedEl, offsetX: osl, offsetY: distanceFromTop });
             }
 
@@ -288,7 +289,7 @@ function DragResizeBox({
 
     function outOfLeftPanel(e) {
         const { clientX, clientY } = e;
-        const  leftPanelRect = leftPanelRef.current.getBoundingClientRect();
+        const leftPanelRect = leftPanelRef.current.getBoundingClientRect();
 
         const leftEdge = leftPanelRect.x;
         const rightEdge = leftPanelRect.x + leftPanelRect.width;

@@ -2,6 +2,7 @@
 import EditBoard from "../cmps/editor/EditBoard";
 import LeftEditBar from "../cmps/editor/LeftEditBar";
 import TopEditBar from "../cmps/editor/TopEditBar.jsx";
+import Style from "../cmps/editor/Style.jsx";
 
 // react hooks
 import React, { useRef, createContext, useState } from 'react';
@@ -18,7 +19,8 @@ function Editor() {
     const selectedPlaceholderToFill = useRef(null);
 
     return (
-        <EditPageContext.Provider value={{ zoomOutMode, setZoomOutMode, editBoardRef, selectedPlaceholderToFill}}>
+
+        <EditPageContext.Provider value={{ zoomOutMode, setZoomOutMode, editBoardRef, selectedPlaceholderToFill }}>
             <main className="editor">
                 <TopEditBar />
                 <LeftEditBar
@@ -26,6 +28,7 @@ function Editor() {
                 <EditBoard
                     zoomOutMode={zoomOutMode} />
             </main>
+            <Style />
         </EditPageContext.Provider>
     )
 }

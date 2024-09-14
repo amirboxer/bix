@@ -99,6 +99,7 @@ const Section = memo(function Section({ sectionId }) {
                             />
                         )}
                     </div>
+                    
                 </div>
 
                 {/* cover - not in grid*/}
