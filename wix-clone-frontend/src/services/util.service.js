@@ -6,6 +6,7 @@ export const utilService = {
     padNumWithZero,
     throttle,
     uId,
+    cropValInRange,
 }
 
 function saveToStorage(key, value) {
@@ -51,7 +52,7 @@ function debounce(func, timeout = 300) {
 
 function throttle(func, limit) {
     let inThrottle;
-    return function() {
+    return function () {
         const args = arguments;
         const context = this;
         if (!inThrottle) {
@@ -62,6 +63,10 @@ function throttle(func, limit) {
     };
 }
 
-function uId(prefix=''){
+function uId(prefix = '') {
     return prefix + '_' + Date.now().toString(36) + Math.random().toString(36).substring(2);
+}
+
+function cropValInRange(val, max, min) {
+    return Math.max(Math.min(val, max), min)
 }

@@ -4,6 +4,8 @@ import { useState } from "react";
 //cmps
 import FontFamilyDropDown from "./FontFamilyDropDown";
 import FontSizeRangeBar from "./FontSizeRangeBar";
+import FontStyle from "./FontStyle";
+
 
 function TextEditor() {
 
@@ -27,17 +29,19 @@ function TextEditor() {
             <div className="specific-style">
 
                 {/* select font family */}
-                <div className="fonts collapsible segment">
+                <div className="fonts  segment">
                     <span>Fonts</span>
                     <FontFamilyDropDown />
                 </div>
 
                 {/* select font size */}
-                <div className="font-size collapsible segment">
+                <div className="font-size  segment">
                     <div>Font size (px)</div>
                     <FontSizeRangeBar />
+                </div>
 
-
+                <div className="font-style segment">
+                    <FontStyle />
                 </div>
 
                 {/*  */}

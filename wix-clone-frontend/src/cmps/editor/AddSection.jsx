@@ -28,4 +28,4 @@ function AddSection({sectionId}) {
     )
 }
 
-export default AddSection
+export default AddSection;

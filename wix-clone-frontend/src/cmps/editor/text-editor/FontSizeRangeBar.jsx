@@ -1,6 +1,10 @@
 // react hooks
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
+// services
+import { utilService } from "../../../services/util.service";
+const cropValInRange = utilService.cropValInRange;
+
 function FontSizeRangeBar({ originalFontSize = 16 }) {
     // states
     const [distFromStart, setDistFromStart] = useState(0);
@@ -48,10 +52,6 @@ function FontSizeRangeBar({ originalFontSize = 16 }) {
     // function
     function getFontSizeFromTrack() {
         return Math.round(distFromStart / trackRef.current.getBoundingClientRect().width * (maxFontSize - minFontSize) + minFontSize);
-    }
-
-    function cropValInRange(val, max, min) {
-        return Math.max(Math.min(val, max), min)
     }
 
     // Inline styles
