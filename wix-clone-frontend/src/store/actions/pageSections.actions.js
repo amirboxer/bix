@@ -12,6 +12,7 @@ import {
     DELETE_ELEMENT_FROM_SECTION,
     ADD_SUPER_ELEMENT,
     SET_SUPER_ELEMENT_PIVOT,
+    UPDATE_ELEMENT_CONFIG,
 } from "../reducers/pageSections.reducer";
 
 import { store } from "../store";
@@ -59,6 +60,16 @@ export function addNewSectionToPage(order, sectionId) {
         type: ADD_NEW_SECTION,
         order,
         sectionId,
+    }
+    store.dispatch(action);
+}
+
+export function upadteElementConfing(sectionId, elementId, config) {
+    const action = {
+        type: UPDATE_ELEMENT_CONFIG,
+        sectionId,
+        elementId,
+        config,
     }
     store.dispatch(action);
 }

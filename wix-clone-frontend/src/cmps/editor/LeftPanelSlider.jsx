@@ -79,10 +79,9 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
     }
 
     function onExamplePick(e, elConfig) {
-        
+
         // superSection bias to be removed
         const pivot = store.getState().page.superElement.pivot;
-        console.log(pivot);
 
         const { x: pivotX, y: pivotY } = pivot.getBoundingClientRect();
 
@@ -174,7 +173,7 @@ function LeftPanelSlider({ selectedButton, onClosePanel }) {
 
                                 {/* close panel */}
                                 <button
-                                    className='exit-button'
+                                    className='basic-button'
                                     onClick={() => onClosePanel(selectedButton)}>
                                     <svg viewBox="-0.5 -0.5 24 24" fill="currentColor" width="24" height="24"><path d="M10.793 11.5 7.146 7.854 6.793 7.5l.707-.707.354.353 3.646 3.647 3.646-3.647.354-.353.707.707-.353.354-3.647 3.646 3.647 3.646.353.354-.707.707-.354-.353-3.646-3.647-3.646 3.647-.354.353-.707-.707.353-.354 3.647-3.646Z"></path></svg>
                                 </button>
@@ -360,96 +359,111 @@ const panelConfigurations = {
             {
                 'Themed Text':
                     [
-                        { type: 'h1', props: { className: 'h1' }, innerText: 'Add Heading 1' },
-                        { type: 'h2', props: { className: 'h2' }, innerText: 'Add Heading 2' },
-                        { type: 'h3', props: { className: 'h3' }, innerText: 'Add Heading 3' },
-                        { type: 'h4', props: { className: 'h4' }, innerText: 'Add Heading 4' },
-                        { type: 'h5', props: { className: 'h5' }, innerText: 'Add Heading 5' },
-                        { type: 'h6', props: { className: 'h6' }, innerText: 'Add Heading 6' },
+                        {
+                            type: 'h1',
+                            props: {
+                                className: 'h1',
+                                style: {
+                                    fontWeight: 'bold',
+                                    fontStyle: 'normal',
+                                    textDecoration: 'none',
+                                    backgroundColor: '#00000000',
+                                    color: '#000000',
+                                    fontSize: 36,
+                                    fontFamily: 'sans-serif'
+                                }
+                            },
+                            children: 'Add Heading 1'
+                        },
+                        { type: 'h2', props: { className: 'h2' }, children: 'Add Heading 2' },
+                        { type: 'h3', props: { className: 'h3' }, children: 'Add Heading 3' },
+                        { type: 'h4', props: { className: 'h4' }, children: 'Add Heading 4' },
+                        { type: 'h5', props: { className: 'h5' }, children: 'Add Heading 5' },
+                        { type: 'h6', props: { className: 'h6' }, children: 'Add Heading 6' },
                     ],
                 'Titels':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
                 'Paragraphs':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
                 'Collapsible Text':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
                 'Text Mask':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
             },
             'Contact & Form':
             {
                 'Themed Text':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
                 'Titels':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
                 'Paragraphs':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
                 'Collapsible Text':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
                 'Text Mask':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
 
             },
@@ -457,96 +471,96 @@ const panelConfigurations = {
             {
                 'Themed Text':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
                 'Titels':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
                 'Paragraphs':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
                 'Collapsible Text':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
                 'Text Mask':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
 
             },
             'Gallery': {
                 'Themed Text':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
                 'Titels':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
                 'Paragraphs':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
                 'Collapsible Text':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
                 'Text Mask':
                     [
-                        { type: 'h1', innerText: 'Add Heading 1' },
-                        { type: 'h2', innerText: 'Add Heading 2' },
-                        { type: 'h3', innerText: 'Add Heading 3' },
-                        { type: 'h4', innerText: 'Add Heading 4' },
-                        { type: 'h5', innerText: 'Add Heading 5' },
-                        { type: 'h6', innerText: 'Add Heading 6' },
+                        { type: 'h1', children: 'Add Heading 1' },
+                        { type: 'h2', children: 'Add Heading 2' },
+                        { type: 'h3', children: 'Add Heading 3' },
+                        { type: 'h4', children: 'Add Heading 4' },
+                        { type: 'h5', children: 'Add Heading 5' },
+                        { type: 'h6', children: 'Add Heading 6' },
                     ],
             },
         },

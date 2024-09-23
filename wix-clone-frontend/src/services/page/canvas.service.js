@@ -1,7 +1,6 @@
 export const canvasServices = {
     hslToRgb,
     rgbToHsl,
-    cropValInRange,
     rgbToHex,
     findColorPositionOnCanvas,
     hexToRgb
@@ -25,6 +24,8 @@ function hslToRgb([h, s, l]) {
     let r, g, b;
 
     if (s === 0) {
+        console.log('here');
+        
         r = g = b = l; // achromatic
     } else {
         const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
@@ -33,7 +34,6 @@ function hslToRgb([h, s, l]) {
         g = hueToRgb(p, q, h);
         b = hueToRgb(p, q, h - 1 / 3);
     }
-
     return [round(r * 255), round(g * 255), round(b * 255)];
 }
 
@@ -79,20 +79,14 @@ function rgbToHsl([r, g, b]) {
     return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
 }
 
-function cropValInRange(val, max, min) {
-    return Math.max(Math.min(val, max), min)
-}
-
-
 function componentToHex(c) {
     var hex = c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
 }
 
-
 // source: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
 function rgbToHex(r, g, b) {
-    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+    return componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
 function findColorPositionOnCanvas(context, rgbColor, width, height, tolerance = 10) {
@@ -113,16 +107,11 @@ function findColorPositionOnCanvas(context, rgbColor, width, height, tolerance =
             }
         }
     }
-
     return null; // If color not found
 }
 
 // source: https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
 function hexToRgb(hex) {
     var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : null;
+    return result ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : null;
 }

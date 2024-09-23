@@ -12,13 +12,15 @@ export const ADD_NEW_SECTION = 'ADD_NEW_SECTION';
 // cover
 export const SET_COVERS_DEADZONES = 'SET_COVERS_DEADZONES';
 export const SET_COVERS_DRAGGED_OVER = 'SET_COVERS_DRAGGED_OVER';
-export const UPDATE_ELEMENT_IN_SECTION = 'UPDATE_ELEMENT_IN_SECTION';
 //elements
+export const UPDATE_ELEMENT_IN_SECTION = 'UPDATE_ELEMENT_IN_SECTION';
 export const ADD_NEW_ELEMENT_TO_SECTION = 'ADD_ELEMENT_TO_SECTION';
 export const DELETE_ELEMENT_FROM_SECTION = 'DELETE_ELEMENT_FROM_SECTION';
+export const UPDATE_ELEMENT_CONFIG = 'UPDATE_ELEMENT_CONFIG';
 //super element
 export const ADD_SUPER_ELEMENT = 'ADD_SUPER_ELEMENT';
 export const SET_SUPER_ELEMENT_PIVOT = 'SET_SUPER_ELEMENT_PIVOT';
+
 
 const page = {
     sectionsCount: 5,
@@ -28,7 +30,32 @@ const page = {
         {
             section: { name: 'Section0', order: 0, height: 400, },
             cover: { isDraggedOver: false, highlightDeadzones: false, },
-            elements: { [uId('el')]: { width: 230, height: 80, offsetX: 200, offsetY: 25 } },
+            elements: {
+                'el_m1ewt89js48luxnpxqb': {
+                    elConfig: {
+                        type: 'h1',
+                        props: {
+                            className: "h1",
+                            id: 'el_m1ewt89js48luxnpxqb',
+                            style: {
+                                backgroundColor: "#00000000",
+                                color: "#000000",
+                                fontFamily: "sans-serif",
+                                fontSize: 36,
+                                fontStyle: "normal",
+                                fontWeight: "bold",
+                                textDecoration: "none",
+                            }
+                        },
+                        type: "h1",
+                        children: 'Add Heading 1',
+                    },
+                    height: 36,
+                    offsetX: 522.0625381469727,
+                    offsetY: 133.00000381469727,
+                    width: 253,
+                }
+            },
         },
 
         [uId('sec')]:
@@ -109,17 +136,35 @@ export function pageSectionsReducer(state = page, action) {
         // --- ELEMENTS --- //
         case UPDATE_ELEMENT_IN_SECTION:
             if (action.sectionId === 'superSection') {
-                updatedState = { ...state, superElement: {pivot: state.superElement.pivot} }
+                updatedState = { ...state, superElement: { pivot: state.superElement.pivot } }
             }
             else {
                 updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], elements: { ...state.sectionsProps[action.sectionId].elements, [action.elementId]: action.element } } } };
             }
             break;
-            
+
+        case UPDATE_ELEMENT_CONFIG:
+            updatedState = {
+                ...state,
+                sectionsProps: {
+                    ...state.sectionsProps,
+                    [action.sectionId]: {
+                        ...state.sectionsProps[action.sectionId],
+                        elements: {
+                            ...state.sectionsProps[action.sectionId].elements,
+                            [action.elementId]: {
+                                ...state.sectionsProps[action.sectionId].elements[action.elementId],
+                                elConfig: action.config
+                            }
+                        }
+                    }
+                }
+            };
+
+            break;
+
         case ADD_NEW_ELEMENT_TO_SECTION:
-            const {pivot, ...remainingProps} = action.element;
-            console.log(remainingProps);
-            
+            const { pivot, ...remainingProps } = action.element;
             updatedState = { ...state, sectionsProps: { ...state.sectionsProps, [action.sectionId]: { ...state.sectionsProps[action.sectionId], elements: { ...state.sectionsProps[action.sectionId].elements, [action.elementId]: remainingProps } } } };
             break;
 
@@ -130,7 +175,7 @@ export function pageSectionsReducer(state = page, action) {
 
         // --- SUPER_ELEMENT --- //
         case ADD_SUPER_ELEMENT:
-            updatedState = { ...state, superElement: { ...state.superElement,  width: action.width, height: action.height, offsetX: action.offsetX, offsetY: action.offsetY,  elConfig: action.elConfig} };
+            updatedState = { ...state, superElement: { ...state.superElement, width: action.width, height: action.height, offsetX: action.offsetX, offsetY: action.offsetY, elConfig: action.elConfig } };
             break;
 
         case SET_SUPER_ELEMENT_PIVOT:

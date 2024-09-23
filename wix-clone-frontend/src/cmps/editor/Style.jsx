@@ -5,6 +5,8 @@ const Style = memo(function Style() {
             .h1 {
                 font-size: 36px;
                 color: #000000;
+                overflow-wrap: break-word;
+                max-width: max-content;
             }
 
             .h2 {

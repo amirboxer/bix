@@ -14,6 +14,7 @@ const EditBox = memo(function EditBox({
     contentsRef,
     element,
 }) {
+
     // States
     const [initialPointerCoords, setInitialPointerCoords] = useState({ posX: null, posY: null });
     const [isFocused, setIsFocused] = useState(false);
@@ -22,6 +23,7 @@ const EditBox = memo(function EditBox({
     const [boxHeight, setBoxHeight] = useState(element.height);
     const [boxOffsetLeft, setBoxOffsetLeft] = useState(element.offsetX);
     const [boxOffsetTop, setBoxOffsetTop] = useState(element.offsetY);
+    const [openTextEditor, setOpenTextEditor] = useState(false);
 
     //references
     const editBoxRef = useRef(null);
@@ -32,6 +34,7 @@ const EditBox = memo(function EditBox({
         editBoxRef.current.addEventListener('focusEditBox', onFocusEditBox);
     }, []);
 
+    // evets
     // Handle focus logic and allow appearance
     function handlePointerDown(e, autoDrag = true) {
         setTimeout(() => {
@@ -40,6 +43,10 @@ const EditBox = memo(function EditBox({
             !autoDrag ? editBoxRef.current.focus() : null;
             setInitialPointerCoords({ pageX: e.pageX, pageY: e.pageY });
         }, 0);
+    }
+
+    function onDoubleClick(e) {
+        setOpenTextEditor(true);
     }
 
     return (
@@ -52,10 +59,9 @@ const EditBox = memo(function EditBox({
                     height: boxHeight,
                     width: boxWidth,
                 }}>
-                {element.elConfig && pageService.buildElementFromConfig(element.elConfig)}
+                {!openTextEditor && element.elConfig && pageService.buildElementFromConfig(element.elConfig)}
             </div>
 
-            <TextEditor />
             <div
                 id={elId}
                 ref={editBoxRef}
@@ -67,8 +73,24 @@ const EditBox = memo(function EditBox({
                     width: boxWidth,
                 }}
                 tabIndex={0}
+
+                // events
                 onPointerDown={handlePointerDown}
-                onBlur={() => setIsFocused(false)}>
+                onBlur={() => setIsFocused(false)}
+                onDoubleClick={onDoubleClick}
+            >
+
+                {/* text edtior */}
+                {openTextEditor &&
+                    <>
+                        <TextEditor
+                            setOpenTextEditor={setOpenTextEditor}
+                            elId={elId}
+                            secId={secId}
+                            element={element}
+                        />
+                    </>
+                }
 
                 {/* resizer wrapper */}
                 {isFocused &&

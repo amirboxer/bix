@@ -89,6 +89,7 @@ function DragResizeBox({
     // ---- event handler ---- //
     // on pointer down - Function to start tracking pointer movement - event handler
     function onPointerDown(e, horizontalDir, verticalDir, type, cursor = 'move') {
+        
         bodyCursor.current = cursor;
         initialPointerCoord.current = { pageX: e.pageX, pageY: e.pageY };
         resizeAxis.current = { horizontal: horizontalDir, vertical: verticalDir };
@@ -159,8 +160,7 @@ function DragResizeBox({
             const newId = isSuperElement ? uId('el') : elId;
 
             if (!isSuperElement || isSuperElement && outOfLeftPanel(e)) {
-
-                addNewElementToSection(currentSectionId, newId, { ...updatedEl, offsetX: osl, offsetY: distanceFromTop });
+                addNewElementToSection(currentSectionId, newId, { ...updatedEl, offsetX: osl, offsetY: distanceFromTop, elConfig: { ...updatedEl.elConfig, props: {...updatedEl.elConfig.props, id: newId}}, });
             }
 
             if (!isSuperElement) {

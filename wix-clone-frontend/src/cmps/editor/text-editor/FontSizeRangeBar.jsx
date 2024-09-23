@@ -5,10 +5,13 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { utilService } from "../../../services/util.service";
 const cropValInRange = utilService.cropValInRange;
 
-function FontSizeRangeBar({ originalFontSize = 16 }) {
+// store
+import { upadteElementConfing } from "../../../store/actions/pageSections.actions";
+
+function FontSizeRangeBar({ elId, secId, element }) {
     // states
     const [distFromStart, setDistFromStart] = useState(0);
-    const [fontSize, setFontSize] = useState(originalFontSize)
+    const [fontSize, setFontSize] = useState(element.elConfig.props.style.fontSize);
 
     //memos
     const maxFontSize = useMemo(() => 176);
@@ -24,7 +27,9 @@ function FontSizeRangeBar({ originalFontSize = 16 }) {
 
 
     useEffect(() => {
-        setFontSize(getFontSizeFromTrack());
+        const size = getFontSizeFromTrack();
+        setFontSize(size);
+        upadteElementConfing(secId, elId, { ...element.elConfig, props: { ...element.elConfig.props, style: { ...element.elConfig.props.style, fontSize:  size} } });
     }, [distFromStart]);
 
 

@@ -52,7 +52,7 @@ function observeAddSecPlaceholders(root, markSectionPlaceholder, delay = 2500, o
         observer: new IntersectionObserver(intersectionCallback, options),
         unboserveAll: function (disconnect) {
             console.log('stop observing');
-            elsToObserve.forEach(el => this.observer.unobserve(el));
+            elsToObserve && elsToObserve.forEach(el => this.observer.unobserve(el));
             Object.values(visibleElements).forEach(el => el.style.height = "");
 
             visibleElements = {};

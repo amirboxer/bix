@@ -42,7 +42,8 @@ export function BringThemHome() {
                 onClick={e => {
                     e.preventDefault();
                     setShowComponent(prev => !prev);
-                }}>X</div>
+                }}>X
+            </div>
 
             {/*  */}
             <div className="subtitle">מאות <span className="red-bg">חטופים</span> על ידי החמאס</div>

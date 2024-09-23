@@ -1,9 +1,24 @@
-import { useState, useMemo } from "react";
+// hooks
+import { useState, useMemo, useRef, useEffect } from "react";
 
-function FontFamilyDropDown() {
+// store
+import { upadteElementConfing } from "../../../store/actions/pageSections.actions";
+
+function FontFamilyDropDown({ elId, secId, element, }) {
     // states
-    const [pickedFont, setpPickedFont] = useState('courier-new');
+
+    const [pickedFont, setpPickedFont] = useState(element.elConfig.props.style.fontFamily);
     const [isOpen, setIsOpen] = useState(false);
+
+    //effects
+    useEffect(() => {
+        if (isOpen) {
+            currPick.current.parentNode.scrollTop = currPick.current.offsetTop;
+        }
+    }, [isOpen]);
+
+    //refernces
+    const currPick = useRef(null);
 
     // memo
     const fontOptions = useMemo(() => ({
@@ -26,6 +41,11 @@ function FontFamilyDropDown() {
         'serif': 'serif',
     }));
 
+    function pickFont(font) {
+        setpPickedFont(font);
+        upadteElementConfing(secId, elId, { ...element.elConfig, props: { ...element.elConfig.props, style: { ...element.elConfig.props.style, fontFamily: font } } });
+    }
+
     return (
         <div className="dropBox">
             <div
@@ -39,7 +59,7 @@ function FontFamilyDropDown() {
 
                 {/* open selection */}
                 <button className="drop-button">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24" color=""><path d="M7 9.79a.5.5 0 0 1 .854-.353L12 13.584l4.146-4.147a.5.5 0 1 1 .708.708L12 14.998l-4.854-4.853A.5.5 0 0 1 7 9.79Z"></path></svg>
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24" color=""><path d="M7 9.79a.5.5 0 0 1 .854-.353L12 13.584l4.146-4.147a.5.5 0 1 1 .708.708L12 14.998l-4.854-4.853A.5.5 0 0 1 7 9.79Z"></path></svg>
                 </button>
 
                 {/* selection */}
@@ -47,9 +67,10 @@ function FontFamilyDropDown() {
                     < ul className="dropDownList">
                         {Object.entries(fontOptions).map(([font, fontName], _) =>
                             <li
-                                onClick={() => setpPickedFont(font)}
+                                onClick={() => pickFont(font)}
                                 key={font}
                                 className={`${font} dropdown-option ${pickedFont === font ? 'picked' : ''}`}
+                                ref={pickedFont === font ? currPick : null}
                             >
                                 {fontName}
                             </li>

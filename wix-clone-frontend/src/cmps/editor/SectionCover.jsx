@@ -5,7 +5,7 @@ import AddSection from './AddSection';
 
 //react hooks
 import { useState, useEffect, useRef, memo, useContext } from 'react';
-import { useSelector} from 'react-redux'
+import { useSelector } from 'react-redux'
 
 // Context
 import { EditPageContext } from '../../pages/Editor';
@@ -46,10 +46,8 @@ const SectionCover = memo(function SectionCover({ setAddSectionBtnHandlers, hand
     }
 
     return (
-        <div className={`section-cover section-layout
-            ${sectionFocused && zoomOutMode != 'add-section' ? 'focused' : 'blur-hover'}
-            ${cover.isDraggedOver ? cover.isDraggedOver === sectionId ? 'dragged-over' : 'not-dragged-over' : ''}
-            ${lowerAddSectionButton + upperAddSectionButton} ${sectionId}`}
+        <div
+            className={`section-cover section-layout ${sectionFocused && zoomOutMode != 'add-section' ? 'focused' : 'blur-hover'} ${cover.isDraggedOver ? cover.isDraggedOver === sectionId ? 'dragged-over' : 'not-dragged-over' : ''} ${lowerAddSectionButton + upperAddSectionButton} ${sectionId}`}
         >
             {/* left deadzone */}
             <div className={`out-of-gridline left ${cover.highlightDeadzones && 'intersecting'}`}></div>

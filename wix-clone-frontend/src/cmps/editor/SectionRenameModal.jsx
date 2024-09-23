@@ -90,7 +90,7 @@ function SectionRenameModal({ setOpenNameModalRef, originalName, positionRef, up
                                     closeModal();
                                     ref.current.focus();
                                 }}
-                                className='exit-button'
+                                className='basic-button'
                             >
                                 <svg viewBox="-0.5 -0.5 24 24" fill="currentColor" width="24" height="24"><path d="M10.793 11.5 7.146 7.854 6.793 7.5l.707-.707.354.353 3.646 3.647 3.646-3.647.354-.353.707.707-.353.354-3.647 3.646 3.647 3.646.353.354-.707.707-.354-.353-3.646-3.647-3.646 3.647-.354.353-.707-.707.353-.354 3.647-3.646Z"></path></svg>
                             </button>

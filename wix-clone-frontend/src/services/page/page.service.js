@@ -13,7 +13,8 @@ function getEmptySection(order) {
     }
 }
 
-function buildElementFromConfig({type, props, innerText}) {
-    return React.createElement(type, props, innerText);
+function buildElementFromConfig(confing) {
+    const {type, props, children} = confing;
+    return React.createElement(type, props, children);
 }
 
